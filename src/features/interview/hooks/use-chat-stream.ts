@@ -129,7 +129,8 @@ export function useChatStream({
           const lines = buffer.split("\n");
           buffer = lines.pop() || "";
 
-          for (const line of lines) {
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
             if (line.startsWith("event: ")) {
               // Skip event type lines, we parse from data structure
               continue;
@@ -143,7 +144,7 @@ export function useChatStream({
 
               try {
                 const data = JSON.parse(dataStr);
-                const eventLine = lines[lines.indexOf(line) - 1];
+                const eventLine = i > 0 ? lines[i - 1] : null;
                 const eventType = eventLine?.startsWith("event: ")
                   ? eventLine.slice(7).trim()
                   : null;
