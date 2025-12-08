@@ -49,7 +49,13 @@ export function MessageInput({
           disabled={disabled || !message.trim()}
           className="h-[52px] w-[52px] shrink-0 bg-emerald-600 text-white shadow-emerald-500/20 shadow-lg transition-all hover:bg-emerald-500 disabled:opacity-50 disabled:shadow-none"
         >
-          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <svg
+            className="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"

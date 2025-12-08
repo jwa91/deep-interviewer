@@ -4,7 +4,7 @@ import { INTERVIEWER_SYSTEM_PROMPT, generateProgressReminder, getSystemPrompt } 
 describe("INTERVIEWER_SYSTEM_PROMPT", () => {
   it("is in Dutch", () => {
     expect(INTERVIEWER_SYSTEM_PROMPT).toContain("Nederlands");
-    expect(INTERVIEWER_SYSTEM_PROMPT).toContain("Hoi!");
+    expect(INTERVIEWER_SYSTEM_PROMPT).toContain("deelnemer");
   });
 
   it("mentions all 9 question tools", () => {
@@ -19,9 +19,10 @@ describe("INTERVIEWER_SYSTEM_PROMPT", () => {
     expect(INTERVIEWER_SYSTEM_PROMPT).toContain("record_course_parts");
   });
 
-  it("emphasizes immediate tool calling", () => {
-    expect(INTERVIEWER_SYSTEM_PROMPT).toContain("DIRECT aan");
-    expect(INTERVIEWER_SYSTEM_PROMPT).toContain("Wacht NIET tot het einde");
+  it("emphasizes natural conversation flow for tool calling", () => {
+    expect(INTERVIEWER_SYSTEM_PROMPT).toContain("Onthoud alles");
+    expect(INTERVIEWER_SYSTEM_PROMPT).toContain("Natuurlijke overgangen");
+    expect(INTERVIEWER_SYSTEM_PROMPT).toContain("Volg de flow");
   });
 
   it("mentions JW as the instructor", () => {

@@ -20,4 +20,3 @@ Ik ben de AI-assistent van JW en ik help hem feedback te verzamelen over de AI-t
 Het gesprek duurt ongeveer 10-15 minuten, afhankelijk van hoeveel je wilt delen.
 
 Laten we beginnen! Kun je me eerst vertellen: had je al ervaring met AI-tools zoals ChatGPT vóórdat je deze training volgde?`;
-

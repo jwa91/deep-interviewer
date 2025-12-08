@@ -80,9 +80,9 @@ function App() {
   // Show loading spinner while checking for existing session
   if (sessionLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
         <div className="text-center">
-          <Spinner className="w-8 h-8 mx-auto text-emerald-500" />
+          <Spinner className="mx-auto h-8 w-8 text-emerald-500" />
           <p className="mt-4 text-slate-400 text-sm">Laden...</p>
         </div>
       </div>
