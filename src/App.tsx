@@ -91,7 +91,6 @@ function App() {
         isStreaming={isStreaming}
         error={chatError}
         onSendMessage={sendMessage}
-        onComplete={handleComplete}
       />
       <CompletionModal isOpen={showCompletionModal} onClose={() => setShowCompletionModal(false)} />
     </>

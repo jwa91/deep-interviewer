@@ -10,7 +10,6 @@ interface ChatContainerProps {
   isStreaming: boolean;
   error: string | null;
   onSendMessage: (message: string) => void;
-  onComplete: () => void;
 }
 
 export function ChatContainer({
