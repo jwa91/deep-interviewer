@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
@@ -60,6 +61,10 @@ app.route("/api/interviews", interviewRoutes);
 
 const port = Number(process.env.PORT) || 3001;
 
+// Check required environment variables
+const hasAnthropicKey = !!process.env.ANTHROPIC_API_KEY;
+const hasLangSmith = !!process.env.LANGSMITH_API_KEY;
+
 console.log(`
 ╔══════════════════════════════════════════════════════════════╗
 ║                   Deep Interviewer API                        ║
@@ -67,6 +72,9 @@ console.log(`
 ║  Server starting on port ${port}...                              ║
 ║  Health check: http://localhost:${port}/health                   ║
 ║  API docs:     http://localhost:${port}/                         ║
+╠══════════════════════════════════════════════════════════════╣
+║  Anthropic API Key: ${hasAnthropicKey ? "✓ loaded" : "✗ missing"}                            ║
+║  LangSmith:         ${hasLangSmith ? "✓ enabled" : "✗ disabled"}                           ║
 ╚══════════════════════════════════════════════════════════════╝
 `);
 

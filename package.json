@@ -35,6 +35,7 @@
     "@tailwindcss/vite": "^4.1.17",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^17.2.3",
     "hono": "^4.10.7",
     "langchain": "^1.1.5",
     "lucide-react": "^0.556.0",
