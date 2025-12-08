@@ -1,30 +1,30 @@
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
+import { forwardRef } from "react";
 import type * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-function ScrollArea({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<typeof ScrollAreaPrimitive.Root>) {
-  return (
-    <ScrollAreaPrimitive.Root
-      data-slot="scroll-area"
-      className={cn("relative", className)}
-      {...props}
+const ScrollArea = forwardRef<
+  React.ComponentRef<typeof ScrollAreaPrimitive.Viewport>,
+  React.ComponentProps<typeof ScrollAreaPrimitive.Root>
+>(({ className, children, ...props }, ref) => (
+  <ScrollAreaPrimitive.Root
+    data-slot="scroll-area"
+    className={cn("relative", className)}
+    {...props}
+  >
+    <ScrollAreaPrimitive.Viewport
+      ref={ref}
+      data-slot="scroll-area-viewport"
+      className="size-full rounded-[inherit] outline-none transition-[color,box-shadow] focus-visible:outline-1 focus-visible:ring-[3px] focus-visible:ring-ring/50"
     >
-      <ScrollAreaPrimitive.Viewport
-        data-slot="scroll-area-viewport"
-        className="size-full rounded-[inherit] outline-none transition-[color,box-shadow] focus-visible:outline-1 focus-visible:ring-[3px] focus-visible:ring-ring/50"
-      >
-        {children}
-      </ScrollAreaPrimitive.Viewport>
-      <ScrollBar />
-      <ScrollAreaPrimitive.Corner />
-    </ScrollAreaPrimitive.Root>
-  );
-}
+      {children}
+    </ScrollAreaPrimitive.Viewport>
+    <ScrollBar />
+    <ScrollAreaPrimitive.Corner />
+  </ScrollAreaPrimitive.Root>
+));
+ScrollArea.displayName = "ScrollArea";
 
 function ScrollBar({
   className,
