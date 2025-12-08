@@ -9,7 +9,16 @@ import {
   useChatStream,
   useInterviewSession,
 } from "./features/interview";
-import type { ProgressState } from "./features/interview";
+import type { Message, ProgressState } from "./features/interview";
+import { WELCOME_MESSAGE } from "./shared/constants";
+
+// Welcome message for new sessions - matches what's stored in LangGraph state
+const createWelcomeMessage = (): Message => ({
+  id: "welcome",
+  role: "assistant",
+  content: WELCOME_MESSAGE,
+  timestamp: new Date(),
+});
 
 function App() {
   const {
@@ -50,12 +59,16 @@ function App() {
     onComplete: handleComplete,
   });
 
-  // Restore existing messages when session is loaded
+  // Initialize with welcome message or restore existing messages
   useEffect(() => {
     if (existingMessages.length > 0) {
+      // Restore existing conversation
       setMessages(existingMessages);
+    } else if (session?.sessionId && messages.length === 0) {
+      // New session - show welcome message (also stored in LangGraph state)
+      setMessages([createWelcomeMessage()]);
     }
-  }, [existingMessages, setMessages]);
+  }, [session?.sessionId, existingMessages, setMessages, messages.length]);
 
   // Sync progress from session hook
   useEffect(() => {

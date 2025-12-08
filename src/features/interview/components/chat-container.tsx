@@ -21,7 +21,7 @@ export function ChatContainer({
   onSendMessage,
 }: ChatContainerProps) {
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="flex h-screen flex-col overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Subtle grid pattern overlay */}
       <div
         className="pointer-events-none fixed inset-0 opacity-[0.02]"
@@ -64,7 +64,7 @@ export function ChatContainer({
       </header>
 
       {/* Chat area */}
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col">
+      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col overflow-hidden">
         {error && (
           <div className="mx-4 mt-4 rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-red-400 text-sm">
             {error}
@@ -76,7 +76,7 @@ export function ChatContainer({
         <MessageInput
           onSend={onSendMessage}
           disabled={isStreaming}
-          placeholder={messages.length === 0 ? "Zeg hallo om te beginnen..." : "Typ je antwoord..."}
+          placeholder="Typ je antwoord..."
         />
       </main>
     </div>
