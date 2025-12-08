@@ -72,21 +72,36 @@ interviewRoutes.get("/:id", async (c) => {
   try {
     const state = await agent.getState(config);
 
+    // Serialize LangChain messages to simple { role, content } format
+    const messages = (state.values?.messages ?? []).map((msg: { _getType?: () => string; content: string }) => ({
+      role: msg._getType?.() === "human" ? "user" : "assistant",
+      content: typeof msg.content === "string" ? msg.content : "",
+    }));
+
+    const questionsCompleted = state.values?.questionsCompleted ?? {};
+    const completedCount = Object.values(questionsCompleted).filter(Boolean).length;
+
     return c.json({
-      session,
-      state: state.values,
+      id: session.id,
+      createdAt: session.createdAt,
+      messages,
       progress: {
-        questionsCompleted: state.values?.questionsCompleted ?? {},
+        questionsCompleted,
+        completedCount,
+        totalQuestions: 9,
         isComplete: state.values?.isComplete ?? false,
       },
     });
   } catch {
     // No state yet (interview not started)
     return c.json({
-      session,
-      state: null,
+      id: session.id,
+      createdAt: session.createdAt,
+      messages: [],
       progress: {
         questionsCompleted: {},
+        completedCount: 0,
+        totalQuestions: 9,
         isComplete: false,
       },
     });
@@ -123,13 +138,15 @@ interviewRoutes.post("/:id/chat", async (c) => {
     currentState = null;
   }
 
-  // Prepare input
+  // Prepare input - check if conversation has actually started (has messages)
   let input: { messages: HumanMessage[] } | ReturnType<typeof createInterviewInput>;
-  if (currentState?.values) {
+  const existingMessages = currentState?.values?.messages ?? [];
+  
+  if (existingMessages.length > 0) {
     // Subsequent message - just add the human message
     input = { messages: [new HumanMessage(message)] };
   } else {
-    // First message - create initial state
+    // First message - create initial state with welcome AIMessage
     input = createInterviewInput(id, message);
   }
 
