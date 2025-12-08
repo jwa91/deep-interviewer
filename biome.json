@@ -7,7 +7,14 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": ["dist", "node_modules", ".git", "*.min.js", "pnpm-lock.yaml", "tsconfig*.json"]
+    "ignore": [
+      "dist",
+      "node_modules",
+      ".git",
+      "*.min.js",
+      "pnpm-lock.yaml",
+      "tsconfig*.json"
+    ]
   },
   "organizeImports": {
     "enabled": true
@@ -126,7 +133,11 @@
           "options": {
             "strictCase": false,
             "requireAscii": true,
-            "filenameCases": ["kebab-case", "PascalCase", "camelCase"]
+            "filenameCases": [
+              "kebab-case",
+              "PascalCase",
+              "camelCase"
+            ]
           }
         },
         "useForOf": "error",
@@ -141,31 +152,50 @@
                 "selector": {
                   "kind": "function"
                 },
-                "formats": ["camelCase", "PascalCase"]
+                "formats": [
+                  "camelCase",
+                  "PascalCase"
+                ]
               },
               {
                 "selector": {
                   "kind": "variable"
                 },
-                "formats": ["camelCase", "PascalCase", "CONSTANT_CASE"]
+                "formats": [
+                  "camelCase",
+                  "PascalCase",
+                  "CONSTANT_CASE"
+                ]
               },
               {
                 "selector": {
                   "kind": "typeLike"
                 },
-                "formats": ["PascalCase"]
+                "formats": [
+                  "PascalCase"
+                ]
               },
               {
                 "selector": {
                   "kind": "objectLiteralProperty"
                 },
-                "formats": ["camelCase", "PascalCase", "CONSTANT_CASE", "snake_case"]
+                "formats": [
+                  "camelCase",
+                  "PascalCase",
+                  "CONSTANT_CASE",
+                  "snake_case"
+                ]
               },
               {
                 "selector": {
                   "kind": "typeProperty"
                 },
-                "formats": ["camelCase", "PascalCase", "CONSTANT_CASE", "snake_case"]
+                "formats": [
+                  "camelCase",
+                  "PascalCase",
+                  "CONSTANT_CASE",
+                  "snake_case"
+                ]
               }
             ]
           }
@@ -275,8 +305,16 @@
         "useSortedClasses": {
           "level": "warn",
           "options": {
-            "attributes": ["className", "class"],
-            "functions": ["cn", "clsx", "cva", "twMerge"]
+            "attributes": [
+              "className",
+              "class"
+            ],
+            "functions": [
+              "cn",
+              "clsx",
+              "cva",
+              "twMerge"
+            ]
           }
         }
       }
@@ -284,7 +322,9 @@
   },
   "overrides": [
     {
-      "include": ["src/components/ui/**"],
+      "include": [
+        "src/components/ui/**"
+      ],
       "linter": {
         "rules": {
           "a11y": {
@@ -297,7 +337,12 @@
       }
     },
     {
-      "include": ["*.config.ts", "*.config.js", "vite.config.ts", "vitest.config.ts"],
+      "include": [
+        "*.config.ts",
+        "*.config.js",
+        "vite.config.ts",
+        "vitest.config.ts"
+      ],
       "linter": {
         "rules": {
           "style": {
@@ -307,7 +352,13 @@
       }
     },
     {
-      "include": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx", "src/test/**"],
+      "include": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.spec.ts",
+        "**/*.spec.tsx",
+        "src/test/**"
+      ],
       "linter": {
         "rules": {
           "suspicious": {
@@ -320,7 +371,9 @@
       }
     },
     {
-      "include": ["src/server/**"],
+      "include": [
+        "src/server/**"
+      ],
       "linter": {
         "rules": {
           "suspicious": {
