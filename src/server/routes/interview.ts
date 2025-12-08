@@ -73,10 +73,33 @@ interviewRoutes.get("/:id", async (c) => {
     const state = await agent.getState(config);
 
     // Serialize LangChain messages to simple { role, content } format
-    const messages = (state.values?.messages ?? []).map((msg: { _getType?: () => string; content: string }) => ({
-      role: msg._getType?.() === "human" ? "user" : "assistant",
-      content: typeof msg.content === "string" ? msg.content : "",
-    }));
+    // Filter out tool messages and system messages, only keep human and AI
+    // biome-ignore lint/style/useNamingConvention: _getType is a LangChain internal method
+    type LangChainMessage = { _getType?: () => string; content: unknown };
+    const messages = (state.values?.messages ?? [])
+      .filter((msg: LangChainMessage) => {
+        const type = msg._getType?.();
+        return type === "human" || type === "ai";
+      })
+      .map((msg: LangChainMessage) => {
+        // Handle content that might be string or array of content blocks
+        let content = "";
+        if (typeof msg.content === "string") {
+          content = msg.content;
+        } else if (Array.isArray(msg.content)) {
+          // Content blocks array - extract text from each block
+          content = msg.content
+            .filter((block: { type?: string }) => block.type === "text")
+            .map((block: { text?: string }) => block.text ?? "")
+            .join("");
+        }
+
+        return {
+          role: msg._getType?.() === "human" ? "user" : "assistant",
+          content,
+        };
+      })
+      .filter((msg: { content: string }) => msg.content.length > 0);
 
     const questionsCompleted = state.values?.questionsCompleted ?? {};
     const completedCount = Object.values(questionsCompleted).filter(Boolean).length;
@@ -141,7 +164,7 @@ interviewRoutes.post("/:id/chat", async (c) => {
   // Prepare input - check if conversation has actually started (has messages)
   let input: { messages: HumanMessage[] } | ReturnType<typeof createInterviewInput>;
   const existingMessages = currentState?.values?.messages ?? [];
-  
+
   if (existingMessages.length > 0) {
     // Subsequent message - just add the human message
     input = { messages: [new HumanMessage(message)] };
