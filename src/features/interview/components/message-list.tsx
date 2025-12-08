@@ -25,7 +25,7 @@ export function MessageList({ messages, toolActivity }: MessageListProps) {
   }, [messages.length, lastMessageContent.length, toolActivity?.name]);
 
   return (
-    <ScrollArea ref={viewportRef} className="flex-1 px-4">
+    <ScrollArea ref={viewportRef} className="h-full px-4">
       <div className="space-y-4 py-4">
         {messages.map((message) => (
           <MessageBubble key={message.id} message={message} />

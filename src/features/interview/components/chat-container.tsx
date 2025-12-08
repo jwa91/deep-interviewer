@@ -64,14 +64,16 @@ export function ChatContainer({
       </header>
 
       {/* Chat area */}
-      <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col overflow-hidden">
+      <main className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col">
         {error && (
           <div className="mx-4 mt-4 rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-red-400 text-sm">
             {error}
           </div>
         )}
 
-        <MessageList messages={messages} toolActivity={toolActivity} />
+        <div className="min-h-0 flex-1">
+          <MessageList messages={messages} toolActivity={toolActivity} />
+        </div>
 
         <MessageInput
           onSend={onSendMessage}
