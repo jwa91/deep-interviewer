@@ -61,10 +61,14 @@ export function createInterviewAgent(config: InterviewAgentConfig = {}) {
 		_config?: RunnableConfig,
 	): Promise<Partial<InterviewState>> {
 		// Build system prompt with progress info
-		const completedIds = Object.entries(state.questionsCompleted)
+		const questionsCompleted = state.questionsCompleted ?? {};
+		const completedIds = Object.entries(questionsCompleted)
 			.filter(([_, v]) => v)
 			.map(([k]) => k);
-		const remainingIds = getRemainingQuestionIds(state);
+		const remainingIds = getRemainingQuestionIds({
+			...state,
+			questionsCompleted: questionsCompleted as InterviewState["questionsCompleted"],
+		});
 
 		const systemPrompt = getSystemPrompt(completedIds, remainingIds);
 
@@ -128,8 +132,8 @@ export function createInterviewAgent(config: InterviewAgentConfig = {}) {
 		}
 
 		// Process pending tool updates
-		const updatedCompletion = { ...state.questionsCompleted };
-		const updatedResponses = { ...state.responses } as CollectedResponses;
+		const updatedCompletion = { ...(state.questionsCompleted ?? {}) };
+		const updatedResponses = { ...(state.responses ?? {}) } as CollectedResponses;
 
 		for (const update of pendingToolUpdates) {
 			const key = update.questionId as keyof typeof updatedCompletion;
