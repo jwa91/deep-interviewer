@@ -1,0 +1,25 @@
+---
+alwaysApply: true
+---
+
+### Import Rules (STRICT - Unidirectional)
+
+```
+shared → (nothing internal)
+features → shared only
+app → features + shared
+agents → shared only
+```
+
+**NEVER:**
+
+- Import from one feature into another feature
+- Import from app into features/shared
+- Import from agents into features
+- Use relative imports crossing feature boundaries
+
+### Dependency Direction
+
+- Features are isolated - communicate via shared state/events
+- If two features need shared logic, extract to `shared/`
+- Agent logic stays separate from UI features

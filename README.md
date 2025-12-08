@@ -1,73 +1,63 @@
-# React + TypeScript + Vite
+# Deep Interviewer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An AI-powered conversational interview agent that collects course feedback through natural dialogue instead of boring survey forms.
 
-Currently, two official plugins are available:
+## Status
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+| Component | Status |
+|-----------|--------|
+| Backend API | ✅ Working |
+| Frontend | ⏳ Not connected |
+| Docker | ⏳ Not tested |
 
-## React Compiler
+## Overview
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Built with LangChain's LangGraph, this agent conducts interviews in Dutch, naturally weaving in 9 feedback questions while maintaining a friendly, conversational tone. Instead of rigid forms, participants chat with an AI that adapts to their responses and goes deeper when interesting insights emerge.
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── shared/schema/       # Zod schemas for all 9 interview questions
+├── agents/interviewer/  # LangGraph agent, tools, prompts, state
+└── server/              # Hono API with SSE streaming
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## API Endpoints
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `POST /api/interviews` - Create new interview session
+- `GET /api/interviews/:id` - Get interview state and progress
+- `POST /api/interviews/:id/chat` - Send message (SSE streaming)
+- `GET /api/interviews/:id/results` - Get completed interview results
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Tech Stack
+
+- **Agent**: LangGraph + Anthropic Claude
+- **Server**: Hono (Node.js)
+- **Persistence**: SQLite (via LangGraph checkpointer)
+- **Streaming**: Server-Sent Events (SSE)
+
+## Quick Start
+
+```bash
+# Set up environment
+cp .env.example .env  # Add your ANTHROPIC_API_KEY
+
+# Install and run
+pnpm install
+pnpm dev:server
 ```
+
+## The 9 Interview Questions
+
+1. AI background (experience before training)
+2. Overall impression
+3. Perceived content (what they think it was about)
+4. Difficulty & pace
+5. Content quality & relevance
+6. Presentation quality
+7. Clarity of explanations
+8. Suggestions & recommendations
+9. Course parts comparison (theory vs practical)
+
+Each question captures both quantitative ratings (for comparison) and qualitative insights (summaries + quotes).

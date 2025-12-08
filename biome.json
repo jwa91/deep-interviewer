@@ -369,6 +369,18 @@
           }
         }
       }
+    },
+    {
+      "include": [
+        "src/server/**"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
     }
   ]
 }
