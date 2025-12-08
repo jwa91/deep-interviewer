@@ -87,14 +87,14 @@ Jij: "Fijn om te horen! Wat maakte het goed voor jou? Was er iets specifieks dat
  * when some questions are already completed.
  */
 export function generateProgressReminder(
-	completedQuestions: string[],
-	remainingQuestions: string[],
+  completedQuestions: string[],
+  remainingQuestions: string[]
 ): string {
-	if (completedQuestions.length === 0) {
-		return "";
-	}
+  if (completedQuestions.length === 0) {
+    return "";
+  }
 
-	return `
+  return `
 
 ## Huidige Voortgang
 Je hebt al feedback verzameld over: ${completedQuestions.join(", ")}
@@ -107,13 +107,9 @@ Focus op de resterende onderwerpen, maar als de deelnemer terug wil komen op een
  * Generates the full system prompt with progress info
  */
 export function getSystemPrompt(
-	completedQuestions: string[] = [],
-	remainingQuestions: string[] = [],
+  completedQuestions: string[] = [],
+  remainingQuestions: string[] = []
 ): string {
-	const progressReminder = generateProgressReminder(
-		completedQuestions,
-		remainingQuestions,
-	);
-	return INTERVIEWER_SYSTEM_PROMPT + progressReminder;
+  const progressReminder = generateProgressReminder(completedQuestions, remainingQuestions);
+  return INTERVIEWER_SYSTEM_PROMPT + progressReminder;
 }
-

@@ -12,13 +12,8 @@ export type Rating = z.infer<typeof RatingSchema>;
 // ═══════════════════════════════════════════════════════════════
 
 export const QualitativeCaptureSchema = z.object({
-	summary: z
-		.string()
-		.describe("Korte samenvatting van wat de deelnemer zei"),
-	quotes: z
-		.array(z.string())
-		.optional()
-		.describe("Opvallende citaten van de deelnemer"),
+  summary: z.string().describe("Korte samenvatting van wat de deelnemer zei"),
+  quotes: z.array(z.string()).optional().describe("Opvallende citaten van de deelnemer"),
 });
 export type QualitativeCapture = z.infer<typeof QualitativeCaptureSchema>;
 
@@ -26,12 +21,7 @@ export type QualitativeCapture = z.infer<typeof QualitativeCaptureSchema>;
 // SENTIMENT - General sentiment classification
 // ═══════════════════════════════════════════════════════════════
 
-export const SentimentSchema = z.enum([
-	"positive",
-	"neutral",
-	"negative",
-	"mixed",
-]);
+export const SentimentSchema = z.enum(["positive", "neutral", "negative", "mixed"]);
 export type Sentiment = z.infer<typeof SentimentSchema>;
 
 // ═══════════════════════════════════════════════════════════════
@@ -39,11 +29,11 @@ export type Sentiment = z.infer<typeof SentimentSchema>;
 // ═══════════════════════════════════════════════════════════════
 
 export const UserTypeSchema = z.enum([
-	"beginner", // Nauwelijks/geen AI ervaring
-	"casual", // Af en toe ChatGPT oid
-	"regular", // Regelmatig gebruik, meerdere tools
-	"power_user", // Dagelijks, diverse usecases
-	"professional", // Bouwt met AI / integreert in werk
+  "beginner", // Nauwelijks/geen AI ervaring
+  "casual", // Af en toe ChatGPT oid
+  "regular", // Regelmatig gebruik, meerdere tools
+  "power_user", // Dagelijks, diverse usecases
+  "professional", // Bouwt met AI / integreert in werk
 ]);
 export type UserType = z.infer<typeof UserTypeSchema>;
 
@@ -52,13 +42,13 @@ export type UserType = z.infer<typeof UserTypeSchema>;
 // ═══════════════════════════════════════════════════════════════
 
 export const UseCaseSubjectSchema = z.enum([
-	"productivity", // Emails, samenvattingen, tekst
-	"creative", // Afbeeldingen, content creatie
-	"coding", // Programmeren, debugging
-	"research", // Onderzoek, informatie zoeken
-	"education", // Leren, uitleg krijgen
-	"business", // Rapportages, analyses
-	"other",
+  "productivity", // Emails, samenvattingen, tekst
+  "creative", // Afbeeldingen, content creatie
+  "coding", // Programmeren, debugging
+  "research", // Onderzoek, informatie zoeken
+  "education", // Leren, uitleg krijgen
+  "business", // Rapportages, analyses
+  "other",
 ]);
 export type UseCaseSubject = z.infer<typeof UseCaseSubjectSchema>;
 
@@ -67,11 +57,11 @@ export type UseCaseSubject = z.infer<typeof UseCaseSubjectSchema>;
 // ═══════════════════════════════════════════════════════════════
 
 export const DifficultyLevelSchema = z.enum([
-	"too_easy",
-	"slightly_easy",
-	"just_right",
-	"slightly_difficult",
-	"too_difficult",
+  "too_easy",
+  "slightly_easy",
+  "just_right",
+  "slightly_difficult",
+  "too_difficult",
 ]);
 export type DifficultyLevel = z.infer<typeof DifficultyLevelSchema>;
 
@@ -80,9 +70,8 @@ export type DifficultyLevel = z.infer<typeof DifficultyLevelSchema>;
 // ═══════════════════════════════════════════════════════════════
 
 export const CoursePartPreferenceSchema = z.enum([
-	"theory", // Hoe LLMs werken
-	"practical", // Gebruik van LLMs
-	"both_equal", // Geen voorkeur
+  "theory", // Hoe LLMs werken
+  "practical", // Gebruik van LLMs
+  "both_equal", // Geen voorkeur
 ]);
 export type CoursePartPreference = z.infer<typeof CoursePartPreferenceSchema>;
-

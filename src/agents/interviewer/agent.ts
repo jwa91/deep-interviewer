@@ -1,28 +1,28 @@
-import { END, START, StateGraph } from "@langchain/langgraph";
-import { SystemMessage, HumanMessage, isAIMessage } from "@langchain/core/messages";
-import type { BaseCheckpointSaver } from "@langchain/langgraph-checkpoint";
+import type { CollectedResponses, QuestionId } from "@/shared/schema";
+import { HumanMessage, SystemMessage, isAIMessage } from "@langchain/core/messages";
 import type { RunnableConfig } from "@langchain/core/runnables";
-import {
-	InterviewStateSchema,
-	type InterviewState,
-	createInitialState,
-	shouldMarkComplete,
-	getRemainingQuestionIds,
-} from "./state";
-import { createModel, type ModelConfig } from "./config";
-import { createQuestionTools, toolNameToQuestionId } from "./tools";
+import { END, START, StateGraph } from "@langchain/langgraph";
+import type { BaseCheckpointSaver } from "@langchain/langgraph-checkpoint";
+import { type ModelConfig, createModel } from "./config";
 import { getSystemPrompt } from "./prompts";
-import type { QuestionId, CollectedResponses } from "@/shared/schema";
+import {
+  type InterviewState,
+  InterviewStateSchema,
+  createInitialState,
+  getRemainingQuestionIds,
+  shouldMarkComplete,
+} from "./state";
+import { createQuestionTools } from "./tools";
 
 // ═══════════════════════════════════════════════════════════════
 // AGENT CONFIGURATION
 // ═══════════════════════════════════════════════════════════════
 
 export interface InterviewAgentConfig {
-	/** Model configuration (defaults to Anthropic) */
-	modelConfig?: Partial<ModelConfig>;
-	/** Checkpointer for persistence */
-	checkpointer?: BaseCheckpointSaver;
+  /** Model configuration (defaults to Anthropic) */
+  modelConfig?: Partial<ModelConfig>;
+  /** Checkpointer for persistence */
+  checkpointer?: BaseCheckpointSaver;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -33,165 +33,166 @@ export interface InterviewAgentConfig {
  * Creates a compiled interview agent graph.
  */
 export function createInterviewAgent(config: InterviewAgentConfig = {}) {
-	const model = createModel(config.modelConfig);
+  const model = createModel(config.modelConfig);
 
-	// Create the graph
-	const graph = new StateGraph(InterviewStateSchema);
+  // Create the graph
+  const graph = new StateGraph(InterviewStateSchema);
 
-	// Storage for tool results (will be updated by tools)
-	const pendingToolUpdates: {
-		questionId: QuestionId;
-		data: unknown;
-	}[] = [];
+  // Storage for tool results (will be updated by tools)
+  const pendingToolUpdates: {
+    questionId: QuestionId;
+    data: unknown;
+  }[] = [];
 
-	// Create tools with callback to capture data
-	const tools = createQuestionTools(async (questionId, data) => {
-		pendingToolUpdates.push({ questionId, data });
-	});
+  // Create tools with callback to capture data
+  const tools = createQuestionTools((questionId, data) => {
+    pendingToolUpdates.push({ questionId, data });
+    return Promise.resolve();
+  });
 
-	// Bind tools to model
-	const modelWithTools = model.bindTools(tools);
+  // Bind tools to model
+  const modelWithTools = model.bindTools(tools);
 
-	// ═══════════════════════════════════════════════════════════
-	// NODE: Model Call
-	// ═══════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════════════
+  // NODE: Model Call
+  // ═══════════════════════════════════════════════════════════
 
-	async function callModel(
-		state: InterviewState,
-		_config?: RunnableConfig,
-	): Promise<Partial<InterviewState>> {
-		// Build system prompt with progress info
-		const questionsCompleted = state.questionsCompleted ?? {};
-		const completedIds = Object.entries(questionsCompleted)
-			.filter(([_, v]) => v)
-			.map(([k]) => k);
-		const remainingIds = getRemainingQuestionIds({
-			...state,
-			questionsCompleted: questionsCompleted as InterviewState["questionsCompleted"],
-		});
+  async function callModel(
+    state: InterviewState,
+    _config?: RunnableConfig
+  ): Promise<Partial<InterviewState>> {
+    // Build system prompt with progress info
+    const questionsCompleted = state.questionsCompleted ?? {};
+    const completedIds = Object.entries(questionsCompleted)
+      .filter(([, v]) => v)
+      .map(([k]) => k);
+    const remainingIds = getRemainingQuestionIds({
+      ...state,
+      questionsCompleted: questionsCompleted as InterviewState["questionsCompleted"],
+    });
 
-		const systemPrompt = getSystemPrompt(completedIds, remainingIds);
+    const systemPrompt = getSystemPrompt(completedIds, remainingIds);
 
-		// Call the model
-		const response = await modelWithTools.invoke([
-			new SystemMessage(systemPrompt),
-			...state.messages,
-		]);
+    // Call the model
+    const response = await modelWithTools.invoke([
+      new SystemMessage(systemPrompt),
+      ...state.messages,
+    ]);
 
-		return {
-			messages: [response],
-		};
-	}
+    return {
+      messages: [response],
+    };
+  }
 
-	// ═══════════════════════════════════════════════════════════
-	// NODE: Tool Execution
-	// ═══════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════════════
+  // NODE: Tool Execution
+  // ═══════════════════════════════════════════════════════════
 
-	async function executeTools(
-		state: InterviewState,
-		_config?: RunnableConfig,
-	): Promise<Partial<InterviewState>> {
-		const lastMessage = state.messages.at(-1);
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Tool execution has necessary branching
+  async function executeTools(
+    state: InterviewState,
+    _config?: RunnableConfig
+  ): Promise<Partial<InterviewState>> {
+    const lastMessage = state.messages.at(-1);
 
-		if (!lastMessage || !isAIMessage(lastMessage)) {
-			return {};
-		}
+    if (!(lastMessage && isAIMessage(lastMessage))) {
+      return {};
+    }
 
-		const toolCalls = lastMessage.tool_calls ?? [];
-		if (toolCalls.length === 0) {
-			return {};
-		}
+    const toolCalls = lastMessage.tool_calls ?? [];
+    if (toolCalls.length === 0) {
+      return {};
+    }
 
-		// Clear pending updates
-		pendingToolUpdates.length = 0;
+    // Clear pending updates
+    pendingToolUpdates.length = 0;
 
-		// Execute each tool call
-		const { ToolMessage } = await import("@langchain/core/messages");
-		const toolMessages = [];
+    // Execute each tool call
+    const { ToolMessage } = await import("@langchain/core/messages");
+    const toolMessages = [];
 
-		for (const toolCall of toolCalls) {
-			const tool = tools.find((t) => t.name === toolCall.name);
-			if (tool) {
-				try {
-					const result = await tool.invoke(toolCall.args);
-					toolMessages.push(
-						new ToolMessage({
-							content: result,
-							tool_call_id: toolCall.id ?? "",
-						}),
-					);
-				} catch (error) {
-					toolMessages.push(
-						new ToolMessage({
-							content: `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
-							tool_call_id: toolCall.id ?? "",
-						}),
-					);
-				}
-			}
-		}
+    for (const toolCall of toolCalls) {
+      const tool = tools.find((t) => t.name === toolCall.name);
+      if (tool) {
+        try {
+          const result = await tool.invoke(toolCall.args);
+          toolMessages.push(
+            new ToolMessage({
+              content: result,
+              tool_call_id: toolCall.id ?? "",
+            })
+          );
+        } catch (error) {
+          toolMessages.push(
+            new ToolMessage({
+              content: `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+              tool_call_id: toolCall.id ?? "",
+            })
+          );
+        }
+      }
+    }
 
-		// Process pending tool updates
-		const updatedCompletion = { ...(state.questionsCompleted ?? {}) };
-		const updatedResponses = { ...(state.responses ?? {}) } as CollectedResponses;
+    // Process pending tool updates
+    const updatedCompletion = { ...(state.questionsCompleted ?? {}) };
+    const updatedResponses = { ...(state.responses ?? {}) } as CollectedResponses;
 
-		for (const update of pendingToolUpdates) {
-			const key = update.questionId as keyof typeof updatedCompletion;
-			updatedCompletion[key] = true;
-			(updatedResponses as Record<string, unknown>)[update.questionId] =
-				update.data;
-		}
+    for (const update of pendingToolUpdates) {
+      const key = update.questionId as keyof typeof updatedCompletion;
+      updatedCompletion[key] = true;
+      (updatedResponses as Record<string, unknown>)[update.questionId] = update.data;
+    }
 
-		// Check if interview is complete
-		const isComplete = shouldMarkComplete({
-			...state,
-			questionsCompleted: updatedCompletion,
-		});
+    // Check if interview is complete
+    const isComplete = shouldMarkComplete({
+      ...state,
+      questionsCompleted: updatedCompletion,
+    });
 
-		return {
-			messages: toolMessages,
-			questionsCompleted: updatedCompletion,
-			responses: updatedResponses,
-			isComplete,
-			...(isComplete ? { completedAt: new Date().toISOString() } : {}),
-		};
-	}
+    return {
+      messages: toolMessages,
+      questionsCompleted: updatedCompletion,
+      responses: updatedResponses,
+      isComplete,
+      ...(isComplete ? { completedAt: new Date().toISOString() } : {}),
+    };
+  }
 
-	// ═══════════════════════════════════════════════════════════
-	// CONDITIONAL EDGE: Should Continue?
-	// ═══════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════════════
+  // CONDITIONAL EDGE: Should Continue?
+  // ═══════════════════════════════════════════════════════════
 
-	function shouldContinue(state: InterviewState): "tools" | typeof END {
-		const lastMessage = state.messages.at(-1);
+  function shouldContinue(state: InterviewState): "tools" | typeof END {
+    const lastMessage = state.messages.at(-1);
 
-		if (!lastMessage || !isAIMessage(lastMessage)) {
-			return END;
-		}
+    if (!(lastMessage && isAIMessage(lastMessage))) {
+      return END;
+    }
 
-		// If there are tool calls, execute them
-		if (lastMessage.tool_calls && lastMessage.tool_calls.length > 0) {
-			return "tools";
-		}
+    // If there are tool calls, execute them
+    if (lastMessage.tool_calls && lastMessage.tool_calls.length > 0) {
+      return "tools";
+    }
 
-		// Otherwise end this turn (wait for user input)
-		return END;
-	}
+    // Otherwise end this turn (wait for user input)
+    return END;
+  }
 
-	// ═══════════════════════════════════════════════════════════
-	// BUILD GRAPH
-	// ═══════════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════════════
+  // BUILD GRAPH
+  // ═══════════════════════════════════════════════════════════
 
-	graph.addNode("model", callModel);
-	graph.addNode("tools", executeTools);
+  graph.addNode("model", callModel);
+  graph.addNode("tools", executeTools);
 
-	graph.addEdge(START, "model");
-	graph.addConditionalEdges("model", shouldContinue, ["tools", END]);
-	graph.addEdge("tools", "model");
+  graph.addEdge(START, "model");
+  graph.addConditionalEdges("model", shouldContinue, ["tools", END]);
+  graph.addEdge("tools", "model");
 
-	// Compile with optional checkpointer
-	return graph.compile({
-		checkpointer: config.checkpointer,
-	});
+  // Compile with optional checkpointer
+  return graph.compile({
+    checkpointer: config.checkpointer,
+  });
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -201,16 +202,12 @@ export function createInterviewAgent(config: InterviewAgentConfig = {}) {
 /**
  * Creates initial input for a new interview.
  */
-export function createInterviewInput(
-	sessionId: string,
-	initialMessage?: string,
-): InterviewState {
-	const state = createInitialState(sessionId);
+export function createInterviewInput(sessionId: string, initialMessage?: string): InterviewState {
+  const state = createInitialState(sessionId);
 
-	if (initialMessage) {
-		state.messages = [new HumanMessage(initialMessage)];
-	}
+  if (initialMessage) {
+    state.messages = [new HumanMessage(initialMessage)];
+  }
 
-	return state;
+  return state;
 }
-

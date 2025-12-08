@@ -14,12 +14,12 @@ const app = new Hono();
 // Middleware
 app.use("*", logger());
 app.use(
-	"*",
-	cors({
-		origin: "*", // Configure for production
-		allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-		allowHeaders: ["Content-Type", "Authorization"],
-	}),
+  "*",
+  cors({
+    origin: "*", // Configure for production
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+  })
 );
 
 // ═══════════════════════════════════════════════════════════════
@@ -28,28 +28,28 @@ app.use(
 
 // Health check
 app.get("/health", (c) =>
-	c.json({
-		status: "ok",
-		timestamp: new Date().toISOString(),
-	}),
+  c.json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+  })
 );
 
 // API info
 app.get("/", (c) =>
-	c.json({
-		name: "Deep Interviewer API",
-		version: "0.1.0",
-		endpoints: {
-			health: "GET /health",
-			interviews: {
-				list: "GET /api/interviews",
-				create: "POST /api/interviews",
-				get: "GET /api/interviews/:id",
-				chat: "POST /api/interviews/:id/chat",
-				results: "GET /api/interviews/:id/results",
-			},
-		},
-	}),
+  c.json({
+    name: "Deep Interviewer API",
+    version: "0.1.0",
+    endpoints: {
+      health: "GET /health",
+      interviews: {
+        list: "GET /api/interviews",
+        create: "POST /api/interviews",
+        get: "GET /api/interviews/:id",
+        chat: "POST /api/interviews/:id/chat",
+        results: "GET /api/interviews/:id/results",
+      },
+    },
+  })
 );
 
 // Interview routes
@@ -79,8 +79,8 @@ console.log(`
 `);
 
 serve({
-	fetch: app.fetch,
-	port,
+  fetch: app.fetch,
+  port,
 });
 
 console.log(`Server running at http://localhost:${port}`);

@@ -35,14 +35,14 @@ Returns an SSE stream with the following event types:
 
 ### Event Types
 
-| Event | Description | Data |
-|-------|-------------|------|
-| `token` | Streaming text chunk | `{ content: "..." }` |
-| `tool_start` | Agent is recording feedback | `{ name: "record_...", input: {...} }` |
-| `tool_end` | Feedback recorded | `{ name: "record_...", output: "✓ ..." }` |
-| `progress` | Updated completion status | `{ questionsCompleted, isComplete, completedCount, totalQuestions }` |
-| `done` | Stream finished | `{ fullResponse, toolCalls, progress }` |
-| `error` | Something went wrong | `{ error: "..." }` |
+| Event        | Description                 | Data                                                                 |
+| ------------ | --------------------------- | -------------------------------------------------------------------- |
+| `token`      | Streaming text chunk        | `{ content: "..." }`                                                 |
+| `tool_start` | Agent is recording feedback | `{ name: "record_...", input: {...} }`                               |
+| `tool_end`   | Feedback recorded           | `{ name: "record_...", output: "✓ ..." }`                            |
+| `progress`   | Updated completion status   | `{ questionsCompleted, isComplete, completedCount, totalQuestions }` |
+| `done`       | Stream finished             | `{ fullResponse, toolCalls, progress }`                              |
+| `error`      | Something went wrong        | `{ error: "..." }`                                                   |
 
 ### Handling the Stream
 
@@ -72,7 +72,7 @@ Returns an SSE stream with the following event types:
 ## UI Suggestions
 
 - Show a typing indicator while receiving `token` events
-- When `tool_start` fires, show something like "💭 Notitie maken..." 
+- When `tool_start` fires, show something like "💭 Notitie maken..."
 - Display progress bar or counter showing `completedCount / totalQuestions`
 - When `isComplete` becomes true, show a completion message and offer to view results
 
@@ -84,4 +84,3 @@ Returns an SSE stream with the following event types:
 - The agent will naturally guide the conversation through 9 feedback topics
 - Tool calls happen mid-stream (agent writes while talking)
 - Session state persists - users can close and resume later
-
