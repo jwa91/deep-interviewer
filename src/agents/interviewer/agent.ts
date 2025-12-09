@@ -1,5 +1,6 @@
+import { WELCOME_MESSAGE } from "@/shared/constants";
 import type { CollectedResponses, QuestionId } from "@/shared/schema";
-import { HumanMessage, SystemMessage, isAIMessage } from "@langchain/core/messages";
+import { AIMessage, HumanMessage, SystemMessage, isAIMessage } from "@langchain/core/messages";
 import type { RunnableConfig } from "@langchain/core/runnables";
 import { END, START, StateGraph } from "@langchain/langgraph";
 import type { BaseCheckpointSaver } from "@langchain/langgraph-checkpoint";
@@ -201,12 +202,16 @@ export function createInterviewAgent(config: InterviewAgentConfig = {}) {
 
 /**
  * Creates initial input for a new interview.
+ * Includes the welcome message as an AIMessage so the agent knows it "said" this.
  */
 export function createInterviewInput(sessionId: string, initialMessage?: string): InterviewState {
   const state = createInitialState(sessionId);
 
+  // Start with the welcome message as if the agent already said it
+  state.messages = [new AIMessage(WELCOME_MESSAGE)];
+
   if (initialMessage) {
-    state.messages = [new HumanMessage(initialMessage)];
+    state.messages.push(new HumanMessage(initialMessage));
   }
 
   return state;
