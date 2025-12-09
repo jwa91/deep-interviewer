@@ -1,5 +1,5 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
 import { Hono } from "hono";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock the persistence module
 vi.mock("../persistence", () => ({
@@ -16,8 +16,8 @@ vi.mock("@/agents/interviewer", () => ({
   createInterviewInput: vi.fn(),
 }));
 
-import { getSession, getCheckpointer } from "../persistence";
 import { createInterviewAgent } from "@/agents/interviewer";
+import { getCheckpointer, getSession } from "../persistence";
 
 // ═══════════════════════════════════════════════════════════════
 // RESPONSE ENDPOINT TESTS
@@ -291,4 +291,3 @@ describe("Response API Endpoints", () => {
     });
   });
 });
-

@@ -94,13 +94,19 @@ export interface SSEErrorEvent {
 export type SSEEventType = "token" | "tool_start" | "tool_end" | "progress" | "done" | "error";
 
 // ═══════════════════════════════════════════════════════════════
-// TOOL ACTIVITY
+// CHAT ITEMS - Unified stream items for rendering
 // ═══════════════════════════════════════════════════════════════
 
-export interface ToolActivity {
-  name: string;
-  isActive: boolean;
+export interface ToolCardData {
+  questionId: QuestionId;
+  state: "active" | "completed";
 }
+
+export type ChatItemType = "message" | "tool_card";
+
+export type ChatItem =
+  | { type: "message"; id: string; data: Message }
+  | { type: "tool_card"; id: string; data: ToolCardData };
 
 // ═══════════════════════════════════════════════════════════════
 // API TYPES

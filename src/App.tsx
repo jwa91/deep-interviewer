@@ -9,7 +9,7 @@ import {
   useChatStream,
   useInterviewSession,
 } from "./features/interview";
-import type { Message, ProgressState } from "./features/interview";
+import type { ChatItem, Message, ProgressState } from "./features/interview";
 import { WELCOME_MESSAGE } from "./shared/constants";
 
 // Welcome message for new sessions - matches what's stored in LangGraph state
@@ -18,6 +18,13 @@ const createWelcomeMessage = (): Message => ({
   role: "assistant",
   content: WELCOME_MESSAGE,
   timestamp: new Date(),
+});
+
+// Convert Message to ChatItem
+const messageToItem = (message: Message): ChatItem => ({
+  type: "message",
+  id: message.id,
+  data: message,
 });
 
 function App() {
@@ -47,12 +54,11 @@ function App() {
   }, []);
 
   const {
-    messages,
+    chatItems,
     isStreaming,
-    toolActivity,
     error: chatError,
     sendMessage,
-    setMessages,
+    setChatItems,
   } = useChatStream({
     sessionId: session?.sessionId ?? null,
     onProgressUpdate: handleProgressUpdate,
@@ -63,12 +69,12 @@ function App() {
   useEffect(() => {
     if (existingMessages.length > 0) {
       // Restore existing conversation
-      setMessages(existingMessages);
-    } else if (session?.sessionId && messages.length === 0) {
+      setChatItems(existingMessages.map(messageToItem));
+    } else if (session?.sessionId && chatItems.length === 0) {
       // New session - show welcome message (also stored in LangGraph state)
-      setMessages([createWelcomeMessage()]);
+      setChatItems([messageToItem(createWelcomeMessage())]);
     }
-  }, [session?.sessionId, existingMessages, setMessages, messages.length]);
+  }, [session?.sessionId, existingMessages, setChatItems, chatItems.length]);
 
   // Sync progress from session hook
   useEffect(() => {
@@ -98,8 +104,8 @@ function App() {
   return (
     <>
       <ChatContainer
-        messages={messages}
-        toolActivity={toolActivity}
+        chatItems={chatItems}
+        sessionId={session.sessionId}
         progress={localProgress}
         isStreaming={isStreaming}
         error={chatError}

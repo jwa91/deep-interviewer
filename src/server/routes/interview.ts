@@ -186,9 +186,31 @@ interviewRoutes.post("/:id/chat", async (c) => {
       let fullResponse = "";
       const toolCalls: Array<{ name: string; args: unknown }> = [];
 
+      // Track message boundaries for proper frontend rendering
+      let currentMessageId = `msg_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+      let currentMessageContent = "";
+      let needsNewMessage = false;
+
+      // Send initial message_start
+      await stream.writeSSE({
+        event: "message_start",
+        data: JSON.stringify({ messageId: currentMessageId }),
+      });
+
       for await (const event of eventStream) {
         // Handle different event types
         if (event.event === "on_chat_model_stream") {
+          // Check if we need to start a new message (after tool call)
+          if (needsNewMessage) {
+            currentMessageId = `msg_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+            currentMessageContent = "";
+            needsNewMessage = false;
+            await stream.writeSSE({
+              event: "message_start",
+              data: JSON.stringify({ messageId: currentMessageId }),
+            });
+          }
+
           // Token streaming
           const chunk = event.data.chunk;
           if (chunk?.content) {
@@ -197,13 +219,22 @@ interviewRoutes.post("/:id/chat", async (c) => {
 
             if (content) {
               fullResponse += content;
+              currentMessageContent += content;
               await stream.writeSSE({
                 event: "token",
-                data: JSON.stringify({ content }),
+                data: JSON.stringify({ content, messageId: currentMessageId }),
               });
             }
           }
         } else if (event.event === "on_tool_start") {
+          // End current message before tool call (if it has content)
+          if (currentMessageContent.trim()) {
+            await stream.writeSSE({
+              event: "message_end",
+              data: JSON.stringify({ messageId: currentMessageId }),
+            });
+          }
+
           // Tool execution starting
           await stream.writeSSE({
             event: "tool_start",
@@ -226,7 +257,18 @@ interviewRoutes.post("/:id/chat", async (c) => {
               output: event.data.output,
             }),
           });
+
+          // Flag that next tokens should go into a new message
+          needsNewMessage = true;
         }
+      }
+
+      // End final message if it has content
+      if (currentMessageContent.trim()) {
+        await stream.writeSSE({
+          event: "message_end",
+          data: JSON.stringify({ messageId: currentMessageId }),
+        });
       }
 
       // Get final state

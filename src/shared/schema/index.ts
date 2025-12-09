@@ -61,4 +61,6 @@ export {
   type TopicResponse,
   InterviewResponsesDTOSchema,
   type InterviewResponsesDTO,
+  // Tool helpers
+  toolNameToQuestionId,
 } from "./progress";

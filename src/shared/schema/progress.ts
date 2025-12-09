@@ -117,6 +117,25 @@ export const InterviewResponsesDTOSchema = z.object({
 export type InterviewResponsesDTO = z.infer<typeof InterviewResponsesDTOSchema>;
 
 // ═══════════════════════════════════════════════════════════════
+// TOOL HELPERS
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Converts a tool name (e.g., "record_ai_background") to QuestionId (e.g., "ai_background")
+ */
+export function toolNameToQuestionId(toolName: string): QuestionId | null {
+  const prefix = "record_";
+  if (!toolName.startsWith(prefix)) {
+    return null;
+  }
+  const questionId = toolName.slice(prefix.length);
+  if (QUESTION_IDS.includes(questionId as QuestionId)) {
+    return questionId as QuestionId;
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════════════
 // HELPER FUNCTIONS
 // ═══════════════════════════════════════════════════════════════
 

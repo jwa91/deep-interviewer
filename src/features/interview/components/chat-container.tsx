@@ -1,11 +1,11 @@
-import type { Message, ProgressState, ToolActivity } from "../types";
+import type { ChatItem, ProgressState } from "../types";
 import { MessageInput } from "./message-input";
 import { MessageList } from "./message-list";
 import { ProgressBar } from "./progress-bar";
 
 interface ChatContainerProps {
-  messages: Message[];
-  toolActivity: ToolActivity | null;
+  chatItems: ChatItem[];
+  sessionId: string;
   progress: ProgressState;
   isStreaming: boolean;
   error: string | null;
@@ -13,8 +13,8 @@ interface ChatContainerProps {
 }
 
 export function ChatContainer({
-  messages,
-  toolActivity,
+  chatItems,
+  sessionId,
   progress,
   isStreaming,
   error,
@@ -72,7 +72,7 @@ export function ChatContainer({
         )}
 
         <div className="min-h-0 flex-1">
-          <MessageList messages={messages} toolActivity={toolActivity} />
+          <MessageList chatItems={chatItems} sessionId={sessionId} />
         </div>
 
         <MessageInput

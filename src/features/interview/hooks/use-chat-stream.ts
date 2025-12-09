@@ -1,15 +1,13 @@
+import { toolNameToQuestionId } from "@/shared/schema";
 import type { Dispatch, SetStateAction } from "react";
 import { useCallback, useRef, useState } from "react";
 import type {
+  ChatItem,
   Message,
   ProgressState,
-  SSEDoneEvent,
-  SSEErrorEvent,
   SSEProgressEvent,
-  SSETokenEvent,
   SSEToolEndEvent,
   SSEToolStartEvent,
-  ToolActivity,
 } from "../types";
 
 const API_BASE = "http://localhost:3001";
@@ -21,16 +19,15 @@ interface UseChatStreamOptions {
 }
 
 interface UseChatStreamReturn {
-  messages: Message[];
+  chatItems: ChatItem[];
   isStreaming: boolean;
-  toolActivity: ToolActivity | null;
   error: string | null;
   sendMessage: (content: string) => Promise<void>;
-  setMessages: Dispatch<SetStateAction<Message[]>>;
+  setChatItems: Dispatch<SetStateAction<ChatItem[]>>;
 }
 
-function generateMessageId(): string {
-  return `msg_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+function generateId(): string {
+  return `${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 }
 
 function createDefaultProgress(): ProgressState {
@@ -57,12 +54,12 @@ export function useChatStream({
   onProgressUpdate,
   onComplete,
 }: UseChatStreamOptions): UseChatStreamReturn {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [chatItems, setChatItems] = useState<ChatItem[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
-  const [toolActivity, setToolActivity] = useState<ToolActivity | null>(null);
   const [error, setError] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: SSE handler requires many branches for different event types
   const sendMessage = useCallback(
     async (content: string) => {
       if (!sessionId || isStreaming) {
@@ -72,24 +69,14 @@ export function useChatStream({
       setError(null);
 
       // Add user message
+      const userMessageId = `user_${generateId()}`;
       const userMessage: Message = {
-        id: generateMessageId(),
+        id: userMessageId,
         role: "user",
         content,
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev, userMessage]);
-
-      // Create placeholder for assistant message
-      const assistantMessageId = generateMessageId();
-      const assistantMessage: Message = {
-        id: assistantMessageId,
-        role: "assistant",
-        content: "",
-        timestamp: new Date(),
-        isStreaming: true,
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
+      setChatItems((prev) => [...prev, { type: "message", id: userMessageId, data: userMessage }]);
 
       setIsStreaming(true);
 
@@ -97,12 +84,13 @@ export function useChatStream({
       abortControllerRef.current?.abort();
       abortControllerRef.current = new AbortController();
 
+      // Track current message being streamed
+      let currentMessageId: string | null = null;
+
       try {
         const response = await fetch(`${API_BASE}/api/interviews/${sessionId}/chat`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: content }),
           signal: abortControllerRef.current.signal,
         });
@@ -132,7 +120,6 @@ export function useChatStream({
           for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
             if (line.startsWith("event: ")) {
-              // Skip event type lines, we parse from data structure
               continue;
             }
 
@@ -149,18 +136,125 @@ export function useChatStream({
                   ? eventLine.slice(7).trim()
                   : null;
 
-                handleSSEEvent(eventType, data, assistantMessageId);
+                // Handle message_start - create new assistant message
+                if (eventType === "message_start" && data.messageId) {
+                  const messageId = data.messageId as string;
+                  currentMessageId = messageId;
+                  const newMessage: Message = {
+                    id: messageId,
+                    role: "assistant",
+                    content: "",
+                    timestamp: new Date(),
+                    isStreaming: true,
+                  };
+                  setChatItems((prev) => [
+                    ...prev,
+                    { type: "message", id: messageId, data: newMessage },
+                  ]);
+                  continue;
+                }
+
+                // Handle token - append to current message
+                if (eventType === "token" && data.content && currentMessageId) {
+                  setChatItems((prev) =>
+                    prev.map((item) =>
+                      item.type === "message" && item.id === currentMessageId
+                        ? {
+                            ...item,
+                            data: {
+                              ...item.data,
+                              content: item.data.content + data.content,
+                            },
+                          }
+                        : item
+                    )
+                  );
+                  continue;
+                }
+
+                // Handle message_end - finalize message
+                if (eventType === "message_end" && data.messageId) {
+                  setChatItems((prev) =>
+                    prev.map((item) =>
+                      item.type === "message" && item.id === data.messageId
+                        ? {
+                            ...item,
+                            data: { ...item.data, isStreaming: false },
+                          }
+                        : item
+                    )
+                  );
+                  continue;
+                }
+
+                // Handle tool_start - add tool card
+                if (eventType === "tool_start" && data.name) {
+                  const toolData = data as SSEToolStartEvent;
+                  const questionId = toolNameToQuestionId(toolData.name);
+                  if (questionId) {
+                    const toolCardId = `tool_${questionId}_${generateId()}`;
+                    setChatItems((prev) => [
+                      ...prev,
+                      {
+                        type: "tool_card",
+                        id: toolCardId,
+                        data: { questionId, state: "active" },
+                      },
+                    ]);
+                  }
+                  continue;
+                }
+
+                // Handle tool_end - update tool card state
+                if (eventType === "tool_end" && data.name) {
+                  const toolData = data as SSEToolEndEvent;
+                  const questionId = toolNameToQuestionId(toolData.name);
+                  if (questionId) {
+                    setChatItems((prev) =>
+                      prev.map((item) =>
+                        item.type === "tool_card" && item.data.questionId === questionId
+                          ? {
+                              ...item,
+                              data: { ...item.data, state: "completed" },
+                            }
+                          : item
+                      )
+                    );
+                  }
+                  continue;
+                }
+
+                // Handle progress
+                if (eventType === "progress" && "completedCount" in data) {
+                  const progressData = data as SSEProgressEvent;
+                  onProgressUpdate?.(progressData);
+                  if (progressData.isComplete) {
+                    onComplete?.();
+                  }
+                  continue;
+                }
+
+                // Handle done - process final progress (cleanup is in finally block)
+                if (eventType === "done") {
+                  if (data.progress) {
+                    onProgressUpdate?.(data.progress);
+                    if (data.progress.isComplete) {
+                      onComplete?.();
+                    }
+                  }
+                  continue;
+                }
+
+                // Handle error
+                if (eventType === "error" && data.error) {
+                  setError(data.error);
+                }
               } catch {
                 // Skip malformed JSON
               }
             }
           }
         }
-
-        // Finalize message
-        setMessages((prev) =>
-          prev.map((msg) => (msg.id === assistantMessageId ? { ...msg, isStreaming: false } : msg))
-        );
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") {
           return;
@@ -168,100 +262,34 @@ export function useChatStream({
 
         const errorMessage = err instanceof Error ? err.message : "Er is iets misgegaan";
         setError(errorMessage);
-
-        // Remove the empty assistant message on error
-        setMessages((prev) => prev.filter((msg) => msg.id !== assistantMessageId));
       } finally {
+        // Always cleanup: finalize streaming messages and remove empty ones
+        setChatItems((prev) =>
+          prev
+            .map((item) =>
+              item.type === "message" && item.data.isStreaming
+                ? { ...item, data: { ...item.data, isStreaming: false } }
+                : item
+            )
+            .filter(
+              (item) =>
+                item.type !== "message" ||
+                item.data.role !== "assistant" ||
+                item.data.content.trim() !== ""
+            )
+        );
         setIsStreaming(false);
-        setToolActivity(null);
       }
     },
-    [sessionId, isStreaming]
-  );
-
-  const handleSSEEvent = useCallback(
-    (_eventType: string | null, data: unknown, messageId: string) => {
-      // Parse based on data structure since event types may not be reliably parsed
-      const payload = data as Record<string, unknown>;
-
-      // Token event
-      if ("content" in payload && typeof payload.content === "string") {
-        const tokenData = payload as SSETokenEvent;
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === messageId ? { ...msg, content: msg.content + tokenData.content } : msg
-          )
-        );
-        return;
-      }
-
-      // Tool start event
-      if ("name" in payload && "input" in payload && !("output" in payload)) {
-        const toolData = payload as SSEToolStartEvent;
-        setToolActivity({ name: toolData.name, isActive: true });
-        return;
-      }
-
-      // Tool end event
-      if ("name" in payload && "output" in payload && !("fullResponse" in payload)) {
-        const toolData = payload as SSEToolEndEvent;
-        setToolActivity({ name: toolData.name, isActive: false });
-        setTimeout(() => setToolActivity(null), 1500);
-        return;
-      }
-
-      // Progress event (standalone)
-      if (
-        "completedCount" in payload &&
-        "totalQuestions" in payload &&
-        !("fullResponse" in payload)
-      ) {
-        const progressData = payload as SSEProgressEvent;
-        onProgressUpdate?.(progressData);
-
-        if (progressData.isComplete) {
-          onComplete?.();
-        }
-        return;
-      }
-
-      // Done event
-      if ("fullResponse" in payload) {
-        const doneData = payload as SSEDoneEvent;
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === messageId
-              ? { ...msg, content: doneData.fullResponse, isStreaming: false }
-              : msg
-          )
-        );
-
-        if (doneData.progress) {
-          onProgressUpdate?.(doneData.progress);
-          if (doneData.progress.isComplete) {
-            onComplete?.();
-          }
-        }
-        return;
-      }
-
-      // Error event
-      if ("error" in payload) {
-        const errorData = payload as SSEErrorEvent;
-        setError(errorData.error);
-        return;
-      }
-    },
-    [onProgressUpdate, onComplete]
+    [sessionId, isStreaming, onProgressUpdate, onComplete]
   );
 
   return {
-    messages,
+    chatItems,
     isStreaming,
-    toolActivity,
     error,
     sendMessage,
-    setMessages,
+    setChatItems,
   };
 }
 
