@@ -2,6 +2,7 @@ import { createInterviewAgent, createInterviewInput } from "@/agents/interviewer
 import { HumanMessage } from "@langchain/core/messages";
 import { Hono } from "hono";
 import { streamSSE } from "hono/streaming";
+import { getInvite, linkSessionToInvite } from "../invites";
 import {
   createSession,
   getCheckpointer,
@@ -33,14 +34,43 @@ async function getAgent() {
 
 interviewRoutes.post("/", async (c) => {
   const body = await c.req.json().catch(() => ({}));
-  const participantId = body.participantId as string | undefined;
+  const code = body.code as string | undefined;
 
+  // Validate invite code
+  if (!code) {
+    return c.json({ error: "Invite code is required" }, 400);
+  }
+
+  const invite = getInvite(code);
+  if (!invite) {
+    return c.json({ error: "Invalid invite code" }, 403);
+  }
+
+  // Check if session already exists for this code
+  if (invite.sessionId) {
+    const existingSession = getSession(invite.sessionId);
+    if (existingSession) {
+      return c.json({
+        id: existingSession.id,
+        createdAt: existingSession.createdAt,
+        message: "Resuming existing interview session.",
+        isResumed: true,
+      });
+    }
+  }
+
+  // Create new session
+  const participantId = body.participantId as string | undefined;
   const session = createSession(participantId);
+
+  // Link session to invite code
+  linkSessionToInvite(code, session.id);
 
   return c.json({
     id: session.id,
     createdAt: session.createdAt,
     message: "Interview session created. Send a message to /chat to begin.",
+    isResumed: false,
   });
 });
 
@@ -74,8 +104,12 @@ interviewRoutes.get("/:id", async (c) => {
 
     // Serialize LangChain messages to simple { role, content } format
     // Filter out tool messages and system messages, only keep human and AI
-    // biome-ignore lint/style/useNamingConvention: _getType is a LangChain internal method
-    type LangChainMessage = { _getType?: () => string; content: unknown };
+    type LangChainMessage = {
+      // biome-ignore lint/style/useNamingConvention: _getType is a LangChain internal method
+      _getType?: () => string;
+      content: unknown;
+      tool_calls?: Array<{ name: string; args: unknown; id: string }>;
+    };
     const messages = (state.values?.messages ?? [])
       .filter((msg: LangChainMessage) => {
         const type = msg._getType?.();
@@ -97,9 +131,13 @@ interviewRoutes.get("/:id", async (c) => {
         return {
           role: msg._getType?.() === "human" ? "user" : "assistant",
           content,
+          toolCalls: msg.tool_calls,
         };
       })
-      .filter((msg: { content: string }) => msg.content.length > 0);
+      .filter((msg: { content: string; toolCalls?: unknown[] }) => {
+        // Keep messages that have content OR have tool calls
+        return msg.content.length > 0 || (msg.toolCalls && msg.toolCalls.length > 0);
+      });
 
     const questionsCompleted = state.values?.questionsCompleted ?? {};
     const completedCount = Object.values(questionsCompleted).filter(Boolean).length;

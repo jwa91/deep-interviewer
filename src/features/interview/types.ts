@@ -4,12 +4,19 @@
 
 export type MessageRole = "user" | "assistant";
 
+export interface ToolCall {
+  name: string;
+  args: Record<string, unknown>;
+  id?: string;
+}
+
 export interface Message {
   id: string;
   role: MessageRole;
   content: string;
   timestamp: Date;
   isStreaming?: boolean;
+  toolCalls?: ToolCall[];
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -123,6 +130,7 @@ export interface GetSessionResponse {
   messages: Array<{
     role: MessageRole;
     content: string;
+    toolCalls?: ToolCall[];
   }>;
   progress: ProgressState;
 }

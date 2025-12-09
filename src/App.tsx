@@ -9,7 +9,8 @@ import {
   useChatStream,
   useInterviewSession,
 } from "./features/interview";
-import type { ChatItem, Message, ProgressState } from "./features/interview";
+import type { ChatItem, Message, ProgressState, ToolCall } from "./features/interview";
+import { toolNameToQuestionId } from "./shared/schema";
 import { WELCOME_MESSAGE } from "./shared/constants";
 
 // Welcome message for new sessions - matches what's stored in LangGraph state
@@ -21,11 +22,60 @@ const createWelcomeMessage = (): Message => ({
 });
 
 // Convert Message to ChatItem
-const messageToItem = (message: Message): ChatItem => ({
-  type: "message",
-  id: message.id,
-  data: message,
-});
+const messageToItem = (message: Message): ChatItem => {
+  // Check if this message has tool calls that need to be rendered as tool cards
+  // This is a simplified handling - in a real app we might want more sophisticated
+  // interleaving, but for restoration, we primarily want to show the cards.
+  // However, the ChatItem type expects either a message OR a tool_card.
+  // If we have a message with tool calls, we might need to generate multiple items?
+  // OR, the backend should have returned them as separate events/messages?
+  
+  // Actually, the `chatItems` state in useChatStream handles the "tool_card" items separately.
+  // When we restore messages, we only get the "text" content messages usually.
+  // If we want to restore tool cards, we need to know about them.
+  
+  // For now, basic message restoration:
+  return {
+    type: "message",
+    id: message.id,
+    data: message,
+  };
+};
+
+// Helper to restore chat items from messages including tool calls
+const restoreChatItems = (messages: Message[]): ChatItem[] => {
+  const items: ChatItem[] = [];
+  
+  for (const msg of messages) {
+    // Add the text message
+    if (msg.content) {
+      items.push({
+        type: "message",
+        id: msg.id,
+        data: msg,
+      });
+    }
+    
+    // If message has tool calls, add tool cards
+    if (msg.toolCalls && msg.toolCalls.length > 0) {
+      for (const [index, toolCall] of msg.toolCalls.entries()) {
+        const questionId = toolNameToQuestionId(toolCall.name);
+        if (questionId) {
+          items.push({
+            type: "tool_card",
+            id: `${msg.id}_tool_${index}`,
+            data: {
+              questionId,
+              state: "completed", // Restored tools are always completed
+            },
+          });
+        }
+      }
+    }
+  }
+  
+  return items;
+};
 
 function App() {
   const {
@@ -68,8 +118,8 @@ function App() {
   // Initialize with welcome message or restore existing messages
   useEffect(() => {
     if (existingMessages.length > 0) {
-      // Restore existing conversation
-      setChatItems(existingMessages.map(messageToItem));
+      // Restore existing conversation with tool cards
+      setChatItems(restoreChatItems(existingMessages));
     } else if (session?.sessionId && chatItems.length === 0) {
       // New session - show welcome message (also stored in LangGraph state)
       setChatItems([messageToItem(createWelcomeMessage())]);
@@ -80,6 +130,11 @@ function App() {
   useEffect(() => {
     if (progress.completedCount > 0) {
       setLocalProgress(progress);
+    }
+
+    // Check if session is already complete upon loading
+    if (progress.isComplete) {
+      setShowCompletionModal(true);
     }
   }, [progress]);
 

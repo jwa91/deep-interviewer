@@ -1,4 +1,6 @@
 import { SqliteSaver } from "@langchain/langgraph-checkpoint-sqlite";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { v4 as uuidv4 } from "uuid";
 
 // ═══════════════════════════════════════════════════════════════
@@ -40,13 +42,44 @@ export interface InterviewSession {
   participantId?: string;
 }
 
-// In-memory session store (for now - could be SQLite later)
-const sessions = new Map<string, InterviewSession>();
+const DATA_DIR = process.env.DATA_DIR || "./data";
+const SESSIONS_FILE = join(DATA_DIR, "sessions.json");
+
+// In-memory session store backed by file
+let sessions = new Map<string, InterviewSession>();
+let initialized = false;
+
+function ensureInitialized() {
+  if (initialized) {
+    return;
+  }
+
+  try {
+    if (existsSync(SESSIONS_FILE)) {
+      const data = JSON.parse(readFileSync(SESSIONS_FILE, "utf-8"));
+      sessions = new Map(Object.entries(data));
+    }
+  } catch (error) {
+    console.error("Failed to load sessions:", error);
+  }
+  initialized = true;
+}
+
+function saveSessions() {
+  try {
+    const data = Object.fromEntries(sessions);
+    writeFileSync(SESSIONS_FILE, JSON.stringify(data, null, 2));
+  } catch (error) {
+    console.error("Failed to save sessions:", error);
+  }
+}
 
 /**
  * Creates a new interview session
  */
 export function createSession(participantId?: string): InterviewSession {
+  ensureInitialized();
+
   const session: InterviewSession = {
     id: uuidv4(),
     createdAt: new Date().toISOString(),
@@ -56,6 +89,7 @@ export function createSession(participantId?: string): InterviewSession {
   };
 
   sessions.set(session.id, session);
+  saveSessions();
   return session;
 }
 
@@ -63,6 +97,7 @@ export function createSession(participantId?: string): InterviewSession {
  * Gets a session by ID
  */
 export function getSession(id: string): InterviewSession | undefined {
+  ensureInitialized();
   return sessions.get(id);
 }
 
@@ -73,6 +108,7 @@ export function updateSession(
   id: string,
   updates: Partial<Omit<InterviewSession, "id" | "createdAt">>
 ): InterviewSession | undefined {
+  ensureInitialized();
   const session = sessions.get(id);
   if (!session) {
     return undefined;
@@ -85,6 +121,7 @@ export function updateSession(
   };
 
   sessions.set(id, updated);
+  saveSessions();
   return updated;
 }
 
@@ -92,6 +129,7 @@ export function updateSession(
  * Lists all sessions
  */
 export function listSessions(): InterviewSession[] {
+  ensureInitialized();
   return Array.from(sessions.values());
 }
 
@@ -99,5 +137,10 @@ export function listSessions(): InterviewSession[] {
  * Deletes a session
  */
 export function deleteSession(id: string): boolean {
-  return sessions.delete(id);
+  ensureInitialized();
+  const result = sessions.delete(id);
+  if (result) {
+    saveSessions();
+  }
+  return result;
 }

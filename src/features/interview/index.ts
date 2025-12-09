@@ -26,6 +26,7 @@ export type {
   ChatItem,
   ChatItemType,
   ToolCardData,
+  ToolCall,
   SSETokenEvent,
   SSEToolStartEvent,
   SSEToolEndEvent,
