@@ -52,7 +52,7 @@ export function AgentNoteCard({ questionId, state, sessionId }: AgentNoteCardPro
   if (state === "active") {
     return (
       <div className="fade-in slide-in-from-bottom-2 animate-in py-2 duration-300">
-        <div className="mx-auto max-w-md rounded-lg border-2 border-border bg-card p-3 brutal-shadow">
+        <div className="brutal-shadow mx-auto max-w-md rounded-lg border-2 border-border bg-card p-3">
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border-2 border-border bg-primary/20">
               <Loader2Icon className="h-4 w-4 animate-spin text-primary" />
@@ -100,9 +100,9 @@ export function AgentNoteCard({ questionId, state, sessionId }: AgentNoteCardPro
       >
         <AccordionItem
           value={questionId}
-          className="overflow-hidden rounded-lg border-2 border-border bg-card brutal-shadow"
+          className="brutal-shadow overflow-hidden rounded-lg border-2 border-border bg-card"
         >
-          <AccordionTrigger className="px-3 py-3 hover:no-underline [&[data-state=open]]:border-b-2 [&[data-state=open]]:border-border">
+          <AccordionTrigger className="px-3 py-3 hover:no-underline [&[data-state=open]]:border-border [&[data-state=open]]:border-b-2">
             <div className="flex flex-1 items-center gap-3">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border-2 border-border bg-secondary">
                 <FileTextIcon className="h-4 w-4 text-secondary-foreground" />
@@ -116,7 +116,7 @@ export function AgentNoteCard({ questionId, state, sessionId }: AgentNoteCardPro
                 </span>
               </div>
               {/* Checkmark indicator */}
-              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground border-2 border-border">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 border-border bg-primary text-primary-foreground">
                 <CheckIcon className="h-3.5 w-3.5" />
               </div>
             </div>
@@ -131,7 +131,7 @@ export function AgentNoteCard({ questionId, state, sessionId }: AgentNoteCardPro
             )}
 
             {error && (
-              <div className="py-2 text-destructive font-bold text-sm">
+              <div className="py-2 font-bold text-destructive text-sm">
                 <p>{error}</p>
               </div>
             )}

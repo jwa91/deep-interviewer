@@ -32,7 +32,7 @@ export function MessageInput({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="border-t-2 border-border p-4 bg-background">
+    <form onSubmit={handleSubmit} className="border-border border-t-2 bg-background p-4">
       <div className="flex items-end gap-3">
         <Textarea
           value={message}
@@ -40,7 +40,7 @@ export function MessageInput({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={disabled}
-          className="max-h-32 min-h-[52px] resize-none font-mono text-base bg-input text-foreground placeholder:text-muted-foreground"
+          className="max-h-32 min-h-[52px] resize-none bg-input font-mono text-base text-foreground placeholder:text-muted-foreground"
           rows={1}
         />
         <Button
@@ -50,7 +50,7 @@ export function MessageInput({
           className="h-[52px] w-[52px] shrink-0"
         >
           <svg
-            className="h-6 w-6 transform rotate-90"
+            className="h-6 w-6 rotate-90 transform"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -67,7 +67,7 @@ export function MessageInput({
         </Button>
       </div>
       {disabled && (
-        <p className="mt-2 text-center font-mono font-bold text-muted-foreground text-xs uppercase tracking-wider">
+        <p className="mt-2 text-center font-bold font-mono text-muted-foreground text-xs uppercase tracking-wider">
           Even geduld, de interviewer is aan het typen...
         </p>
       )}

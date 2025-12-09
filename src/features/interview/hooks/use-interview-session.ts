@@ -101,79 +101,73 @@ export function useInterviewSession(): UseInterviewSessionReturn {
     checkExistingSession();
   }, []);
 
-  const startSession = useCallback(async (code: string) => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // Create session or resume existing one using the code
-      const response = await fetch(`${API_BASE}/api/interviews`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code }),
-      });
-
-      if (!response.ok) {
-        if (response.status === 403) {
-          throw new Error("Ongeldige toegangscode.");
-        }
-        throw new Error("Kon geen sessie starten. Probeer het opnieuw.");
+  const resumeSession = useCallback(async (sessionId: string) => {
+    const sessionResponse = await fetch(`${API_BASE}/api/interviews/${sessionId}`);
+    if (sessionResponse.ok) {
+      const sessionData = (await sessionResponse.json()) as GetSessionResponse;
+      setProgress(sessionData.progress);
+      if (sessionData.messages && sessionData.messages.length > 0) {
+        const restoredMessages: Message[] = sessionData.messages.map((msg, index) => ({
+          id: `restored_${index}`,
+          role: msg.role,
+          content: msg.content,
+          toolCalls: msg.toolCalls,
+          timestamp: new Date(),
+        }));
+        setExistingMessages(restoredMessages);
       }
-
-      const data = (await response.json()) as CreateSessionResponse & { isResumed?: boolean };
-
-      const newSession: SessionState = {
-        code,
-        sessionId: data.id,
-      };
-
-      storeSession(newSession);
-      setSession(newSession);
-      
-      // If resumed, we need to fetch the existing state to restore progress and messages
-      if (data.isResumed) {
-         // The useEffect will handle fetching state since we set the session
-         // But we can also trigger a re-fetch here if needed, or rely on the fact 
-         // that we need to load the messages.
-         // Actually, better to just let the component mount and the existing useEffect 
-         // logic handles restoration if session exists.
-         // Wait, startSession sets session state.
-         // We might need to manually fetch state here to be sure we have the latest.
-         const sessionResponse = await fetch(`${API_BASE}/api/interviews/${data.id}`);
-         if (sessionResponse.ok) {
-           const sessionData = (await sessionResponse.json()) as GetSessionResponse;
-           setProgress(sessionData.progress);
-           if (sessionData.messages && sessionData.messages.length > 0) {
-             // Create a map of restored messages to avoid duplicates if needed
-             // But more importantly, we need to handle tool calls if they exist in the history
-             // Currently GetSessionResponse doesn't return tool calls in a way we easily render?
-             // Wait, the backend *does* return messages with toolCalls property now.
-             
-             // We need to make sure we're mapping them correctly for the UI.
-             const restoredMessages: Message[] = sessionData.messages.map((msg, index) => ({
-               id: `restored_${index}`,
-               role: msg.role,
-               content: msg.content,
-               toolCalls: msg.toolCalls,
-               timestamp: new Date(),
-             }));
-             setExistingMessages(restoredMessages);
-           }
-         }
-      } else {
-        setProgress(createDefaultProgress());
-        setExistingMessages([]);
-      }
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Er is een fout opgetreden. Probeer het opnieuw.";
-      setError(message);
-    } finally {
-      setIsLoading(false);
     }
   }, []);
+
+  const startSession = useCallback(
+    async (code: string) => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        // Create session or resume existing one using the code
+        const response = await fetch(`${API_BASE}/api/interviews`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ code }),
+        });
+
+        if (!response.ok) {
+          if (response.status === 403) {
+            throw new Error("Ongeldige toegangscode.");
+          }
+          throw new Error("Kon geen sessie starten. Probeer het opnieuw.");
+        }
+
+        const data = (await response.json()) as CreateSessionResponse & { isResumed?: boolean };
+
+        const newSession: SessionState = {
+          code,
+          sessionId: data.id,
+        };
+
+        storeSession(newSession);
+        setSession(newSession);
+
+        // If resumed, we need to fetch the existing state to restore progress and messages
+        if (data.isResumed) {
+          await resumeSession(data.id);
+        } else {
+          setProgress(createDefaultProgress());
+          setExistingMessages([]);
+        }
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : "Er is een fout opgetreden. Probeer het opnieuw.";
+        setError(message);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [resumeSession]
+  );
 
   const updateProgress = useCallback((newProgress: ProgressState) => {
     setProgress(newProgress);

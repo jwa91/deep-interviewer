@@ -59,4 +59,3 @@ export function useResponses({ sessionId }: UseResponsesOptions): UseResponsesRe
     reset,
   };
 }
-

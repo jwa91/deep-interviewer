@@ -9,7 +9,7 @@
   --color-orange-base: #fc7428;
   --color-pink-base: #f38ba3;
   --color-purple-base: #7b5ea7;
-  
+
   /* Text-safe accent colors (inherited by themes) */
   --color-accent-1-astext: var(--color-yellow-base);
   --color-accent-2-astext: var(--color-green-base);

@@ -18,7 +18,7 @@
   --color-highlight: #d6cdb7;
   --color-ring: #2a2521;
   --color-ring-offset: #f0ebe2; /* Updated to match primary background */
-  
+
   /* Text-safe accent colors (overridden for read mode) */
   --color-accent-1-astext: var(--color-text-primary);
   --color-accent-2-astext: var(--color-text-primary);

@@ -48,11 +48,7 @@ export function ProgressBar({ progress, sessionId }: ProgressBarProps) {
         )}
       </div>
 
-      <SummaryModal
-        sessionId={sessionId}
-        open={showSummary}
-        onOpenChange={setShowSummary}
-      />
+      <SummaryModal sessionId={sessionId} open={showSummary} onOpenChange={setShowSummary} />
     </>
   );
 }

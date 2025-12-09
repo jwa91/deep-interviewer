@@ -35,7 +35,7 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
 
       <Card className="w-full max-w-md bg-card">
         <CardHeader className="space-y-4 pb-2 text-center">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-lg border-2 border-border bg-primary brutal-shadow">
+          <div className="brutal-shadow mx-auto flex h-20 w-20 items-center justify-center rounded-lg border-2 border-border bg-primary">
             <svg
               className="h-10 w-10 text-primary-foreground"
               fill="none"
@@ -52,7 +52,7 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
             </svg>
           </div>
           <div>
-            <CardTitle className="font-heading font-black text-3xl text-foreground">
+            <CardTitle className="font-black font-heading text-3xl text-foreground">
               Welkom bij het Interview
             </CardTitle>
             <CardDescription className="mt-2 font-mono text-muted-foreground">
@@ -64,7 +64,10 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
         <CardContent className="pt-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label htmlFor="code" className="font-bold font-mono text-foreground text-sm uppercase tracking-wider">
+              <label
+                htmlFor="code"
+                className="font-bold font-mono text-foreground text-sm uppercase tracking-wider"
+              >
                 Toegangscode
               </label>
               <Input
@@ -81,7 +84,7 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
             </div>
 
             {error && (
-              <div className="rounded-md border-2 border-destructive bg-destructive/10 p-3 text-center text-destructive font-bold brutal-shadow text-sm">
+              <div className="brutal-shadow rounded-md border-2 border-destructive bg-destructive/10 p-3 text-center font-bold text-destructive text-sm">
                 {error}
               </div>
             )}

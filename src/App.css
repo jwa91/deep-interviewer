@@ -71,9 +71,7 @@
   --muted: var(--color-bg-tertiary);
   --muted-foreground: var(--color-text-primary); /* Keeping high contrast */
 
-  --accent: var(
-    --color-accent-3
-  ); /* Cream base for accent areas? Or maybe Accent 4 (Blue)? Let's try Cream (Accent 3) as subtle accent */
+  --accent: var(--color-accent-3); /* Cream base for accent areas? Or maybe Accent 4 (Blue)? Let's try Cream (Accent 3) as subtle accent */
   --accent-foreground: var(--color-text-on-accent);
 
   --destructive: var(--color-red-base); /* Accent 5 */

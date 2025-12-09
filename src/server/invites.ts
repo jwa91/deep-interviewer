@@ -15,7 +15,9 @@ let invites = new Map<string, Invite>();
 let initialized = false;
 
 function ensureInitialized() {
-  if (initialized) return;
+  if (initialized) {
+    return;
+  }
 
   try {
     if (existsSync(INVITES_FILE)) {
@@ -39,10 +41,10 @@ function saveInvites() {
 
 export function createInvite(): string {
   ensureInitialized();
-  
+
   // Generate random 6-char code (uppercase alphanumeric)
   const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-  
+
   // Ensure uniqueness (extremely unlikely to collide but good practice)
   if (invites.has(code)) {
     return createInvite();
@@ -55,7 +57,7 @@ export function createInvite(): string {
 
   invites.set(code, invite);
   saveInvites();
-  
+
   return code;
 }
 
@@ -68,7 +70,7 @@ export function linkSessionToInvite(code: string, sessionId: string): void {
   ensureInitialized();
   const upperCode = code.toUpperCase();
   const invite = invites.get(upperCode);
-  
+
   if (invite) {
     invites.set(upperCode, { ...invite, sessionId });
     saveInvites();
@@ -79,4 +81,3 @@ export function listInvites(): Invite[] {
   ensureInitialized();
   return Array.from(invites.values());
 }
-

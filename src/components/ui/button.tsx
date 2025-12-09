@@ -10,19 +10,19 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground border-2 border-border brutal-shadow active:translate-x-[2px] active:translate-y-[2px] active:shadow-none hover:bg-primary/90",
+          "brutal-shadow border-2 border-border bg-primary text-primary-foreground hover:bg-primary/90 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none",
         destructive:
-          "bg-destructive text-destructive-foreground border-2 border-border brutal-shadow active:translate-x-[2px] active:translate-y-[2px] active:shadow-none hover:bg-destructive/90",
+          "brutal-shadow border-2 border-border bg-destructive text-destructive-foreground hover:bg-destructive/90 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none",
         outline:
-          "bg-background text-foreground border-2 border-border brutal-shadow active:translate-x-[2px] active:translate-y-[2px] active:shadow-none hover:bg-accent hover:text-accent-foreground",
+          "brutal-shadow border-2 border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground active:translate-x-[2px] active:translate-y-[2px] active:shadow-none",
         secondary:
-          "bg-secondary text-secondary-foreground border-2 border-border brutal-shadow active:translate-x-[2px] active:translate-y-[2px] active:shadow-none hover:bg-secondary/80",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+          "brutal-shadow border-2 border-border bg-secondary text-secondary-foreground hover:bg-secondary/80 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none",
+        ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-11 px-4 py-2 has-[>svg]:px-3", /* Slightly taller for brutalist feel? Standard is 9 (36px). Let's try 11 (44px) or keep 9. User didn't specify size changes, but bold borders eat space. */
+        default:
+          "h-11 px-4 py-2 has-[>svg]:px-3" /* Slightly taller for brutalist feel? Standard is 9 (36px). Let's try 11 (44px) or keep 9. User didn't specify size changes, but bold borders eat space. */,
         sm: "h-9 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5",
         lg: "h-12 rounded-md px-8 has-[>svg]:px-4",
         icon: "size-10",

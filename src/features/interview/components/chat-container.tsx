@@ -33,11 +33,11 @@ export function ChatContainer({
       />
 
       {/* Header with progress */}
-      <header className="sticky top-0 z-10 border-b-2 border-border bg-background">
+      <header className="sticky top-0 z-10 border-border border-b-2 bg-background">
         <div className="mx-auto max-w-3xl px-4 py-3">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-md border-2 border-border bg-primary brutal-shadow">
+              <div className="brutal-shadow flex h-10 w-10 items-center justify-center rounded-md border-2 border-border bg-primary">
                 <svg
                   className="h-5 w-5 text-primary-foreground"
                   fill="none"
@@ -54,8 +54,10 @@ export function ChatContainer({
                 </svg>
               </div>
               <div>
-                <h1 className="font-heading font-black text-xl text-foreground">Cursus Feedback</h1>
-                <p className="font-mono text-muted-foreground text-xs font-bold uppercase tracking-wider">Interview in voortgang</p>
+                <h1 className="font-black font-heading text-foreground text-xl">Cursus Feedback</h1>
+                <p className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wider">
+                  Interview in voortgang
+                </p>
               </div>
             </div>
           </div>
@@ -66,7 +68,7 @@ export function ChatContainer({
       {/* Chat area */}
       <main className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col">
         {error && (
-          <div className="mx-4 mt-4 rounded-md border-2 border-destructive bg-destructive/10 p-3 text-destructive font-bold brutal-shadow">
+          <div className="brutal-shadow mx-4 mt-4 rounded-md border-2 border-destructive bg-destructive/10 p-3 font-bold text-destructive">
             {error}
           </div>
         )}

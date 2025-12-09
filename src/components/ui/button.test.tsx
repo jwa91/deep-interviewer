@@ -24,7 +24,7 @@ describe("Button", () => {
   it("applies size variants", () => {
     render(<Button size="sm">Small</Button>);
     const button = screen.getByRole("button");
-    expect(button).toHaveClass("h-8");
+    expect(button).toHaveClass("h-9");
   });
 
   it("handles click events", async () => {

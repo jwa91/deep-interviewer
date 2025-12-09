@@ -14,7 +14,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
     <div className={cn("flex w-full gap-3", isUser ? "justify-end" : "justify-start")}>
       {/* Avatar for assistant */}
       {!isUser && (
-        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border-2 border-border bg-primary brutal-shadow">
+        <div className="brutal-shadow flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border-2 border-border bg-primary">
           <svg
             className="h-5 w-5 text-primary-foreground"
             fill="none"
@@ -34,10 +34,8 @@ export function MessageBubble({ message }: MessageBubbleProps) {
 
       <div
         className={cn(
-          "max-w-[80%] rounded-lg border-2 border-border px-4 py-3 brutal-shadow",
-          isUser
-            ? "bg-primary text-primary-foreground"
-            : "bg-card text-card-foreground"
+          "brutal-shadow max-w-[80%] rounded-lg border-2 border-border px-4 py-3",
+          isUser ? "bg-primary text-primary-foreground" : "bg-card text-card-foreground"
         )}
       >
         {isStreaming ? (
@@ -48,7 +46,10 @@ export function MessageBubble({ message }: MessageBubbleProps) {
               {message.content}
             </p>
             <time
-              className={cn("block font-bold text-[10px]", isUser ? "text-primary-foreground/70" : "text-muted-foreground")}
+              className={cn(
+                "block font-bold text-[10px]",
+                isUser ? "text-primary-foreground/70" : "text-muted-foreground"
+              )}
             >
               {formatTime(message.timestamp)}
             </time>
@@ -58,7 +59,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
 
       {/* Avatar for user */}
       {isUser && (
-        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border-2 border-border bg-secondary brutal-shadow">
+        <div className="brutal-shadow flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border-2 border-border bg-secondary">
           <svg
             className="h-5 w-5 text-secondary-foreground"
             fill="none"
