@@ -72,7 +72,7 @@ export function ChatContainer({
       </header>
 
       {/* Chat area */}
-      <main className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col">
+      <main className="relative z-10 mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col">
         {error && (
           <div className="brutal-shadow mx-4 mt-4 rounded-md border-2 border-destructive bg-destructive/10 p-3 font-bold text-destructive">
             {error}

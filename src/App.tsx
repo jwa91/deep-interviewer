@@ -127,9 +127,9 @@ function App() {
 
   // Sync progress from session hook
   useEffect(() => {
-    if (progress.completedCount > 0) {
-      setLocalProgress(progress);
-    }
+    // Only update local progress if the new progress is different/relevant
+    // This allows reset when progress.completedCount goes back to 0
+    setLocalProgress(progress);
 
     // Check if session is already complete upon loading
     if (progress.isComplete) {

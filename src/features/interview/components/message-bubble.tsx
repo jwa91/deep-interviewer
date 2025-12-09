@@ -35,7 +35,9 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       <div
         className={cn(
           "brutal-shadow max-w-[80%] rounded-lg border-2 border-border px-4 py-3",
-          isUser ? "bg-primary text-primary-foreground" : "bg-card text-card-foreground"
+          isUser
+            ? "bg-primary text-primary-foreground"
+            : "bg-secondary text-secondary-foreground"
         )}
       >
         {isStreaming ? (
