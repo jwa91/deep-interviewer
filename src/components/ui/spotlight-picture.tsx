@@ -1,21 +1,17 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
-export interface SpotlightPictureProps
-  extends React.HTMLAttributes<HTMLDivElement> {
-  imageSrc: string
-  imageAlt?: string
+export interface SpotlightPictureProps extends React.HTMLAttributes<HTMLDivElement> {
+  imageSrc: string;
+  imageAlt?: string;
 }
 
 const SpotlightPicture = React.forwardRef<HTMLDivElement, SpotlightPictureProps>(
   ({ imageSrc, imageAlt = "", className, children, ...props }, ref) => {
     // Generate a unique ID for the clip path
-    const clipId = React.useId()
-    
-    // Determine if we have a custom class
-    const hasCustomClass = className !== ""
+    const clipId = React.useId();
 
     return (
       <figure className={cn("relative", className)} {...props} ref={ref}>
@@ -30,13 +26,13 @@ const SpotlightPicture = React.forwardRef<HTMLDivElement, SpotlightPictureProps>
                   62.1144 313.41 50.7364 353.721 104.805Z"
                 fill="var(--border)"
               />
-              {/* Colored shape (uses CSS variable when no custom class) */}
+              {/* Colored shape */}
               <path
                 d="M346.72 99.805C387.031 153.873 345.658 252.914 254.311 321.017C162.964 
                   389.121 56.2348 400.499 15.924 346.431C-24.3867 292.362 16.9862 
                   193.322 108.333 125.218C199.68 57.1145 306.41 
                   45.7366 346.72 99.805Z"
-                fill={hasCustomClass ? "currentColor" : "var(--primary)"}
+                fill="var(--primary)"
                 stroke="var(--border)"
                 strokeWidth="1"
               />
@@ -57,7 +53,7 @@ const SpotlightPicture = React.forwardRef<HTMLDivElement, SpotlightPictureProps>
                     />
                   </clipPath>
                 </defs>
-                
+
                 <image
                   href={imageSrc}
                   width="100%"
@@ -73,11 +69,10 @@ const SpotlightPicture = React.forwardRef<HTMLDivElement, SpotlightPictureProps>
         {/* Optional children content */}
         {children}
       </figure>
-    )
+    );
   }
-)
+);
 
-SpotlightPicture.displayName = "SpotlightPicture"
+SpotlightPicture.displayName = "SpotlightPicture";
 
-export { SpotlightPicture }
-
+export { SpotlightPicture };
