@@ -52,26 +52,26 @@ export function AgentNoteCard({ questionId, state, sessionId }: AgentNoteCardPro
   if (state === "active") {
     return (
       <div className="fade-in slide-in-from-bottom-2 animate-in py-2 duration-300">
-        <div className="mx-auto max-w-md rounded-lg border border-amber-500/20 bg-amber-500/5 p-3">
+        <div className="mx-auto max-w-md rounded-lg border-2 border-border bg-card p-3 brutal-shadow">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-amber-500/10">
-              <Loader2Icon className="h-4 w-4 animate-spin text-amber-400" />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border-2 border-border bg-primary/20">
+              <Loader2Icon className="h-4 w-4 animate-spin text-primary" />
             </div>
             <div className="flex-1 space-y-2">
-              <Skeleton className="h-4 w-32 bg-amber-500/20" />
-              <Skeleton className="h-3 w-48 bg-amber-500/10" />
+              <Skeleton className="h-4 w-32 bg-muted" />
+              <Skeleton className="h-3 w-48 bg-muted/50" />
             </div>
             <div className="flex gap-0.5">
               <div
-                className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-400"
+                className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary"
                 style={{ animationDelay: "0ms" }}
               />
               <div
-                className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-400"
+                className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary"
                 style={{ animationDelay: "200ms" }}
               />
               <div
-                className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-400"
+                className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary"
                 style={{ animationDelay: "400ms" }}
               />
             </div>
@@ -96,38 +96,42 @@ export function AgentNoteCard({ questionId, state, sessionId }: AgentNoteCardPro
         type="single"
         collapsible
         onValueChange={handleAccordionChange}
-        className="mx-auto max-w-md overflow-hidden"
+        className="mx-auto max-w-md"
       >
         <AccordionItem
           value={questionId}
-          className="overflow-hidden rounded-lg border border-emerald-500/20 bg-emerald-500/5"
+          className="overflow-hidden rounded-lg border-2 border-border bg-card brutal-shadow"
         >
-          <AccordionTrigger className="px-3 py-3 hover:no-underline [&[data-state=open]]:border-emerald-500/30 [&[data-state=open]]:border-b">
+          <AccordionTrigger className="px-3 py-3 hover:no-underline [&[data-state=open]]:border-b-2 [&[data-state=open]]:border-border">
             <div className="flex flex-1 items-center gap-3">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-emerald-500/10">
-                <FileTextIcon className="h-4 w-4 text-emerald-400" />
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border-2 border-border bg-secondary">
+                <FileTextIcon className="h-4 w-4 text-secondary-foreground" />
               </div>
               <div className="flex flex-1 flex-col items-start gap-0.5">
-                <span className="font-medium text-emerald-300 text-sm">Agent notities</span>
-                <span className="text-emerald-400/70 text-xs">{getQuestionLabel(questionId)}</span>
+                <span className="font-bold font-mono text-card-foreground text-sm uppercase">
+                  Agent notities
+                </span>
+                <span className="font-mono text-muted-foreground text-xs">
+                  {getQuestionLabel(questionId)}
+                </span>
               </div>
               {/* Checkmark indicator */}
-              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/20">
-                <CheckIcon className="h-3.5 w-3.5 text-emerald-400" />
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground border-2 border-border">
+                <CheckIcon className="h-3.5 w-3.5" />
               </div>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="px-3 text-slate-300">
+          <AccordionContent className="px-3 text-card-foreground">
             {isLoading && (
               <div className="space-y-2 py-2">
-                <Skeleton className="h-4 w-full bg-emerald-500/10" />
-                <Skeleton className="h-4 w-3/4 bg-emerald-500/10" />
-                <Skeleton className="h-4 w-1/2 bg-emerald-500/10" />
+                <Skeleton className="h-4 w-full bg-muted" />
+                <Skeleton className="h-4 w-3/4 bg-muted" />
+                <Skeleton className="h-4 w-1/2 bg-muted" />
               </div>
             )}
 
             {error && (
-              <div className="py-2 text-red-400 text-sm">
+              <div className="py-2 text-destructive font-bold text-sm">
                 <p>{error}</p>
               </div>
             )}
@@ -137,16 +141,18 @@ export function AgentNoteCard({ questionId, state, sessionId }: AgentNoteCardPro
                 {/* Summary section */}
                 {summary && (
                   <div>
-                    <h4 className="mb-1.5 font-medium text-slate-400 text-xs uppercase tracking-wide">
+                    <h4 className="mb-1.5 font-bold text-muted-foreground text-xs uppercase tracking-wide">
                       Samenvatting
                     </h4>
-                    <p className="text-slate-200 text-sm leading-relaxed">{summary}</p>
+                    <p className="font-mono text-card-foreground text-sm leading-relaxed">
+                      {summary}
+                    </p>
                   </div>
                 )}
 
                 {/* Dynamic Fields Section */}
                 {otherFields.length > 0 && (
-                  <div className="space-y-3 rounded-md border border-slate-800 bg-slate-900/50 p-3">
+                  <div className="space-y-3 rounded-md border-2 border-border bg-background p-3">
                     {otherFields.map(([key, value]) => (
                       <FieldRenderer key={key} label={FIELD_LABELS[key] || key} value={value} />
                     ))}
@@ -156,7 +162,7 @@ export function AgentNoteCard({ questionId, state, sessionId }: AgentNoteCardPro
                 {/* Quotes section */}
                 {quotes && quotes.length > 0 && (
                   <div>
-                    <h4 className="mb-1.5 font-medium text-slate-400 text-xs uppercase tracking-wide">
+                    <h4 className="mb-1.5 font-bold text-muted-foreground text-xs uppercase tracking-wide">
                       Citaten
                     </h4>
                     <ul className="space-y-2">
@@ -164,9 +170,9 @@ export function AgentNoteCard({ questionId, state, sessionId }: AgentNoteCardPro
                         <li
                           // biome-ignore lint/suspicious/noArrayIndexKey: quotes are static strings without unique IDs
                           key={`${questionId}-quote-${index}`}
-                          className="flex gap-2 text-slate-300 text-sm"
+                          className="flex gap-2 font-mono text-card-foreground text-sm"
                         >
-                          <QuoteIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500/50" />
+                          <QuoteIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
                           <span className="italic">&ldquo;{quote}&rdquo;</span>
                         </li>
                       ))}
@@ -176,7 +182,9 @@ export function AgentNoteCard({ questionId, state, sessionId }: AgentNoteCardPro
 
                 {/* Fallback if no data */}
                 {!summary && otherFields.length === 0 && (!quotes || quotes.length === 0) && (
-                  <p className="text-slate-400 text-sm italic">Geen notities beschikbaar.</p>
+                  <p className="font-mono text-muted-foreground text-sm italic">
+                    Geen notities beschikbaar.
+                  </p>
                 )}
               </div>
             )}

@@ -15,11 +15,11 @@ interface CompletionModalProps {
 export function CompletionModal({ isOpen, onClose }: CompletionModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="border-slate-800 bg-slate-900 text-slate-100 sm:max-w-md">
+      <DialogContent className="border-2 border-border bg-card text-card-foreground sm:max-w-md brutal-shadow">
         <DialogHeader className="text-center sm:text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 shadow-emerald-500/30 shadow-lg">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-border bg-primary brutal-shadow">
             <svg
-              className="h-8 w-8 text-white"
+              className="h-8 w-8 text-primary-foreground"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -33,30 +33,30 @@ export function CompletionModal({ isOpen, onClose }: CompletionModalProps) {
               />
             </svg>
           </div>
-          <DialogTitle className="font-bold text-2xl text-slate-100">
+          <DialogTitle className="font-heading font-black text-2xl text-foreground">
             Bedankt voor je feedback!
           </DialogTitle>
-          <DialogDescription className="mt-2 text-base text-slate-400">
+          <DialogDescription className="mt-2 font-mono text-base text-muted-foreground">
             Je hebt alle vragen beantwoord. Je feedback helpt ons de cursus te verbeteren.
           </DialogDescription>
         </DialogHeader>
 
         <div className="mt-6 space-y-4">
-          <div className="rounded-lg border border-slate-700/50 bg-slate-800/50 p-4">
+          <div className="rounded-md border-2 border-border bg-background p-4 brutal-shadow">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/20">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-secondary border-2 border-border">
                 <span className="text-xl">🎯</span>
               </div>
               <div>
-                <p className="font-medium text-slate-200">9/9 vragen voltooid</p>
-                <p className="text-slate-500 text-sm">Interview succesvol afgerond</p>
+                <p className="font-bold text-foreground">9/9 vragen voltooid</p>
+                <p className="font-mono text-muted-foreground text-sm">Interview succesvol afgerond</p>
               </div>
             </div>
           </div>
 
           <Button
             onClick={onClose}
-            className="h-12 w-full bg-gradient-to-r from-emerald-600 to-teal-600 font-semibold text-base text-white shadow-emerald-500/20 shadow-lg hover:from-emerald-500 hover:to-teal-500"
+            className="h-12 w-full text-base"
           >
             Sluiten
           </Button>

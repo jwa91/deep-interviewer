@@ -1,0 +1,30 @@
+/* Typography tokens */
+:root {
+  /* Font family tokens */
+  --font-family-body: "Roboto Mono", monospace;
+  --font-family-subtitle: "Roboto Mono", monospace;
+  --font-family-heading: "Public Sans", sans-serif;
+  --font-family-small-heading: "Roboto Mono", monospace;
+
+  /* Font weight tokens */
+  --font-weight-body: 200;
+  --font-weight-bold: 400;
+  --font-weight-subtitle: 500;
+  --font-weight-small-heading: 500;
+  --font-weight-heading: 900;
+
+  /* Font size tokens */
+  --font-size-1: 0.75rem;
+  --font-size-2: 0.875rem;
+  --font-size-3: 1rem;
+  --font-size-4: 1.25rem;
+  --font-size-5: 1.5rem;
+  --font-size-6: 2rem;
+  --font-size-7: 3rem;
+  --font-size-8: 4rem;
+
+  /* Line height tokens */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+}

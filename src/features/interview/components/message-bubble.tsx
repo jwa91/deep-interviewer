@@ -14,9 +14,9 @@ export function MessageBubble({ message }: MessageBubbleProps) {
     <div className={cn("flex w-full gap-3", isUser ? "justify-end" : "justify-start")}>
       {/* Avatar for assistant */}
       {!isUser && (
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 shadow-sm">
+        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border-2 border-border bg-primary brutal-shadow">
           <svg
-            className="h-4 w-4 text-white"
+            className="h-5 w-5 text-primary-foreground"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -34,21 +34,21 @@ export function MessageBubble({ message }: MessageBubbleProps) {
 
       <div
         className={cn(
-          "max-w-[80%] rounded-2xl px-4 py-3 shadow-sm",
+          "max-w-[80%] rounded-lg border-2 border-border px-4 py-3 brutal-shadow",
           isUser
-            ? "rounded-br-md bg-emerald-600 text-white"
-            : "rounded-bl-md border border-slate-700/50 bg-slate-800 text-slate-100"
+            ? "bg-primary text-primary-foreground"
+            : "bg-card text-card-foreground"
         )}
       >
         {isStreaming ? (
           <TypingIndicator />
         ) : (
           <div className="space-y-2">
-            <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">
+            <p className="whitespace-pre-wrap break-words font-mono text-sm leading-relaxed">
               {message.content}
             </p>
             <time
-              className={cn("block text-[10px]", isUser ? "text-emerald-200/70" : "text-slate-500")}
+              className={cn("block font-bold text-[10px]", isUser ? "text-primary-foreground/70" : "text-muted-foreground")}
             >
               {formatTime(message.timestamp)}
             </time>
@@ -58,9 +58,9 @@ export function MessageBubble({ message }: MessageBubbleProps) {
 
       {/* Avatar for user */}
       {isUser && (
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-slate-700 shadow-sm">
+        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border-2 border-border bg-secondary brutal-shadow">
           <svg
-            className="h-4 w-4 text-slate-300"
+            className="h-5 w-5 text-secondary-foreground"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

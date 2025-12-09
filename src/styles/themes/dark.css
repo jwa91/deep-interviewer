@@ -1,0 +1,21 @@
+/* Dark theme */
+.dark {
+  --color-bg-primary: #0f0d0e;
+  --color-bg-secondary: #231f20;
+  --color-bg-tertiary: #262522;
+  --color-text-primary: #f8f8f6;
+  --color-text-on-accent: #0f0d0e;
+  --color-accent-1: var(--color-yellow-base);
+  --color-accent-2: var(--color-green-base);
+  --color-accent-3: var(--color-cream-base);
+  --color-accent-4: var(--color-blue-base);
+  --color-accent-5: var(--color-red-base);
+  --color-accent-6: var(--color-orange-base);
+  --color-accent-7: var(--color-pink-base);
+  --color-accent-8: var(--color-purple-base);
+  --color-border: #000000;
+  --color-shadow: #000000;
+  --color-highlight: #f8f8f6;
+  --color-ring: #f8f8f6;
+  --color-ring-offset: #0f0d0e;
+}

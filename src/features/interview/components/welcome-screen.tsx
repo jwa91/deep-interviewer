@@ -22,22 +22,22 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
       {/* Subtle grid pattern overlay */}
       <div
-        className="pointer-events-none fixed inset-0 opacity-[0.02]"
+        className="pointer-events-none fixed inset-0 opacity-10"
         style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                           linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-          backgroundSize: "50px 50px",
+          backgroundImage: `linear-gradient(var(--foreground) 1px, transparent 1px),
+                           linear-gradient(90deg, var(--foreground) 1px, transparent 1px)`,
+          backgroundSize: "40px 40px",
         }}
       />
 
-      <Card className="w-full max-w-md border-slate-800 bg-slate-900/80 shadow-2xl backdrop-blur-sm">
+      <Card className="w-full max-w-md bg-card">
         <CardHeader className="space-y-4 pb-2 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-emerald-500/20 shadow-lg">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-lg border-2 border-border bg-primary brutal-shadow">
             <svg
-              className="h-8 w-8 text-white"
+              className="h-10 w-10 text-primary-foreground"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -52,19 +52,19 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
             </svg>
           </div>
           <div>
-            <CardTitle className="font-bold text-2xl text-slate-100">
+            <CardTitle className="font-heading font-black text-3xl text-foreground">
               Welkom bij het Interview
             </CardTitle>
-            <CardDescription className="mt-2 text-slate-400">
+            <CardDescription className="mt-2 font-mono text-muted-foreground">
               Voer je persoonlijke code in om te beginnen of verder te gaan met je feedback.
             </CardDescription>
           </div>
         </CardHeader>
 
-        <CardContent className="pt-4">
+        <CardContent className="pt-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label htmlFor="code" className="font-medium text-slate-300 text-sm">
+              <label htmlFor="code" className="font-bold font-mono text-foreground text-sm uppercase tracking-wider">
                 Toegangscode
               </label>
               <Input
@@ -73,7 +73,7 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
                 placeholder="Bijv. ABC123"
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
-                className="h-12 border-slate-700 bg-slate-800/50 text-center font-mono text-lg text-slate-100 tracking-widest placeholder:text-slate-500 focus:border-emerald-500 focus:ring-emerald-500/20"
+                className="h-14 text-center font-black font-mono text-xl tracking-[0.2em]"
                 disabled={isLoading}
                 autoComplete="off"
                 autoFocus
@@ -81,14 +81,14 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
             </div>
 
             {error && (
-              <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-center text-red-400 text-sm">
+              <div className="rounded-md border-2 border-destructive bg-destructive/10 p-3 text-center text-destructive font-bold brutal-shadow text-sm">
                 {error}
               </div>
             )}
 
             <Button
               type="submit"
-              className="h-12 w-full bg-gradient-to-r from-emerald-600 to-teal-600 font-semibold text-base text-white shadow-emerald-500/20 shadow-lg transition-all duration-200 hover:from-emerald-500 hover:to-teal-500"
+              className="h-14 w-full text-lg"
               disabled={isLoading || !code.trim()}
             >
               {isLoading ? (
@@ -102,7 +102,7 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-slate-500 text-xs leading-relaxed">
+          <p className="mt-6 text-center font-mono text-muted-foreground text-xs leading-relaxed">
             Je kunt dit interview op elk moment onderbreken en later hervatten met dezelfde code.
           </p>
         </CardContent>

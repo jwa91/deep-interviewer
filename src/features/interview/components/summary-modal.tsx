@@ -1,9 +1,4 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { QUESTION_TITLES } from "@/shared/constants";
@@ -30,28 +25,28 @@ export function SummaryModal({ sessionId, open, onOpenChange }: SummaryModalProp
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] w-[90vw] max-w-2xl overflow-hidden border-slate-800 bg-slate-950 p-0 text-slate-200">
-        <DialogHeader className="border-b border-slate-800 px-6 py-4">
-          <DialogTitle className="text-lg font-medium text-emerald-400">
+      <DialogContent className="max-h-[85vh] w-[90vw] max-w-2xl overflow-hidden border-2 border-border bg-background p-0 text-foreground brutal-shadow">
+        <DialogHeader className="border-b-2 border-border px-6 py-4">
+          <DialogTitle className="font-heading font-black text-xl text-primary">
             Jouw Antwoorden
           </DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="h-[calc(85vh-80px)] px-6 py-6">
-          <div className="space-y-8 pb-6">
+        <ScrollArea className="h-[calc(85vh-80px)]">
+          <div className="space-y-8 px-6 py-6 pb-6">
             {isLoading && (
               <div className="space-y-6">
                 {[1, 2, 3].map((i) => (
                   <div key={i} className="space-y-2">
-                    <Skeleton className="h-5 w-48 bg-slate-800" />
-                    <Skeleton className="h-20 w-full bg-slate-800/50" />
+                    <Skeleton className="h-5 w-48 bg-muted" />
+                    <Skeleton className="h-20 w-full bg-muted/50" />
                   </div>
                 ))}
               </div>
             )}
 
             {error && (
-              <div className="rounded-md border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-400">
+              <div className="rounded-md border-2 border-destructive bg-destructive/10 p-4 text-sm font-bold text-destructive brutal-shadow">
                 Er is iets misgegaan bij het laden van je antwoorden: {error}
               </div>
             )}
@@ -59,7 +54,7 @@ export function SummaryModal({ sessionId, open, onOpenChange }: SummaryModalProp
             {data && (
               <>
                 {data.completedTopics.length === 0 ? (
-                  <div className="py-8 text-center text-slate-400">
+                  <div className="py-8 text-center font-mono text-muted-foreground">
                     Nog geen antwoorden beschikbaar.
                   </div>
                 ) : (
@@ -69,13 +64,9 @@ export function SummaryModal({ sessionId, open, onOpenChange }: SummaryModalProp
 
                     const title = QUESTION_TITLES[topicId] || topicId;
                     const summary =
-                      "summary" in response.data
-                        ? (response.data.summary as string)
-                        : null;
+                      "summary" in response.data ? (response.data.summary as string) : null;
                     const quotes =
-                      "quotes" in response.data
-                        ? (response.data.quotes as string[])
-                        : null;
+                      "quotes" in response.data ? (response.data.quotes as string[]) : null;
 
                     const otherFields = response.data
                       ? Object.entries(response.data).filter(
@@ -85,18 +76,18 @@ export function SummaryModal({ sessionId, open, onOpenChange }: SummaryModalProp
 
                     return (
                       <div key={topicId} className="space-y-3">
-                        <h3 className="font-medium text-emerald-400 text-sm uppercase tracking-wide">
+                        <h3 className="font-mono font-bold text-primary text-sm uppercase tracking-wider">
                           {title}
                         </h3>
-                        <div className="rounded-lg border border-slate-800 bg-slate-900/50 p-4 text-sm leading-relaxed text-slate-300">
+                        <div className="rounded-lg border-2 border-border bg-card p-4 text-sm leading-relaxed text-card-foreground brutal-shadow">
                           <div className="space-y-6">
                             {/* Summary section */}
                             {summary && (
                               <div>
-                                <h4 className="mb-1.5 font-medium text-slate-400 text-xs uppercase tracking-wide">
+                                <h4 className="mb-1.5 font-bold text-muted-foreground text-xs uppercase tracking-wide">
                                   Samenvatting
                                 </h4>
-                                <p className="text-slate-200 text-sm leading-relaxed">
+                                <p className="font-mono text-card-foreground text-sm leading-relaxed">
                                   {summary}
                                 </p>
                               </div>
@@ -104,7 +95,7 @@ export function SummaryModal({ sessionId, open, onOpenChange }: SummaryModalProp
 
                             {/* Dynamic Fields Section */}
                             {otherFields.length > 0 && (
-                              <div className="space-y-3 rounded-md border border-slate-800 bg-slate-900/50 p-3">
+                              <div className="space-y-3 rounded-md border-2 border-border bg-background p-3">
                                 {otherFields.map(([key, value]) => (
                                   <FieldRenderer
                                     key={key}
@@ -118,7 +109,7 @@ export function SummaryModal({ sessionId, open, onOpenChange }: SummaryModalProp
                             {/* Quotes section */}
                             {quotes && quotes.length > 0 && (
                               <div>
-                                <h4 className="mb-1.5 font-medium text-slate-400 text-xs uppercase tracking-wide">
+                                <h4 className="mb-1.5 font-bold text-muted-foreground text-xs uppercase tracking-wide">
                                   Citaten
                                 </h4>
                                 <ul className="space-y-2">
@@ -126,12 +117,10 @@ export function SummaryModal({ sessionId, open, onOpenChange }: SummaryModalProp
                                     <li
                                       // biome-ignore lint/suspicious/noArrayIndexKey: quotes are static strings without unique IDs
                                       key={`${topicId}-quote-${index}`}
-                                      className="flex gap-2 text-slate-300 text-sm"
+                                      className="flex gap-2 font-mono text-card-foreground text-sm"
                                     >
-                                      <QuoteIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500/50" />
-                                      <span className="italic">
-                                        &ldquo;{quote}&rdquo;
-                                      </span>
+                                      <QuoteIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                                      <span className="italic">&ldquo;{quote}&rdquo;</span>
                                     </li>
                                   ))}
                                 </ul>

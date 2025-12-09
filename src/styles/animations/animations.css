@@ -1,0 +1,223 @@
+/* Animation keyframes */
+
+/* Accordion animations */
+@keyframes accordion-down {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}
+
+/* Sheet/Dialog animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slide-in-from-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out-to-right {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slide-in-from-left {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-out-to-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slide-in-from-top {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-out-to-top {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes slide-in-from-bottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-out-to-bottom {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+/* Animation classes */
+.animate-accordion-down {
+  animation: accordion-down 0.2s ease-out forwards;
+}
+
+.animate-accordion-up {
+  animation: accordion-up 0.2s ease-in forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out forwards;
+}
+
+.animate-fade-out {
+  animation: fade-out 0.2s ease-in forwards;
+}
+
+.animate-slide-in-from-right {
+  animation: slide-in-from-right 0.2s ease-out forwards;
+}
+
+.animate-slide-out-to-right {
+  animation: slide-out-to-right 0.2s ease-in forwards;
+}
+
+.animate-slide-in-from-left {
+  animation: slide-in-from-left 0.2s ease-out forwards;
+}
+
+.animate-slide-out-to-left {
+  animation: slide-out-to-left 0.2s ease-in forwards;
+}
+
+.animate-slide-in-from-top {
+  animation: slide-in-from-top 0.2s ease-out forwards;
+}
+
+.animate-slide-out-to-top {
+  animation: slide-out-to-top 0.2s ease-in forwards;
+}
+
+.animate-slide-in-from-bottom {
+  animation: slide-in-from-bottom 0.2s ease-out forwards;
+}
+
+.animate-slide-out-to-bottom {
+  animation: slide-out-to-bottom 0.2s ease-in forwards;
+}
+
+/* Direct data-state attribute selectors for Radix components */
+/* Accordion */
+[data-state="open"].radix-accordion-content {
+  animation: accordion-down 0.2s ease-out forwards;
+}
+
+[data-state="closed"].radix-accordion-content {
+  animation: accordion-up 0.2s ease-in forwards;
+}
+
+/* Sheet/Dialog - Overlay */
+[data-state="open"][data-slot="sheet-overlay"] {
+  animation: fade-in 0.2s ease-out forwards;
+}
+
+[data-state="closed"][data-slot="sheet-overlay"] {
+  animation: fade-out 0.2s ease-in forwards;
+}
+
+/* Sheet - Content (Right) */
+[data-state="open"][data-slot="sheet-content"][style*="right"] {
+  animation: slide-in-from-right 0.2s ease-out forwards;
+}
+
+[data-state="closed"][data-slot="sheet-content"][style*="right"] {
+  animation: slide-out-to-right 0.2s ease-in forwards;
+}
+
+/* Sheet - Content (Left) */
+[data-state="open"][data-slot="sheet-content"][style*="left"] {
+  animation: slide-in-from-left 0.2s ease-out forwards;
+}
+
+[data-state="closed"][data-slot="sheet-content"][style*="left"] {
+  animation: slide-out-to-left 0.2s ease-in forwards;
+}
+
+/* Sheet - Content (Top) */
+[data-state="open"][data-slot="sheet-content"][style*="top"] {
+  animation: slide-in-from-top 0.2s ease-out forwards;
+}
+
+[data-state="closed"][data-slot="sheet-content"][style*="top"] {
+  animation: slide-out-to-top 0.2s ease-in forwards;
+}
+
+/* Sheet - Content (Bottom) */
+[data-state="open"][data-slot="sheet-content"][style*="bottom"] {
+  animation: slide-in-from-bottom 0.2s ease-out forwards;
+}
+
+[data-state="closed"][data-slot="sheet-content"][style*="bottom"] {
+  animation: slide-out-to-bottom 0.2s ease-in forwards;
+}
+
+/* Removed duplicate */
+
+/* Removed old animation classes that used CSS variables */

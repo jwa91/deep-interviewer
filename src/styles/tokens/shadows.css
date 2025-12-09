@@ -1,0 +1,9 @@
+/* Shadow tokens */
+:root {
+  --shadow-offset-x: 4px;
+  --shadow-offset-y: 4px;
+  --shadow-blur: 0px;
+  --shadow-spread: 0px;
+  --shadow-inset-offset-x: 4px;
+  --shadow-inset-offset-y: 4px;
+}

@@ -15,13 +15,13 @@ export function FieldRenderer({ label, value }: FieldRendererProps) {
     }
     return (
       <div className="space-y-1">
-        <h4 className="font-medium text-slate-400 text-xs uppercase tracking-wide">{label}</h4>
+        <h4 className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">{label}</h4>
         <div className="flex flex-wrap gap-1.5">
           {value.map((item, i) => (
             <span
               // biome-ignore lint/suspicious/noArrayIndexKey: items are strings without unique IDs
               key={`${label}-${i}`}
-              className="inline-flex rounded-md bg-emerald-500/10 px-2 py-1 font-medium text-emerald-300 text-xs ring-1 ring-emerald-500/20 ring-inset"
+              className="inline-flex rounded-md border-2 border-border bg-secondary px-2 py-1 font-mono font-bold text-secondary-foreground text-xs brutal-shadow"
             >
               {String(item)}
             </span>
@@ -35,8 +35,8 @@ export function FieldRenderer({ label, value }: FieldRendererProps) {
   if (typeof value === "boolean") {
     return (
       <div className="flex items-center justify-between py-1">
-        <span className="font-medium text-slate-400 text-xs uppercase tracking-wide">{label}</span>
-        <span className={`font-medium text-sm ${value ? "text-emerald-400" : "text-slate-400"}`}>
+        <span className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">{label}</span>
+        <span className={`font-mono font-bold text-sm ${value ? "text-primary" : "text-muted-foreground"}`}>
           {value ? "Ja" : "Nee"}
         </span>
       </div>
@@ -44,22 +44,20 @@ export function FieldRenderer({ label, value }: FieldRendererProps) {
   }
 
   // Handle ratings (numbers 1-5 typically)
-  // We assume simple numbers are ratings if the label contains 'Rating' or 'Level' or 'Score'
-  // But generic number handling is safer if we don't rely on naming conventions strictly
   if (typeof value === "number") {
     return (
       <div className="flex items-center justify-between py-1">
-        <span className="font-medium text-slate-400 text-xs uppercase tracking-wide">{label}</span>
+        <span className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">{label}</span>
         <div className="flex items-center gap-1.5">
-          <span className="font-mono text-emerald-300 text-sm">{value}</span>
+          <span className="font-mono font-bold text-foreground text-sm">{value}</span>
           {/* Simple visual indicator for 1-5 ratings */}
           {value >= 1 && value <= 5 && (
-            <div className="flex gap-0.5">
+            <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <div
                   key={star}
-                  className={`h-1.5 w-1.5 rounded-full ${
-                    star <= value ? "bg-emerald-500" : "bg-slate-700"
+                  className={`h-2 w-2 rounded-full border border-border ${
+                    star <= value ? "bg-primary" : "bg-muted"
                   }`}
                 />
               ))}
@@ -73,8 +71,8 @@ export function FieldRenderer({ label, value }: FieldRendererProps) {
   // Handle strings and other types
   return (
     <div className="space-y-1">
-      <h4 className="font-medium text-slate-400 text-xs uppercase tracking-wide">{label}</h4>
-      <p className="text-slate-200 text-sm leading-relaxed">{String(value)}</p>
+      <h4 className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">{label}</h4>
+      <p className="font-mono text-foreground text-sm leading-relaxed">{String(value)}</p>
     </div>
   );
 }
@@ -110,4 +108,3 @@ export const FIELD_LABELS: Record<string, string> = {
   practicalPartRating: "Praktijk Score",
   balanceOpinion: "Balans Mening",
 };
-

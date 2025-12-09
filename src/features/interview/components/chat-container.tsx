@@ -21,25 +21,25 @@ export function ChatContainer({
   onSendMessage,
 }: ChatContainerProps) {
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="flex h-screen flex-col overflow-hidden bg-background">
       {/* Subtle grid pattern overlay */}
       <div
-        className="pointer-events-none fixed inset-0 opacity-[0.02]"
+        className="pointer-events-none fixed inset-0 opacity-10"
         style={{
-          backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-                           linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-          backgroundSize: "50px 50px",
+          backgroundImage: `linear-gradient(var(--foreground) 1px, transparent 1px),
+                           linear-gradient(90deg, var(--foreground) 1px, transparent 1px)`,
+          backgroundSize: "40px 40px",
         }}
       />
 
       {/* Header with progress */}
-      <header className="sticky top-0 z-10 border-slate-800 border-b bg-slate-900/80 backdrop-blur-md">
+      <header className="sticky top-0 z-10 border-b-2 border-border bg-background">
         <div className="mx-auto max-w-3xl px-4 py-3">
-          <div className="mb-2 flex items-center justify-between">
+          <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md border-2 border-border bg-primary brutal-shadow">
                 <svg
-                  className="h-4 w-4 text-white"
+                  className="h-5 w-5 text-primary-foreground"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -54,8 +54,8 @@ export function ChatContainer({
                 </svg>
               </div>
               <div>
-                <h1 className="font-semibold text-slate-100">Cursus Feedback</h1>
-                <p className="text-slate-500 text-xs">Interview in voortgang</p>
+                <h1 className="font-heading font-black text-xl text-foreground">Cursus Feedback</h1>
+                <p className="font-mono text-muted-foreground text-xs font-bold uppercase tracking-wider">Interview in voortgang</p>
               </div>
             </div>
           </div>
@@ -66,7 +66,7 @@ export function ChatContainer({
       {/* Chat area */}
       <main className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col">
         {error && (
-          <div className="mx-4 mt-4 rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-red-400 text-sm">
+          <div className="mx-4 mt-4 rounded-md border-2 border-destructive bg-destructive/10 p-3 text-destructive font-bold brutal-shadow">
             {error}
           </div>
         )}

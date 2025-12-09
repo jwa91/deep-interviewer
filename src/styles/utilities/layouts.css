@@ -1,0 +1,33 @@
+/* Layer utilities - focused only on z-index positioning */
+
+/* --- Layer Structure --- */
+
+/* Background layer */
+@utility layer-bg {
+  z-index: 0;
+}
+
+/* Section layer */
+@utility layer-section {
+  z-index: 10;
+}
+
+/* Subsection layer */
+@utility layer-subsection {
+  z-index: 20;
+}
+
+/* Component layer - for positioning UI components */
+@utility layer-component {
+  z-index: 25;
+}
+
+/* Element layer */
+@utility layer-element {
+  z-index: 30;
+}
+
+/* Overlay layer */
+@utility layer-overlay {
+  z-index: 100;
+}

@@ -1,0 +1,73 @@
+/* styles/utilities/typography.css */
+
+/* Reusable Heading Style Utilities */
+/* Apply these classes directly to your h1, h2, etc. tags or use in components */
+
+/* Custom utility for applying Public Sans italic without default sizing */
+@utility font-public-sans-italic {
+  font-family: var(--font-family-heading, var(--font-public-sans));
+  font-weight: 900;
+  font-style: italic;
+}
+
+/* Logo specific styling with no underline */
+@utility logo-text {
+  font-family: var(--font-family-heading, var(--font-public-sans));
+  font-weight: 900;
+  font-style: italic;
+  text-decoration: none;
+}
+
+@utility heading-h1 {
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-heading);
+  font-style: italic;
+  font-size: var(--font-size-8);
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--space-4);
+}
+
+@utility heading-h2 {
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-heading);
+  font-style: italic;
+  font-size: var(--font-size-7);
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--space-4);
+}
+
+@utility heading-h3 {
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-heading);
+  font-style: italic;
+  font-size: var(--font-size-6); /* Note: This is 2rem */
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--space-4);
+}
+
+@utility heading-h4 {
+  font-family: var(--font-family-small-heading);
+  font-weight: var(--font-weight-small-heading);
+  font-style: normal;
+  font-size: var(--font-size-5); /* Note: This is 1.5rem */
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--space-4);
+}
+
+@utility heading-h5 {
+  font-family: var(--font-family-small-heading);
+  font-weight: var(--font-weight-small-heading);
+  font-style: normal;
+  font-size: var(--font-size-4); /* Note: This is 1.25rem */
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--space-4);
+}
+
+@utility heading-h6 {
+  font-family: var(--font-family-small-heading);
+  font-weight: var(--font-weight-small-heading);
+  font-style: normal;
+  font-size: var(--font-size-3); /* Note: This is 1rem */
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--space-4);
+}

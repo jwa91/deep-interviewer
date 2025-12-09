@@ -1,0 +1,31 @@
+/* Read theme - Softer background tones for comfortable reading */
+.read {
+  --color-bg-primary: #f0ebe2; /* Warmer off-white/cream background */
+  --color-bg-secondary: #e2d9c9; /* More distinct secondary background */
+  --color-bg-tertiary: #d4c9b6; /* More distinct tertiary background */
+  --color-text-primary: #2a2521; /* Softer than pure black for eye comfort */
+  --color-text-on-accent: #2a2521;
+  --color-accent-1: #b6ad99;
+  --color-accent-2: #b6ad99;
+  --color-accent-3: #b6ad99;
+  --color-accent-4: #b6ad99;
+  --color-accent-5: #b6ad99;
+  --color-accent-6: #b6ad99;
+  --color-accent-7: #b6ad99;
+  --color-accent-8: #b6ad99;
+  --color-border: #2a2521; /* Softer border color */
+  --color-shadow: #2a2521; /* Softer shadow color */
+  --color-highlight: #d6cdb7;
+  --color-ring: #2a2521;
+  --color-ring-offset: #f0ebe2; /* Updated to match primary background */
+  
+  /* Text-safe accent colors (overridden for read mode) */
+  --color-accent-1-astext: var(--color-text-primary);
+  --color-accent-2-astext: var(--color-text-primary);
+  --color-accent-3-astext: var(--color-text-primary);
+  --color-accent-4-astext: var(--color-text-primary);
+  --color-accent-5-astext: var(--color-text-primary);
+  --color-accent-6-astext: var(--color-text-primary);
+  --color-accent-7-astext: var(--color-text-primary);
+  --color-accent-8-astext: var(--color-text-primary);
+}

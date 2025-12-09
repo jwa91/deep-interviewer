@@ -1,0 +1,46 @@
+/* Base typography settings */
+html {
+  font-family: var(--font-family-body);
+  font-weight: var(--font-weight-body);
+  font-size: var(--font-size-3);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+}
+
+/* --- Base Element Styles (No Heading Defaults) --- */
+
+p {
+  margin-bottom: var(--space-4);
+}
+
+/* Base anchor style - only provide underlines for text links in content */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Content links - apply underlines to links in content areas */
+.content a,
+p.content a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  color: currentColor; /* Ensures the link takes its color from custom styles */
+}
+
+/* Link variant - explicit class for text links that should have underlines */
+.link-underline {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+strong,
+b {
+  font-weight: var(--font-weight-bold);
+}
+
+code,
+pre {
+  font-family: monospace;
+}

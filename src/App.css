@@ -1,13 +1,19 @@
 @import "tailwindcss";
+@import "./styles/main.css";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: "Roboto Mono", monospace;
+  --font-heading: "Public Sans", sans-serif;
+  --font-mono: "Roboto Mono", monospace;
+
+  --radius-sm: var(--radius-element);
+  --radius-md: var(--radius-component);
+  --radius-lg: var(--radius-subsection);
+  --radius-xl: var(--radius-section);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -42,79 +48,104 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: var(--radius-component);
+
+  /* Map to Neo-Brutalist tokens */
+  --background: var(--color-bg-primary);
+  --foreground: var(--color-text-primary);
+
+  --card: var(--color-bg-primary);
+  --card-foreground: var(--color-text-primary);
+
+  --popover: var(--color-bg-primary);
+  --popover-foreground: var(--color-text-primary);
+
+  /* Primary = Yellow (Accent 1) */
+  --primary: var(--color-accent-1);
+  --primary-foreground: var(--color-text-on-accent);
+
+  /* Secondary = Gray/Bg Secondary */
+  --secondary: var(--color-bg-secondary);
+  --secondary-foreground: var(--color-text-primary);
+
+  --muted: var(--color-bg-tertiary);
+  --muted-foreground: var(--color-text-primary); /* Keeping high contrast */
+
+  --accent: var(
+    --color-accent-3
+  ); /* Cream base for accent areas? Or maybe Accent 4 (Blue)? Let's try Cream (Accent 3) as subtle accent */
+  --accent-foreground: var(--color-text-on-accent);
+
+  --destructive: var(--color-red-base); /* Accent 5 */
+  --destructive-foreground: var(--color-text-on-accent);
+
+  --border: var(--color-border);
+  --input: var(--color-bg-secondary);
+  --ring: var(--color-ring);
+
+  /* Charts - map to accents */
+  --chart-1: var(--color-accent-4); /* Blue */
+  --chart-2: var(--color-accent-2); /* Green */
+  --chart-3: var(--color-accent-6); /* Orange */
+  --chart-4: var(--color-accent-7); /* Pink */
+  --chart-5: var(--color-accent-8); /* Purple */
+
+  --sidebar: var(--color-bg-primary);
+  --sidebar-foreground: var(--color-text-primary);
+  --sidebar-primary: var(--color-accent-1);
+  --sidebar-primary-foreground: var(--color-text-on-accent);
+  --sidebar-accent: var(--color-bg-secondary);
+  --sidebar-accent-foreground: var(--color-text-primary);
+  --sidebar-border: var(--color-border);
+  --sidebar-ring: var(--color-ring);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Dark mode mappings - relying on themes/dark.css to swap the underlying var values where possible, 
+     but some need explicit re-mapping if the logic differs */
+
+  --background: var(--color-bg-primary);
+  --foreground: var(--color-text-primary);
+
+  --card: var(--color-bg-secondary); /* Cards slightly lighter in dark mode */
+  --card-foreground: var(--color-text-primary);
+
+  --popover: var(--color-bg-secondary);
+  --popover-foreground: var(--color-text-primary);
+
+  --primary: var(--color-accent-1); /* Keep yellow */
+  --primary-foreground: var(--color-text-on-accent);
+
+  --secondary: var(--color-bg-tertiary);
+  --secondary-foreground: var(--color-text-primary);
+
+  --muted: var(--color-bg-tertiary);
+  --muted-foreground: #a0a0a0; /* Slightly dimmed for dark mode text */
+
+  --accent: var(--color-bg-tertiary);
+  --accent-foreground: var(--color-text-primary);
+
+  --destructive: var(--color-red-base);
+  --destructive-foreground: var(--color-text-on-accent);
+
+  --border: var(--color-border);
+  --input: var(--color-bg-tertiary);
+  --ring: var(--color-ring);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading font-black;
   }
 }

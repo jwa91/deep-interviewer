@@ -1,0 +1,8 @@
+/* Shadow utilities */
+@utility brutal-shadow {
+  box-shadow: var(--shadow-offset-x) var(--shadow-offset-y) 0 0 var(--color-shadow);
+}
+
+@utility brutal-shadow-inset {
+  box-shadow: inset var(--shadow-inset-offset-x) var(--shadow-inset-offset-y) 0 0 var(--color-shadow);
+}

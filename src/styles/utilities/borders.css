@@ -1,0 +1,37 @@
+/* Border utilities */
+
+/* --- Border Structure --- */
+
+/* Element border */
+@utility border-element {
+  border-width: var(--border-element);
+  border-style: solid;
+}
+
+/* Component border */
+@utility border-component {
+  border-width: var(--border-component);
+  border-style: solid;
+}
+
+/* --- Border Radius Structure --- */
+
+/* Element radius */
+@utility radius-element {
+  border-radius: var(--radius-element);
+}
+
+/* Component radius */
+@utility radius-component {
+  border-radius: var(--radius-component);
+}
+
+/* Subsection radius */
+@utility radius-subsection {
+  border-radius: var(--radius-subsection);
+}
+
+/* Section radius */
+@utility radius-section {
+  border-radius: var(--radius-section);
+}

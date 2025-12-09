@@ -21,8 +21,8 @@ export function MessageList({ chatItems, sessionId }: MessageListProps) {
   }, [chatItems.length, chatItems[chatItems.length - 1]]);
 
   return (
-    <ScrollArea ref={viewportRef} className="h-full px-4">
-      <div className="space-y-4 py-4">
+    <ScrollArea ref={viewportRef} className="h-full">
+      <div className="space-y-4 px-4 py-4">
         {chatItems.map((item) => {
           if (item.type === "message") {
             return <MessageBubble key={item.id} message={item.data} />;

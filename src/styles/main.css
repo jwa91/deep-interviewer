@@ -1,0 +1,32 @@
+/* Main CSS import file */
+
+/* Base styles */
+@import "./base/tailwind-imports.css";
+@import "./base/typography.css";
+
+/* Tokens */
+@import "./tokens/colors.css";
+@import "./tokens/spacing.css";
+@import "./tokens/typography.css";
+@import "./tokens/borders.css";
+@import "./tokens/shadows.css";
+
+/* Themes */
+@import "./themes/light.css";
+@import "./themes/dark.css";
+@import "./themes/read.css";
+
+@import "./animations/animations.css";
+
+/* Utilities */
+@import "./utilities/shadows.css";
+@import "./utilities/layouts.css";
+@import "./utilities/borders.css";
+@import "./utilities/layer-styling.css";
+@import "./utilities/typography.css";
+
+/* Add explicit background color to body based on theme */
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}

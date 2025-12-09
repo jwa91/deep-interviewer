@@ -1,0 +1,26 @@
+/* Layer styling utilities */
+
+/* --- Background Layer Styling --- */
+@utility layer-bg-styled {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+/* --- Section Layer Styling --- */
+@utility layer-section-offset {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-section);
+}
+
+/* --- Subsection Layer Styling --- */
+@utility layer-subsection-offset {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-subsection);
+}
+
+/* --- Element Layer Styling --- */
+@utility layer-element-styled {
+  border-radius: var(--radius-element);
+}

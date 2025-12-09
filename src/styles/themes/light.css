@@ -1,0 +1,21 @@
+/* Light theme (default) */
+:root {
+  --color-bg-primary: #f8f8f6;
+  --color-bg-secondary: #e9e9e7;
+  --color-bg-tertiary: #dcdcda;
+  --color-text-primary: #0f0d0e;
+  --color-text-on-accent: #0f0d0e;
+  --color-accent-1: var(--color-yellow-base);
+  --color-accent-2: var(--color-green-base);
+  --color-accent-3: var(--color-cream-base);
+  --color-accent-4: var(--color-blue-base);
+  --color-accent-5: var(--color-red-base);
+  --color-accent-6: var(--color-orange-base);
+  --color-accent-7: var(--color-pink-base);
+  --color-accent-8: var(--color-purple-base);
+  --color-border: #000000;
+  --color-shadow: #000000;
+  --color-highlight: #000000;
+  --color-ring: #0f0d0e;
+  --color-ring-offset: #f8f8f6;
+}
