@@ -22,7 +22,8 @@ describe("INTERVIEWER_SYSTEM_PROMPT", () => {
   it("emphasizes natural conversation flow for tool calling", () => {
     expect(INTERVIEWER_SYSTEM_PROMPT).toContain("Onthoud alles");
     expect(INTERVIEWER_SYSTEM_PROMPT).toContain("Natuurlijke overgangen");
-    expect(INTERVIEWER_SYSTEM_PROMPT).toContain("Volg de flow");
+    // "Volg de flow" was removed in favor of being more directive/efficient
+    expect(INTERVIEWER_SYSTEM_PROMPT).toContain("Snelheid in het begin");
   });
 
   it("mentions JW as the instructor", () => {
