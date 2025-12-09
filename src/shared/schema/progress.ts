@@ -64,6 +64,59 @@ export const InterviewProgressSchema = z.object({
 export type InterviewProgress = z.infer<typeof InterviewProgressSchema>;
 
 // ═══════════════════════════════════════════════════════════════
+// RESPONSE API TYPES - For viewing/editing recorded responses
+// ═══════════════════════════════════════════════════════════════
+
+export const ResponseSourceSchema = z.enum(["agent", "user_edit"]);
+export type ResponseSource = z.infer<typeof ResponseSourceSchema>;
+
+/**
+ * Single topic response with metadata for the API
+ */
+export const TopicResponseSchema = z.object({
+  topic: z.enum([
+    "ai_background",
+    "overall_impression",
+    "perceived_content",
+    "difficulty",
+    "content_quality",
+    "presentation",
+    "clarity",
+    "suggestions",
+    "course_parts",
+  ]),
+  data: z.record(z.string(), z.unknown()),
+  timestamp: z.string().datetime(),
+  source: ResponseSourceSchema,
+});
+
+export type TopicResponse = z.infer<typeof TopicResponseSchema>;
+
+/**
+ * Full interview responses DTO for the API
+ */
+export const InterviewResponsesDTOSchema = z.object({
+  sessionId: z.string().uuid(),
+  responses: z.record(z.string(), TopicResponseSchema),
+  completedTopics: z.array(
+    z.enum([
+      "ai_background",
+      "overall_impression",
+      "perceived_content",
+      "difficulty",
+      "content_quality",
+      "presentation",
+      "clarity",
+      "suggestions",
+      "course_parts",
+    ])
+  ),
+  totalTopics: z.literal(9),
+});
+
+export type InterviewResponsesDTO = z.infer<typeof InterviewResponsesDTOSchema>;
+
+// ═══════════════════════════════════════════════════════════════
 // HELPER FUNCTIONS
 // ═══════════════════════════════════════════════════════════════
 

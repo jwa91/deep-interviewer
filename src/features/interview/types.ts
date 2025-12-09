@@ -120,3 +120,42 @@ export interface GetSessionResponse {
   }>;
   progress: ProgressState;
 }
+
+// ═══════════════════════════════════════════════════════════════
+// RESPONSE API TYPES
+// ═══════════════════════════════════════════════════════════════
+
+export type QuestionId =
+  | "ai_background"
+  | "overall_impression"
+  | "perceived_content"
+  | "difficulty"
+  | "content_quality"
+  | "presentation"
+  | "clarity"
+  | "suggestions"
+  | "course_parts";
+
+export type ResponseSource = "agent" | "user_edit";
+
+export interface TopicResponseDTO {
+  topic: QuestionId;
+  data: Record<string, unknown>;
+  timestamp: string;
+  source: ResponseSource;
+}
+
+export interface GetAllResponsesResponse {
+  sessionId: string;
+  responses: Record<string, TopicResponseDTO>;
+  completedTopics: QuestionId[];
+  totalTopics: 9;
+}
+
+export interface GetTopicResponseResponse extends TopicResponseDTO {}
+
+export interface UpdateTopicResponseRequest {
+  [key: string]: unknown;
+}
+
+export interface UpdateTopicResponseResponse extends TopicResponseDTO {}

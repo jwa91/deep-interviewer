@@ -54,4 +54,11 @@ export {
   isInterviewComplete,
   getRemainingQuestions,
   getCompletedQuestions,
+  // Response API types
+  ResponseSourceSchema,
+  type ResponseSource,
+  TopicResponseSchema,
+  type TopicResponse,
+  InterviewResponsesDTOSchema,
+  type InterviewResponsesDTO,
 } from "./progress";

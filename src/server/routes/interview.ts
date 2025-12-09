@@ -312,3 +312,209 @@ interviewRoutes.get("/:id/results", async (c) => {
     return c.json({ error: "No interview data found" }, 404);
   }
 });
+
+// ═══════════════════════════════════════════════════════════════
+// GET /api/interviews/:id/responses - Get all recorded responses
+// ═══════════════════════════════════════════════════════════════
+
+interviewRoutes.get("/:id/responses", async (c) => {
+  const { id } = c.req.param();
+
+  const session = getSession(id);
+  if (!session) {
+    return c.json({ error: "Interview not found" }, 404);
+  }
+
+  const agent = await getAgent();
+  const config = { configurable: { thread_id: id } };
+
+  try {
+    const state = await agent.getState(config);
+
+    const responses = state.values?.responses ?? {};
+    const questionsCompleted = state.values?.questionsCompleted ?? {};
+
+    // Get list of completed topic IDs
+    const completedTopics = Object.entries(questionsCompleted)
+      .filter(([, completed]) => completed)
+      .map(([topic]) => topic);
+
+    // Transform responses to include metadata
+    const responsesWithMetadata: Record<
+      string,
+      {
+        topic: string;
+        data: unknown;
+        timestamp: string;
+        source: "agent" | "user_edit";
+      }
+    > = {};
+
+    for (const [topic, data] of Object.entries(responses)) {
+      if (data) {
+        responsesWithMetadata[topic] = {
+          topic,
+          data,
+          // Use completedAt if available, otherwise use startedAt as fallback
+          timestamp:
+            state.values?.completedAt ?? state.values?.startedAt ?? new Date().toISOString(),
+          // Check if data has a source field, otherwise default to "agent"
+          source: (data as { source?: "agent" | "user_edit" }).source ?? "agent",
+        };
+      }
+    }
+
+    return c.json({
+      sessionId: id,
+      responses: responsesWithMetadata,
+      completedTopics,
+      totalTopics: 9,
+    });
+  } catch {
+    // No state yet (interview not started)
+    return c.json({
+      sessionId: id,
+      responses: {},
+      completedTopics: [],
+      totalTopics: 9,
+    });
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+// GET /api/interviews/:id/responses/:topic - Get single topic response
+// ═══════════════════════════════════════════════════════════════
+
+interviewRoutes.get("/:id/responses/:topic", async (c) => {
+  const { id, topic } = c.req.param();
+
+  // Validate topic is a valid question ID
+  const validTopics = [
+    "ai_background",
+    "overall_impression",
+    "perceived_content",
+    "difficulty",
+    "content_quality",
+    "presentation",
+    "clarity",
+    "suggestions",
+    "course_parts",
+  ];
+
+  if (!validTopics.includes(topic)) {
+    return c.json({ error: `Invalid topic: ${topic}` }, 400);
+  }
+
+  const session = getSession(id);
+  if (!session) {
+    return c.json({ error: "Interview not found" }, 404);
+  }
+
+  const agent = await getAgent();
+  const config = { configurable: { thread_id: id } };
+
+  try {
+    const state = await agent.getState(config);
+
+    const responses = state.values?.responses ?? {};
+    const data = responses[topic as keyof typeof responses];
+
+    if (!data) {
+      return c.json({ error: `No response recorded for topic: ${topic}` }, 404);
+    }
+
+    return c.json({
+      topic,
+      data,
+      timestamp: state.values?.completedAt ?? state.values?.startedAt ?? new Date().toISOString(),
+      source: (data as { source?: "agent" | "user_edit" }).source ?? "agent",
+    });
+  } catch {
+    return c.json({ error: "No interview data found" }, 404);
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════
+// PUT /api/interviews/:id/responses/:topic - Update/correct a response
+// ═══════════════════════════════════════════════════════════════
+
+interviewRoutes.put("/:id/responses/:topic", async (c) => {
+  const { id, topic } = c.req.param();
+
+  // Validate topic is a valid question ID
+  const validTopics = [
+    "ai_background",
+    "overall_impression",
+    "perceived_content",
+    "difficulty",
+    "content_quality",
+    "presentation",
+    "clarity",
+    "suggestions",
+    "course_parts",
+  ];
+
+  if (!validTopics.includes(topic)) {
+    return c.json({ error: `Invalid topic: ${topic}` }, 400);
+  }
+
+  const session = getSession(id);
+  if (!session) {
+    return c.json({ error: "Interview not found" }, 404);
+  }
+
+  const body = await c.req.json().catch(() => null);
+  if (!body || typeof body !== "object") {
+    return c.json({ error: "Request body must be a valid JSON object" }, 400);
+  }
+
+  const agent = await getAgent();
+  const config = { configurable: { thread_id: id } };
+
+  try {
+    const state = await agent.getState(config);
+
+    if (!state.values) {
+      return c.json({ error: "Interview has no state yet" }, 400);
+    }
+
+    // Get current responses and update the specific topic
+    const currentResponses = state.values.responses ?? {};
+
+    // Add source metadata to track user edits
+    const updatedData = {
+      ...body,
+      source: "user_edit" as const,
+    };
+
+    const updatedResponses = {
+      ...currentResponses,
+      [topic]: updatedData,
+    };
+
+    // Also mark the question as completed if it wasn't already
+    const updatedQuestionsCompleted = {
+      ...state.values.questionsCompleted,
+      [topic]: true,
+    };
+
+    // Update the state using updateState
+    await agent.updateState(config, {
+      responses: updatedResponses,
+      questionsCompleted: updatedQuestionsCompleted,
+    });
+
+    return c.json({
+      topic,
+      data: updatedData,
+      timestamp: new Date().toISOString(),
+      source: "user_edit",
+    });
+  } catch (error) {
+    console.error("Error updating response:", error);
+    return c.json(
+      { error: error instanceof Error ? error.message : "Failed to update response" },
+      500
+    );
+  }
+});

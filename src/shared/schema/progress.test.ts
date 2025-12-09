@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   InterviewProgressSchema,
+  InterviewResponsesDTOSchema,
   QuestionCompletionSchema,
+  ResponseSourceSchema,
+  TopicResponseSchema,
   countCompletedQuestions,
   createEmptyProgress,
   getCompletedQuestions,
@@ -170,5 +173,162 @@ describe("getCompletedQuestions", () => {
     expect(completed).toHaveLength(2);
     expect(completed).toContain("ai_background");
     expect(completed).toContain("difficulty");
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// RESPONSE API SCHEMA TESTS
+// ═══════════════════════════════════════════════════════════════
+
+describe("ResponseSourceSchema", () => {
+  it("accepts 'agent' as valid source", () => {
+    const result = ResponseSourceSchema.parse("agent");
+    expect(result).toBe("agent");
+  });
+
+  it("accepts 'user_edit' as valid source", () => {
+    const result = ResponseSourceSchema.parse("user_edit");
+    expect(result).toBe("user_edit");
+  });
+
+  it("rejects invalid source values", () => {
+    expect(() => ResponseSourceSchema.parse("invalid")).toThrow();
+    expect(() => ResponseSourceSchema.parse("system")).toThrow();
+    expect(() => ResponseSourceSchema.parse("")).toThrow();
+  });
+});
+
+describe("TopicResponseSchema", () => {
+  it("accepts valid topic response", () => {
+    const response = TopicResponseSchema.parse({
+      topic: "ai_background",
+      data: { experienceLevel: 3, summary: "test" },
+      timestamp: "2024-01-15T10:00:00.000Z",
+      source: "agent",
+    });
+    expect(response.topic).toBe("ai_background");
+    expect(response.source).toBe("agent");
+  });
+
+  it("accepts all valid topic IDs", () => {
+    const validTopics = [
+      "ai_background",
+      "overall_impression",
+      "perceived_content",
+      "difficulty",
+      "content_quality",
+      "presentation",
+      "clarity",
+      "suggestions",
+      "course_parts",
+    ];
+
+    for (const topic of validTopics) {
+      const response = TopicResponseSchema.parse({
+        topic,
+        data: {},
+        timestamp: "2024-01-15T10:00:00.000Z",
+        source: "agent",
+      });
+      expect(response.topic).toBe(topic);
+    }
+  });
+
+  it("rejects invalid topic ID", () => {
+    expect(() =>
+      TopicResponseSchema.parse({
+        topic: "invalid_topic",
+        data: {},
+        timestamp: "2024-01-15T10:00:00.000Z",
+        source: "agent",
+      })
+    ).toThrow();
+  });
+
+  it("accepts user_edit source", () => {
+    const response = TopicResponseSchema.parse({
+      topic: "difficulty",
+      data: { difficultyRating: 4 },
+      timestamp: "2024-01-15T10:00:00.000Z",
+      source: "user_edit",
+    });
+    expect(response.source).toBe("user_edit");
+  });
+});
+
+describe("InterviewResponsesDTOSchema", () => {
+  it("accepts valid responses DTO", () => {
+    const dto = InterviewResponsesDTOSchema.parse({
+      sessionId: "550e8400-e29b-41d4-a716-446655440000",
+      responses: {
+        ai_background: {
+          topic: "ai_background",
+          data: { experienceLevel: 3 },
+          timestamp: "2024-01-15T10:00:00.000Z",
+          source: "agent",
+        },
+      },
+      completedTopics: ["ai_background"],
+      totalTopics: 9,
+    });
+    expect(dto.sessionId).toBe("550e8400-e29b-41d4-a716-446655440000");
+    expect(dto.totalTopics).toBe(9);
+  });
+
+  it("accepts empty responses", () => {
+    const dto = InterviewResponsesDTOSchema.parse({
+      sessionId: "550e8400-e29b-41d4-a716-446655440000",
+      responses: {},
+      completedTopics: [],
+      totalTopics: 9,
+    });
+    expect(Object.keys(dto.responses)).toHaveLength(0);
+    expect(dto.completedTopics).toHaveLength(0);
+  });
+
+  it("accepts multiple responses", () => {
+    const dto = InterviewResponsesDTOSchema.parse({
+      sessionId: "550e8400-e29b-41d4-a716-446655440000",
+      responses: {
+        ai_background: {
+          topic: "ai_background",
+          data: { experienceLevel: 3 },
+          timestamp: "2024-01-15T10:00:00.000Z",
+          source: "agent",
+        },
+        difficulty: {
+          topic: "difficulty",
+          data: { difficultyRating: 2 },
+          timestamp: "2024-01-15T10:05:00.000Z",
+          source: "user_edit",
+        },
+      },
+      completedTopics: ["ai_background", "difficulty"],
+      totalTopics: 9,
+    });
+    expect(Object.keys(dto.responses)).toHaveLength(2);
+    expect(dto.completedTopics).toHaveLength(2);
+  });
+
+  it("requires totalTopics to be exactly 9", () => {
+    expect(() =>
+      InterviewResponsesDTOSchema.parse({
+        sessionId: "550e8400-e29b-41d4-a716-446655440000",
+        responses: {},
+        completedTopics: [],
+        totalTopics: 10,
+      })
+    ).toThrow();
+  });
+
+  it("validates completedTopics are valid question IDs", () => {
+    expect(() =>
+      InterviewResponsesDTOSchema.parse({
+        sessionId: "550e8400-e29b-41d4-a716-446655440000",
+        responses: {},
+        completedTopics: ["invalid_topic"],
+        totalTopics: 9,
+      })
+    ).toThrow();
   });
 });
