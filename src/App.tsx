@@ -105,12 +105,15 @@ function App() {
 
   // Initialize with welcome message or restore existing messages
   useEffect(() => {
-    if (existingMessages.length > 0) {
-      // Restore existing conversation with tool cards
-      setChatItems(restoreChatItems(existingMessages));
-    } else if (session?.sessionId && chatItems.length === 0) {
-      // New session - show welcome message (also stored in LangGraph state)
-      setChatItems([messageToItem(createWelcomeMessage())]);
+    // Only initialize if chatItems is empty to avoid overwriting ongoing conversation
+    if (chatItems.length === 0) {
+      if (existingMessages.length > 0) {
+        // Restore existing conversation with tool cards
+        setChatItems(restoreChatItems(existingMessages));
+      } else if (session?.sessionId) {
+        // New session - show welcome message (also stored in LangGraph state)
+        setChatItems([messageToItem(createWelcomeMessage())]);
+      }
     }
   }, [session?.sessionId, existingMessages, setChatItems, chatItems.length]);
 
