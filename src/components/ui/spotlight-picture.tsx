@@ -1,46 +1,21 @@
-You are a senior frontender designer.
+"use client"
 
-Its your job to modify the "welcome" card of this application., (the one where someone fills in the card)
+import * as React from "react"
+import { cn } from "@/lib/utils"
 
-What it should look like:
-
-- remove the bottom text "Je kunt dit interview op elk moment onderbreken en later hervatten met dezelfde code." and make it part of the other text ("Voer je persoonlijke code in om te beginnen of verder te gaan met je feedback.")
-- Modify the content:
-
-```markdown
-# Hoi LLM fundamentels deelnemer
-
-Bedankt voor je deelname aan de LLM fundamentals workshop. Tijdens de training hebben we gekeken naar de werking en het gebruik van LLM's. Ik ben erg benieuwd hoe je de training hebt ervaren. Om de enquete daarover een beetje in een leuke vorm te gieten, heb ik een AI agent gemaakt die je zal interviewen over de training. De interviewer heeft in totaal 9 vragen voor je, en ik denk dat het invullen ervan ongeveer 10 minuten tijd kost. Alle feedback wordt gewaardeerd!
-
-Je kunt de Agent ook vragen naar de slides, mocht je nog eens wat na willen lezen.
-
-Je kunt dit interview op elk moment onderbreken en later hervatten met dezelfde code, maar ik zou het fijn vinden als je de feedback die je wilt geven geeft binnen ongeveer 2 weken.
-
-Als laatste: mocht je nu of in de toekomst nog bepaalde Ai gerelateerde vragen of uitdagingen hebben, denk ik heel graag met je mee. Stuur me gerust een Teams berichtje of email in dat geval.
-
-Groeten, Jan Willem
-```
-
-I'd like to show a picture with this message, i used to have a component to show pictures in a nice neo brutalism style that suits the styling, i dont think the component is one on one usable, but if yuou could integrate it in this project that would be great:
-
-```typescript
-"use client";
-
-import * as React from "react";
-import { cn } from "@/lib/utils";
-
-export interface SpotlightPictureProps extends React.HTMLAttributes<HTMLDivElement> {
-  imageSrc: string;
-  imageAlt?: string;
+export interface SpotlightPictureProps
+  extends React.HTMLAttributes<HTMLDivElement> {
+  imageSrc: string
+  imageAlt?: string
 }
 
 const SpotlightPicture = React.forwardRef<HTMLDivElement, SpotlightPictureProps>(
   ({ imageSrc, imageAlt = "", className, children, ...props }, ref) => {
     // Generate a unique ID for the clip path
-    const clipId = React.useId();
-
+    const clipId = React.useId()
+    
     // Determine if we have a custom class
-    const hasCustomClass = className !== "";
+    const hasCustomClass = className !== ""
 
     return (
       <figure className={cn("relative", className)} {...props} ref={ref}>
@@ -61,7 +36,7 @@ const SpotlightPicture = React.forwardRef<HTMLDivElement, SpotlightPictureProps>
                   389.121 56.2348 400.499 15.924 346.431C-24.3867 292.362 16.9862 
                   193.322 108.333 125.218C199.68 57.1145 306.41 
                   45.7366 346.72 99.805Z"
-                fill={hasCustomClass ? "currentColor" : "var(--main)"}
+                fill={hasCustomClass ? "currentColor" : "var(--primary)"}
                 stroke="var(--border)"
                 strokeWidth="1"
               />
@@ -82,7 +57,7 @@ const SpotlightPicture = React.forwardRef<HTMLDivElement, SpotlightPictureProps>
                     />
                   </clipPath>
                 </defs>
-
+                
                 <image
                   href={imageSrc}
                   width="100%"
@@ -98,13 +73,11 @@ const SpotlightPicture = React.forwardRef<HTMLDivElement, SpotlightPictureProps>
         {/* Optional children content */}
         {children}
       </figure>
-    );
+    )
   }
-);
+)
 
-SpotlightPicture.displayName = "SpotlightPicture";
+SpotlightPicture.displayName = "SpotlightPicture"
 
-export { SpotlightPicture };
-```
+export { SpotlightPicture }
 
-Now, this is a lot more content then before, so the card should probably be bigger to make it fit in a nice way. Make sure to follow existing convnetions as much as possible. In the public folder i have a png you can use: public/avatar_no_background_jw_altink_optimized.png.
