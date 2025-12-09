@@ -59,7 +59,7 @@ export function ChatContainer({
               </div>
             </div>
           </div>
-          <ProgressBar progress={progress} />
+          <ProgressBar progress={progress} sessionId={sessionId} />
         </div>
       </header>
 
