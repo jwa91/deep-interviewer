@@ -1,4 +1,5 @@
 import type { ChatItem, ProgressState } from "../types";
+import { Button } from "@/components/ui/button";
 import { MessageInput } from "./message-input";
 import { MessageList } from "./message-list";
 import { ProgressBar } from "./progress-bar";
@@ -10,6 +11,7 @@ interface ChatContainerProps {
   readonly isStreaming: boolean;
   readonly error: string | null;
   readonly onSendMessage: (message: string) => void;
+  readonly onLeave: () => void;
 }
 
 export function ChatContainer({
@@ -19,6 +21,7 @@ export function ChatContainer({
   isStreaming,
   error,
   onSendMessage,
+  onLeave,
 }: ChatContainerProps) {
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background">
@@ -60,6 +63,9 @@ export function ChatContainer({
                 </p>
               </div>
             </div>
+            <Button variant="outline" size="sm" onClick={onLeave}>
+              Chat verlaten
+            </Button>
           </div>
           <ProgressBar progress={progress} sessionId={sessionId} />
         </div>

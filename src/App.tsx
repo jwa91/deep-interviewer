@@ -74,6 +74,7 @@ function App() {
     existingMessages,
     startSession,
     updateProgress,
+    clearSession,
   } = useInterviewSession();
 
   const [showCompletionModal, setShowCompletionModal] = useState(false);
@@ -102,6 +103,13 @@ function App() {
     onProgressUpdate: handleProgressUpdate,
     onComplete: handleComplete,
   });
+
+  const handleLeave = useCallback(() => {
+    clearSession();
+    setChatItems([]);
+    setLocalProgress(createDefaultProgress());
+    setShowCompletionModal(false);
+  }, [clearSession, setChatItems]);
 
   // Initialize with welcome message or restore existing messages
   useEffect(() => {
@@ -156,6 +164,7 @@ function App() {
         isStreaming={isStreaming}
         error={chatError}
         onSendMessage={sendMessage}
+        onLeave={handleLeave}
       />
       <CompletionModal isOpen={showCompletionModal} onClose={() => setShowCompletionModal(false)} />
     </>
