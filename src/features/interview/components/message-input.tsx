@@ -38,7 +38,7 @@ export function MessageInput({
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder}
+          placeholder={disabled ? "Even geduld, de interviewer is aan het typen..." : placeholder}
           disabled={disabled}
           className="max-h-32 min-h-[52px] resize-none bg-input font-mono text-base text-foreground placeholder:text-muted-foreground"
           rows={1}
@@ -66,11 +66,6 @@ export function MessageInput({
           <span className="sr-only">Verstuur</span>
         </Button>
       </div>
-      {disabled && (
-        <p className="mt-2 text-center font-bold font-mono text-muted-foreground text-xs uppercase tracking-wider">
-          Even geduld, de interviewer is aan het typen...
-        </p>
-      )}
     </form>
   );
 }

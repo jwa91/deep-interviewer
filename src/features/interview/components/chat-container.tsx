@@ -1,3 +1,4 @@
+import { Bot } from "lucide-react";
 import type { ChatItem, ProgressState } from "../types";
 import { Button } from "@/components/ui/button";
 import { MessageInput } from "./message-input";
@@ -41,20 +42,7 @@ export function ChatContainer({
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="brutal-shadow flex h-10 w-10 items-center justify-center rounded-md border-2 border-border bg-primary">
-                <svg
-                  className="h-5 w-5 text-primary-foreground"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                  />
-                </svg>
+                <Bot className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
                 <h1 className="font-black font-heading text-foreground text-xl">Cursus Feedback</h1>

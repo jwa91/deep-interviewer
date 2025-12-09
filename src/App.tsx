@@ -5,6 +5,7 @@ import {
   ChatContainer,
   CompletionModal,
   WelcomeScreen,
+  DebugView,
   createDefaultProgress,
   useChatStream,
   useInterviewSession,
@@ -65,7 +66,7 @@ const restoreChatItems = (messages: Message[]): ChatItem[] => {
   return items;
 };
 
-function App() {
+function MainApp() {
   const {
     session,
     progress,
@@ -169,6 +170,18 @@ function App() {
       <CompletionModal isOpen={showCompletionModal} onClose={() => setShowCompletionModal(false)} />
     </>
   );
+}
+
+function App() {
+  // Check for debug mode
+  const searchParams = new URLSearchParams(window.location.search);
+  const isDebug = searchParams.get("debug") === "true";
+
+  if (isDebug) {
+    return <DebugView />;
+  }
+
+  return <MainApp />;
 }
 
 export default App;
