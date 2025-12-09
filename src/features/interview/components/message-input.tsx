@@ -4,9 +4,9 @@ import type { FormEvent, KeyboardEvent } from "react";
 import { useState } from "react";
 
 interface MessageInputProps {
-  onSend: (message: string) => void;
-  disabled?: boolean;
-  placeholder?: string;
+  readonly onSend: (message: string) => void;
+  readonly disabled?: boolean;
+  readonly placeholder?: string;
 }
 
 export function MessageInput({

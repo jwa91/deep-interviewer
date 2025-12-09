@@ -4,12 +4,12 @@ import { MessageList } from "./message-list";
 import { ProgressBar } from "./progress-bar";
 
 interface ChatContainerProps {
-  chatItems: ChatItem[];
-  sessionId: string;
-  progress: ProgressState;
-  isStreaming: boolean;
-  error: string | null;
-  onSendMessage: (message: string) => void;
+  readonly chatItems: ChatItem[];
+  readonly sessionId: string;
+  readonly progress: ProgressState;
+  readonly isStreaming: boolean;
+  readonly error: string | null;
+  readonly onSendMessage: (message: string) => void;
 }
 
 export function ChatContainer({

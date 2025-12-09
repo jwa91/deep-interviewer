@@ -11,9 +11,9 @@ import { useTopicResponse } from "../hooks/use-topic-response";
 import type { QuestionId, ToolCardData } from "../types";
 
 interface AgentNoteCardProps {
-  questionId: QuestionId;
-  state: ToolCardData["state"];
-  sessionId: string;
+  readonly questionId: QuestionId;
+  readonly state: ToolCardData["state"];
+  readonly sessionId: string;
 }
 
 const QUESTION_LABELS: Record<QuestionId, string> = {
@@ -145,9 +145,9 @@ export function AgentNoteCard({ questionId, state, sessionId }: AgentNoteCardPro
                       Citaten
                     </h4>
                     <ul className="space-y-2">
-                      {/* biome-ignore lint/suspicious/noArrayIndexKey: quotes are static strings without unique IDs */}
                       {quotes.map((quote, index) => (
                         <li
+                          // biome-ignore lint/suspicious/noArrayIndexKey: quotes are static strings without unique IDs
                           key={`${questionId}-quote-${index}`}
                           className="flex gap-2 text-slate-300 text-sm"
                         >

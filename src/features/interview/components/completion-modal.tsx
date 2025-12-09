@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/dialog";
 
 interface CompletionModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  readonly isOpen: boolean;
+  readonly onClose: () => void;
 }
 
 export function CompletionModal({ isOpen, onClose }: CompletionModalProps) {

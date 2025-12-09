@@ -59,8 +59,8 @@ export function useChatStream({
   const [error, setError] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: SSE handler requires many branches for different event types
   const sendMessage = useCallback(
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: SSE handler requires many branches for different event types
     async (content: string) => {
       if (!sessionId || isStreaming) {
         return;

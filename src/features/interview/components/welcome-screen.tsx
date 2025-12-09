@@ -6,9 +6,9 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 
 interface WelcomeScreenProps {
-  onStart: (code: string) => Promise<void>;
-  isLoading: boolean;
-  error: string | null;
+  readonly onStart: (code: string) => Promise<void>;
+  readonly isLoading: boolean;
+  readonly error: string | null;
 }
 
 export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps) {

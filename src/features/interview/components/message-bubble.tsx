@@ -3,7 +3,7 @@ import type { Message } from "../types";
 import { TypingIndicator } from "./typing-indicator";
 
 interface MessageBubbleProps {
-  message: Message;
+  readonly message: Message;
 }
 
 export function MessageBubble({ message }: MessageBubbleProps) {

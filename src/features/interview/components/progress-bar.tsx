@@ -2,7 +2,7 @@ import { Progress } from "@/components/ui/progress";
 import type { ProgressState } from "../types";
 
 interface ProgressBarProps {
-  progress: ProgressState;
+  readonly progress: ProgressState;
 }
 
 export function ProgressBar({ progress }: ProgressBarProps) {

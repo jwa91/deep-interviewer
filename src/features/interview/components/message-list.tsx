@@ -5,8 +5,8 @@ import { AgentNoteCard } from "./agent-note-card";
 import { MessageBubble } from "./message-bubble";
 
 interface MessageListProps {
-  chatItems: ChatItem[];
-  sessionId: string;
+  readonly chatItems: ChatItem[];
+  readonly sessionId: string;
 }
 
 export function MessageList({ chatItems, sessionId }: MessageListProps) {
