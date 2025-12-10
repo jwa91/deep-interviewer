@@ -23,7 +23,7 @@ services:
       - LANGSMITH_TRACING=${LANGSMITH_TRACING}
       # Model configuration (optional)
       - MODEL_PROVIDER=${MODEL_PROVIDER:-anthropic}
-      - MODEL_NAME=${MODEL_NAME:-claude-sonnet-4-20250514}
+      - MODEL_NAME=${MODEL_NAME:-claude-haiku-4-5}
     volumes:
       # Persist SQLite database
       - interview-data:/app/data

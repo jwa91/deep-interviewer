@@ -50,8 +50,8 @@ function createAnthropicModel(config: ModelConfig): ChatAnthropic {
 
   return new ChatAnthropic({
     anthropicApiKey: apiKey,
-    model: config.modelName ?? "claude-sonnet-4-20250514",
-    temperature: config.temperature ?? 0.7,
+    model: config.modelName ?? DEFAULT_CONFIG.modelName,
+    temperature: config.temperature ?? DEFAULT_CONFIG.temperature,
   });
 }
 
