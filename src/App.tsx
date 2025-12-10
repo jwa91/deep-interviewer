@@ -9,8 +9,8 @@ import {
   useChatStream,
   useInterviewSession,
 } from "./features/interview";
-import { DebugOverlay } from "./features/interview/components/debug-overlay";
 import type { ChatItem, Message, ProgressState } from "./features/interview";
+import { DebugOverlay } from "./features/interview/components/debug-overlay";
 import { WELCOME_MESSAGE } from "./shared/constants";
 import { toolNameToQuestionId } from "./shared/schema";
 

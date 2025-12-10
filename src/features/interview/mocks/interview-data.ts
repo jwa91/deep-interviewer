@@ -1,15 +1,12 @@
 import { WELCOME_MESSAGE } from "@/shared/constants";
-import type {
-  Message,
-  ProgressState,
-  QuestionCompletion,
-} from "../types";
+import type { Message, ProgressState, QuestionCompletion } from "../types";
 
 export const MOCK_RESPONSES = {
   ai_background: {
     topic: "ai_background",
     data: {
-      summary: "De deelnemer heeft beperkte ervaring met AI, voornamelijk via ChatGPT voor brainstormen.",
+      summary:
+        "De deelnemer heeft beperkte ervaring met AI, voornamelijk via ChatGPT voor brainstormen.",
       quotes: ["Ik gebruik het soms om ideeën op te doen", "Nog niet zakelijk ingezet"],
       userType: "novice",
       experienceLevel: 2,
@@ -127,7 +124,8 @@ export const MOCK_MESSAGES: Message[] = [
   {
     id: "msg_2",
     role: "user",
-    content: "Hoi, is goed. Ik had er nog niet zoveel ervaring mee, alleen wat gespeeld met ChatGPT.",
+    content:
+      "Hoi, is goed. Ik had er nog niet zoveel ervaring mee, alleen wat gespeeld met ChatGPT.",
     timestamp: new Date(Date.now() - 900000),
   },
   {
@@ -174,7 +172,7 @@ export const MOCK_MESSAGES: Message[] = [
     ],
     timestamp: new Date(Date.now() - 600000),
   },
-    {
+  {
     id: "msg_6",
     role: "user",
     content: "Ik vond het erg leerzaam en leuk gebracht.",
@@ -198,4 +196,3 @@ export const MOCK_PROGRESS: ProgressState = {
   totalQuestions: 9,
   isComplete: true,
 };
-

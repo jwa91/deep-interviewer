@@ -19,10 +19,10 @@ export function MessageInput({
   // Allow setting message externally (for debug quick actions)
   useEffect(() => {
     const handleDebugFill = (e: CustomEvent<string>) => {
-        setMessage(e.detail);
-        // Optional: auto-submit
-        // onSend(e.detail);
-        // setMessage("");
+      setMessage(e.detail);
+      // Optional: auto-submit
+      // onSend(e.detail);
+      // setMessage("");
     };
     window.addEventListener("debug:fill-message", handleDebugFill as EventListener);
     return () => window.removeEventListener("debug:fill-message", handleDebugFill as EventListener);

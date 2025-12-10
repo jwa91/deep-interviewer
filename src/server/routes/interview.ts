@@ -94,7 +94,11 @@ interviewRoutes.get("/", (c) => {
   return c.json({ sessions });
 });
 
-import { MOCK_MESSAGES, MOCK_PROGRESS, MOCK_RESPONSES } from "@/features/interview/mocks/interview-data";
+import {
+  MOCK_MESSAGES,
+  MOCK_PROGRESS,
+  MOCK_RESPONSES,
+} from "@/features/interview/mocks/interview-data";
 import { mockInterviewService } from "../services/mock-interview";
 
 // ═══════════════════════════════════════════════════════════════
@@ -223,55 +227,58 @@ interviewRoutes.post("/:id/chat", async (c) => {
   if (id === "debug-session") {
     const body = await c.req.json();
     const message = body.message as string;
-    
-    return streamSSE(c, async (stream) => {
-        const result = await mockInterviewService.processMessage(message);
-        const messageId = `msg_${Date.now()}`;
-        
-        // Start message
-        await stream.writeSSE({ event: "message_start", data: JSON.stringify({ messageId }) });
-        
-        // Simulate thinking delay
-        await new Promise(r => setTimeout(r, 500));
-        
-        // Tool calls first if any
-        if (result.toolCalls.length > 0) {
-            for (const tool of result.toolCalls) {
-                 await stream.writeSSE({
-                    event: "tool_start",
-                    data: JSON.stringify({ name: tool.name, input: tool.args })
-                 });
-                 await new Promise(r => setTimeout(r, 800)); // Visible delay
-                 await stream.writeSSE({
-                    event: "tool_end",
-                    data: JSON.stringify({ name: tool.name, output: "Success" }) // Mock output
-                 });
-            }
-            // Start new message for text after tool
-             await stream.writeSSE({ event: "message_start", data: JSON.stringify({ messageId: messageId + "_2" }) });
-        }
 
-        // Stream text
-        const tokens = result.fullResponse.split(" ");
-        for (const token of tokens) {
-            await stream.writeSSE({
-                event: "token",
-                data: JSON.stringify({ content: token + " ", messageId })
-            });
-            await new Promise(r => setTimeout(r, 50));
+    return streamSSE(c, async (stream) => {
+      const result = await mockInterviewService.processMessage(message);
+      const messageId = `msg_${Date.now()}`;
+
+      // Start message
+      await stream.writeSSE({ event: "message_start", data: JSON.stringify({ messageId }) });
+
+      // Simulate thinking delay
+      await new Promise((r) => setTimeout(r, 500));
+
+      // Tool calls first if any
+      if (result.toolCalls.length > 0) {
+        for (const tool of result.toolCalls) {
+          await stream.writeSSE({
+            event: "tool_start",
+            data: JSON.stringify({ name: tool.name, input: tool.args }),
+          });
+          await new Promise((r) => setTimeout(r, 800)); // Visible delay
+          await stream.writeSSE({
+            event: "tool_end",
+            data: JSON.stringify({ name: tool.name, output: "Success" }), // Mock output
+          });
         }
-        
-        await stream.writeSSE({ event: "message_end", data: JSON.stringify({ messageId }) });
-        
+        // Start new message for text after tool
         await stream.writeSSE({
-            event: "progress",
-            data: JSON.stringify(result.progress)
+          event: "message_start",
+          data: JSON.stringify({ messageId: messageId + "_2" }),
         });
-        
+      }
+
+      // Stream text
+      const tokens = result.fullResponse.split(" ");
+      for (const token of tokens) {
         await stream.writeSSE({
-            event: "done",
-            data: JSON.stringify(result)
+          event: "token",
+          data: JSON.stringify({ content: token + " ", messageId }),
         });
+        await new Promise((r) => setTimeout(r, 50));
+      }
+
+      await stream.writeSSE({ event: "message_end", data: JSON.stringify({ messageId }) });
+
+      await stream.writeSSE({
+        event: "progress",
+        data: JSON.stringify(result.progress),
+      });
+
+      await stream.writeSSE({
+        event: "done",
+        data: JSON.stringify(result),
+      });
     });
   }
 
@@ -598,15 +605,15 @@ interviewRoutes.get("/:id/responses/:topic", async (c) => {
   if (id === "debug-session") {
     const state = mockInterviewService.getState();
     const data = state.responses[topic];
-    
+
     if (!data) {
-        return c.json({ error: `No response recorded for topic: ${topic}` }, 404);
+      return c.json({ error: `No response recorded for topic: ${topic}` }, 404);
     }
 
     return c.json({
       topic,
       data: data.data, // The stored response object has { topic, data, ... } structure, or is it direct?
-      // Check MockInterviewService structure: 
+      // Check MockInterviewService structure:
       // this.state.responses[topic] = { topic, data: args, timestamp, source }
       // So we return the whole object or just parts?
       // The real endpoint returns { topic, data, timestamp, source }.
@@ -619,7 +626,7 @@ interviewRoutes.get("/:id/responses/:topic", async (c) => {
       // Or just return `data` spread?
       // Real endpoint: returns { topic, data, timestamp, source }.
       // Our `data` variable holds exactly that object.
-      ...data
+      ...data,
     });
   }
 

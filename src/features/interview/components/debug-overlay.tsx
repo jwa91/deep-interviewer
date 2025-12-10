@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { useCallback, useEffect, useState } from "react";
-import { useChatStream } from "../hooks/use-chat-stream";
 
 const API_BASE = "http://localhost:3001";
 

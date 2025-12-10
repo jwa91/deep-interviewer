@@ -1,6 +1,6 @@
+import { Button } from "@/components/ui/button";
 import { Bot } from "lucide-react";
 import type { ChatItem, ProgressState } from "../types";
-import { Button } from "@/components/ui/button";
 import { MessageInput } from "./message-input";
 import { MessageList } from "./message-list";
 import { ProgressBar } from "./progress-bar";
