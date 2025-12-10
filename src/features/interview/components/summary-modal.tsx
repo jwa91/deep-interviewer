@@ -33,50 +33,50 @@ function TopicResponseItem({ topicId, response }: TopicResponseItemProps) {
     : [];
 
   return (
-    <div className="space-y-3">
-      <h3 className="font-bold font-mono text-primary text-sm uppercase tracking-wider">{title}</h3>
-      <div className="brutal-shadow rounded-lg border-2 border-border bg-card p-4 text-card-foreground text-sm leading-relaxed">
-        <div className="space-y-6">
-          {/* Summary section */}
-          {summary && (
-            <div>
-              <h4 className="mb-1.5 font-bold text-muted-foreground text-xs uppercase tracking-wide">
-                Samenvatting
-              </h4>
-              <p className="font-mono text-card-foreground text-sm leading-relaxed">{summary}</p>
-            </div>
-          )}
+    <div className="group">
+      <div className="flex items-baseline gap-3 mb-4">
+        {/* Brutalist marker: solid square with border */}
+        <div className="h-4 w-4 border-2 border-foreground bg-primary mt-1 shrink-0" />
+        <h3 className="font-heading font-black text-xl text-foreground">{title}</h3>
+      </div>
 
-          {/* Dynamic Fields Section */}
-          {otherFields.length > 0 && (
-            <div className="space-y-3 rounded-md border-2 border-border bg-background p-3">
-              {otherFields.map(([key, value]) => (
-                <FieldRenderer key={key} label={FIELD_LABELS[key] || key} value={value} />
+      <div className="pl-6 ml-2 space-y-6 pb-2">
+        {/* Summary section */}
+        {summary && (
+          <div className="prose prose-sm max-w-none text-foreground font-medium leading-relaxed">
+            <p>{summary}</p>
+          </div>
+        )}
+
+        {/* Dynamic Fields Section */}
+        {otherFields.length > 0 && (
+          <div className="grid gap-x-12 gap-y-4 sm:grid-cols-2 pt-2">
+            {otherFields.map(([key, value]) => (
+              <FieldRenderer key={key} label={FIELD_LABELS[key] || key} value={value} />
+            ))}
+          </div>
+        )}
+
+        {/* Quotes section */}
+        {quotes && quotes.length > 0 && (
+          <div className="relative pt-4">
+            <h4 className="mb-3 font-bold text-muted-foreground text-xs uppercase tracking-wide flex items-center gap-2">
+              <QuoteIcon className="h-3 w-3" />
+              Opmerkelijke citaten
+            </h4>
+            <ul className="space-y-3">
+              {quotes.map((quote, index) => (
+                <li
+                  // biome-ignore lint/suspicious/noArrayIndexKey: quotes are static strings without unique IDs
+                  key={`${topicId}-quote-${index}`}
+                  className="flex gap-3 text-sm text-foreground italic pl-3 border-l-4 border-primary"
+                >
+                  <span>&ldquo;{quote}&rdquo;</span>
+                </li>
               ))}
-            </div>
-          )}
-
-          {/* Quotes section */}
-          {quotes && quotes.length > 0 && (
-            <div>
-              <h4 className="mb-1.5 font-bold text-muted-foreground text-xs uppercase tracking-wide">
-                Citaten
-              </h4>
-              <ul className="space-y-2">
-                {quotes.map((quote, index) => (
-                  <li
-                    // biome-ignore lint/suspicious/noArrayIndexKey: quotes are static strings without unique IDs
-                    key={`${topicId}-quote-${index}`}
-                    className="flex gap-2 font-mono text-card-foreground text-sm"
-                  >
-                    <QuoteIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-                    <span className="italic">&ldquo;{quote}&rdquo;</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -94,15 +94,15 @@ export function SummaryModal({ sessionId, open, onOpenChange }: SummaryModalProp
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="brutal-shadow max-h-[85vh] w-[90vw] max-w-2xl overflow-hidden border-2 border-border bg-background p-0 text-foreground">
-        <DialogHeader className="border-border border-b-2 px-6 py-4">
-          <DialogTitle className="font-black font-heading text-primary text-xl">
+      <DialogContent className="brutal-shadow max-h-[85vh] w-[90vw] max-w-4xl overflow-hidden border-2 border-border bg-background p-0 text-foreground">
+        <DialogHeader className="border-border border-b-2 px-8 py-6">
+          <DialogTitle className="font-black font-heading text-primary text-2xl">
             Jouw Antwoorden
           </DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="h-[calc(85vh-80px)]">
-          <div className="space-y-8 px-6 py-6 pb-6">
+        <ScrollArea className="h-[calc(85vh-90px)]">
+          <div className="space-y-10 px-8 py-8 pb-8">
             {isLoading && (
               <div className="space-y-6">
                 {[1, 2, 3].map((i) => (
@@ -126,13 +126,22 @@ export function SummaryModal({ sessionId, open, onOpenChange }: SummaryModalProp
                   Nog geen antwoorden beschikbaar.
                 </div>
               ) : (
-                data.completedTopics.map((topicId) => {
-                  const response = data.responses[topicId];
-                  if (!response) {
-                    return null;
-                  }
-                  return <TopicResponseItem key={topicId} topicId={topicId} response={response} />;
-                })
+                <div className="space-y-12">
+                  {data.completedTopics.map((topicId, index) => {
+                    const response = data.responses[topicId];
+                    if (!response) {
+                      return null;
+                    }
+                    return (
+                      <div key={topicId}>
+                        <TopicResponseItem topicId={topicId} response={response} />
+                        {index < data.completedTopics.length - 1 && (
+                          <div className="my-8 h-0.5 w-full bg-border" />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               ))}
           </div>
         </ScrollArea>

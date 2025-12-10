@@ -18,16 +18,8 @@ export function FieldRenderer({ label, value }: FieldRendererProps) {
         <h4 className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">
           {label}
         </h4>
-        <div className="flex flex-wrap gap-1.5">
-          {value.map((item, i) => (
-            <span
-              // biome-ignore lint/suspicious/noArrayIndexKey: items are strings without unique IDs
-              key={`${label}-${i}`}
-              className="brutal-shadow inline-flex rounded-md border-2 border-border bg-secondary px-2 py-1 font-bold font-mono text-secondary-foreground text-xs"
-            >
-              {String(item)}
-            </span>
-          ))}
+        <div className="text-sm font-medium leading-relaxed">
+          {value.map((item) => String(item)).join(", ")}
         </div>
       </div>
     );
@@ -36,10 +28,10 @@ export function FieldRenderer({ label, value }: FieldRendererProps) {
   // Handle booleans
   if (typeof value === "boolean") {
     return (
-      <div className="flex items-center justify-between py-1">
-        <span className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">
+      <div className="space-y-1">
+        <h4 className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">
           {label}
-        </span>
+        </h4>
         <span
           className={`font-bold font-mono text-sm ${value ? "text-primary" : "text-muted-foreground"}`}
         >
@@ -52,24 +44,25 @@ export function FieldRenderer({ label, value }: FieldRendererProps) {
   // Handle ratings (numbers 1-5 typically)
   if (typeof value === "number") {
     return (
-      <div className="flex items-center justify-between py-1">
-        <span className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">
+      <div className="space-y-1">
+        <h4 className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">
           {label}
-        </span>
-        <div className="flex items-center gap-1.5">
-          <span className="font-bold font-mono text-foreground text-sm">{value}</span>
+        </h4>
+        <div className="flex items-center gap-1.5 h-6">
           {/* Simple visual indicator for 1-5 ratings */}
-          {value >= 1 && value <= 5 && (
-            <div className="flex gap-1">
+          {value >= 1 && value <= 5 ? (
+            <div className="flex gap-1.5">
               {[1, 2, 3, 4, 5].map((star) => (
                 <div
                   key={star}
-                  className={`h-2 w-2 rounded-full border border-border ${
-                    star <= value ? "bg-primary" : "bg-muted"
+                  className={`h-3 w-3 rounded-sm border-2 border-foreground ${
+                    star <= value ? "bg-primary" : "bg-transparent"
                   }`}
                 />
               ))}
             </div>
+          ) : (
+            <span className="font-bold font-mono text-foreground text-sm">{value}</span>
           )}
         </div>
       </div>
