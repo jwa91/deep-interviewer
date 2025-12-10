@@ -34,23 +34,23 @@ function TopicResponseItem({ topicId, response }: TopicResponseItemProps) {
 
   return (
     <div className="group">
-      <div className="flex items-baseline gap-3 mb-4">
+      <div className="mb-4 flex items-baseline gap-3">
         {/* Brutalist marker: solid square with border */}
-        <div className="h-4 w-4 border-2 border-foreground bg-primary mt-1 shrink-0" />
-        <h3 className="font-heading font-black text-xl text-foreground">{title}</h3>
+        <div className="mt-1 h-4 w-4 shrink-0 border-2 border-foreground bg-primary" />
+        <h3 className="font-black font-heading text-foreground text-xl">{title}</h3>
       </div>
 
-      <div className="pl-6 ml-2 space-y-6 pb-2">
+      <div className="ml-2 space-y-6 pb-2 pl-6">
         {/* Summary section */}
         {summary && (
-          <div className="prose prose-sm max-w-none text-foreground font-medium leading-relaxed">
+          <div className="prose prose-sm max-w-none font-medium text-foreground leading-relaxed">
             <p>{summary}</p>
           </div>
         )}
 
         {/* Dynamic Fields Section */}
         {otherFields.length > 0 && (
-          <div className="grid gap-x-12 gap-y-4 sm:grid-cols-2 pt-2">
+          <div className="grid gap-x-12 gap-y-4 pt-2 sm:grid-cols-2">
             {otherFields.map(([key, value]) => (
               <FieldRenderer key={key} label={FIELD_LABELS[key] || key} value={value} />
             ))}
@@ -60,7 +60,7 @@ function TopicResponseItem({ topicId, response }: TopicResponseItemProps) {
         {/* Quotes section */}
         {quotes && quotes.length > 0 && (
           <div className="relative pt-4">
-            <h4 className="mb-3 font-bold text-muted-foreground text-xs uppercase tracking-wide flex items-center gap-2">
+            <h4 className="mb-3 flex items-center gap-2 font-bold text-muted-foreground text-xs uppercase tracking-wide">
               <QuoteIcon className="h-3 w-3" />
               Opmerkelijke citaten
             </h4>
@@ -69,7 +69,7 @@ function TopicResponseItem({ topicId, response }: TopicResponseItemProps) {
                 <li
                   // biome-ignore lint/suspicious/noArrayIndexKey: quotes are static strings without unique IDs
                   key={`${topicId}-quote-${index}`}
-                  className="flex gap-3 text-sm text-foreground italic pl-3 border-l-4 border-primary"
+                  className="flex gap-3 border-primary border-l-4 pl-3 text-foreground text-sm italic"
                 >
                   <span>&ldquo;{quote}&rdquo;</span>
                 </li>
@@ -96,7 +96,7 @@ export function SummaryModal({ sessionId, open, onOpenChange }: SummaryModalProp
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="brutal-shadow max-h-[85vh] w-[90vw] max-w-4xl overflow-hidden border-2 border-border bg-background p-0 text-foreground">
         <DialogHeader className="border-border border-b-2 px-8 py-6">
-          <DialogTitle className="font-heading font-black text-2xl text-primary">
+          <DialogTitle className="font-black font-heading text-2xl text-primary">
             Jouw Antwoorden
           </DialogTitle>
         </DialogHeader>

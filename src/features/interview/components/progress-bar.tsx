@@ -24,13 +24,13 @@ export function ProgressBar({ progress, sessionId }: ProgressBarProps) {
               <button
                 type="button"
                 onClick={() => setShowSummary(true)}
-                className="flex cursor-pointer items-center gap-1.5 whitespace-nowrap font-mono text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
+                className="flex cursor-pointer items-center gap-1.5 whitespace-nowrap font-mono text-muted-foreground text-xs underline underline-offset-2 hover:text-foreground"
               >
                 <FileTextIcon className="h-3 w-3" />
                 Bekijk antwoorden
               </button>
             )}
-            <span className="font-mono font-bold text-foreground">
+            <span className="font-bold font-mono text-foreground">
               {progress.completedCount} / {progress.totalQuestions} vragen beantwoord
             </span>
           </div>
@@ -40,7 +40,7 @@ export function ProgressBar({ progress, sessionId }: ProgressBarProps) {
           className="h-3 border-2 border-border bg-muted [&>[data-slot=progress-indicator]]:bg-primary"
         />
         {progress.isComplete && (
-          <p className="fade-in animate-in font-mono font-bold text-xs text-primary duration-500">
+          <p className="fade-in animate-in font-bold font-mono text-primary text-xs duration-500">
             ✓ Interview voltooid!
           </p>
         )}

@@ -1,5 +1,5 @@
 import { WELCOME_MESSAGE } from "@/shared/constants";
-import type { Message, ProgressState, QuestionCompletion } from "../types";
+import type { Message, ProgressState } from "../types";
 
 export const MOCK_RESPONSES = {
   ai_background: {

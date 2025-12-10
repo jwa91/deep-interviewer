@@ -45,8 +45,8 @@ export function ChatContainer({
                 <Bot className="h-5 w-5 text-primary-foreground" />
               </div>
               <div>
-                <h1 className="font-heading font-black text-xl text-foreground">Cursus Feedback</h1>
-                <p className="font-mono font-bold text-xs text-muted-foreground uppercase tracking-wide">
+                <h1 className="font-black font-heading text-foreground text-xl">Cursus Feedback</h1>
+                <p className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">
                   Interview in voortgang
                 </p>
               </div>

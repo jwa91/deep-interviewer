@@ -15,10 +15,10 @@ export function FieldRenderer({ label, value }: FieldRendererProps) {
     }
     return (
       <div className="space-y-1">
-        <h4 className="font-mono font-bold text-xs text-muted-foreground uppercase tracking-wide">
+        <h4 className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">
           {label}
         </h4>
-        <div className="text-sm font-medium leading-relaxed">
+        <div className="font-medium text-sm leading-relaxed">
           {value.map((item) => String(item)).join(", ")}
         </div>
       </div>
@@ -29,11 +29,11 @@ export function FieldRenderer({ label, value }: FieldRendererProps) {
   if (typeof value === "boolean") {
     return (
       <div className="space-y-1">
-        <h4 className="font-mono font-bold text-xs text-muted-foreground uppercase tracking-wide">
+        <h4 className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">
           {label}
         </h4>
         <span
-          className={`font-mono font-bold text-sm ${value ? "text-primary" : "text-muted-foreground"}`}
+          className={`font-bold font-mono text-sm ${value ? "text-primary" : "text-muted-foreground"}`}
         >
           {value ? "Ja" : "Nee"}
         </span>
@@ -45,10 +45,10 @@ export function FieldRenderer({ label, value }: FieldRendererProps) {
   if (typeof value === "number") {
     return (
       <div className="space-y-1">
-        <h4 className="font-mono font-bold text-xs text-muted-foreground uppercase tracking-wide">
+        <h4 className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">
           {label}
         </h4>
-        <div className="flex items-center gap-1.5 h-6">
+        <div className="flex h-6 items-center gap-1.5">
           {/* Simple visual indicator for 1-5 ratings */}
           {value >= 1 && value <= 5 ? (
             <div className="flex gap-1.5">
@@ -62,7 +62,7 @@ export function FieldRenderer({ label, value }: FieldRendererProps) {
               ))}
             </div>
           ) : (
-            <span className="font-mono font-bold text-sm text-foreground">{value}</span>
+            <span className="font-bold font-mono text-foreground text-sm">{value}</span>
           )}
         </div>
       </div>
@@ -72,7 +72,7 @@ export function FieldRenderer({ label, value }: FieldRendererProps) {
   // Handle strings and other types
   return (
     <div className="space-y-1">
-      <h4 className="font-mono font-bold text-xs text-muted-foreground uppercase tracking-wide">
+      <h4 className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">
         {label}
       </h4>
       <p className="font-mono text-foreground text-sm leading-relaxed">{String(value)}</p>

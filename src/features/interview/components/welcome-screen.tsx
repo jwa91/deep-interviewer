@@ -34,16 +34,16 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
         }}
       />
 
-      <Card className="w-full max-w-5xl bg-accent overflow-hidden relative z-10">
+      <Card className="relative z-10 w-full max-w-5xl overflow-hidden bg-accent">
         <CardContent className="p-6 md:p-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
+          <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-2 md:gap-12">
             {/* Left Column: Text Content */}
             <div className="space-y-6">
-              <h1 className="font-heading font-black text-3xl md:text-4xl text-foreground">
+              <h1 className="font-black font-heading text-3xl text-foreground md:text-4xl">
                 Hoi LLM fundamentals deelnemer
               </h1>
 
-              <div className="space-y-4 font-mono text-muted-foreground leading-relaxed text-sm md:text-base">
+              <div className="space-y-4 font-mono text-muted-foreground text-sm leading-relaxed md:text-base">
                 <p>
                   Bedankt voor je deelname aan de LLM fundamentals workshop. Tijdens de training
                   hebben we gekeken naar de werking en het gebruik van LLM's. Ik ben erg benieuwd
@@ -69,13 +69,13 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
                   berichtje of email in dat geval.
                 </p>
 
-                <p className="font-bold text-foreground pt-2">Groeten, Jan Willem</p>
+                <p className="pt-2 font-bold text-foreground">Groeten, Jan Willem</p>
               </div>
             </div>
 
             {/* Right Column: Picture & Form */}
             <div className="flex flex-col gap-8">
-              <div className="w-full max-w-[300px] mx-auto md:max-w-[350px]">
+              <div className="mx-auto w-full max-w-[300px] md:max-w-[350px]">
                 <SpotlightPicture
                   imageSrc="/avatar_no_background_jw_altink_optimized.png"
                   imageAlt="Jan Willem Altink"
@@ -83,12 +83,12 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
                 />
               </div>
 
-              <div className="space-y-6 bg-[var(--color-accent-4)] p-6 rounded-lg border-2 border-border brutal-shadow">
+              <div className="brutal-shadow space-y-6 rounded-lg border-2 border-border bg-[var(--color-accent-4)] p-6">
                 <div className="text-center">
-                  <h2 className="font-heading font-bold text-xl text-foreground">
+                  <h2 className="font-bold font-heading text-foreground text-xl">
                     Start Interview
                   </h2>
-                  <p className="mt-1 font-mono text-sm text-muted-foreground">
+                  <p className="mt-1 font-mono text-muted-foreground text-sm">
                     Voer je persoonlijke code in om te beginnen
                   </p>
                 </div>
@@ -101,7 +101,7 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
                       placeholder="Bijv. ABC123"
                       value={code}
                       onChange={(e) => setCode(e.target.value.toUpperCase())}
-                      className="h-12 text-left font-mono italic text-lg tracking-normal bg-background placeholder:text-muted-foreground/70"
+                      className="h-12 bg-background text-left font-mono text-lg italic tracking-normal placeholder:text-muted-foreground/70"
                       disabled={isLoading}
                       autoComplete="off"
                     />
@@ -115,7 +115,7 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
 
                   <Button
                     type="submit"
-                    className="h-12 w-full text-lg font-bold"
+                    className="h-12 w-full font-bold text-lg"
                     disabled={isLoading || !code.trim()}
                   >
                     {isLoading ? (

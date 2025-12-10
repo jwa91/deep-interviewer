@@ -1,7 +1,6 @@
 import { MOCK_RESPONSES } from "@/features/interview/mocks/interview-data";
-import type { Message, ProgressState } from "@/features/interview/types";
+import type { ProgressState } from "@/features/interview/types";
 import { WELCOME_MESSAGE } from "@/shared/constants";
-import { HumanMessage } from "@langchain/core/messages";
 
 interface ScriptStep {
   id: string;
@@ -192,7 +191,9 @@ class MockInterviewService {
   }
 
   jumpTo(stepIndex: number) {
-    if (stepIndex < 0 || stepIndex >= SCRIPT.length) return;
+    if (stepIndex < 0 || stepIndex >= SCRIPT.length) {
+      return;
+    }
 
     this.reset(); // Clear history first
 
@@ -210,7 +211,7 @@ class MockInterviewService {
       if (step.toolCall) {
         // Update responses map FIRST so it's available for fetching
         const topic = Object.keys(MOCK_RESPONSES).find((k) =>
-          k.includes(step.toolCall!.name.replace("record_", ""))
+          k.includes(step.toolCall?.name.replace("record_", ""))
         );
         if (topic) {
           this.state.responses[topic] = {
@@ -227,7 +228,9 @@ class MockInterviewService {
         // Here we need to update the last assistant message to include the tool call
         const lastMsg = this.state.messages[this.state.messages.length - 1];
         if (lastMsg && lastMsg.role === "assistant") {
-          if (!lastMsg.toolCalls) lastMsg.toolCalls = [];
+          if (!lastMsg.toolCalls) {
+            lastMsg.toolCalls = [];
+          }
           lastMsg.toolCalls.push({
             name: step.toolCall.name,
             args: step.toolCall.args,
@@ -280,7 +283,7 @@ class MockInterviewService {
 
       // Update mock state
       const topic = Object.keys(MOCK_RESPONSES).find((k) =>
-        k.includes(nextStep.toolCall!.name.replace("record_", ""))
+        k.includes(nextStep.toolCall?.name.replace("record_", ""))
       );
       if (topic) {
         // Update responses map immediately so it's available for the tool card fetch

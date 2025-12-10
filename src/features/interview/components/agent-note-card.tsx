@@ -115,7 +115,7 @@ export function AgentNoteCard({ questionId, state, sessionId }: AgentNoteCardPro
               <AccordionTrigger className="px-4 py-3 hover:no-underline [&[data-state=open]]:border-border [&[data-state=open]]:border-b-2">
                 <div className="flex flex-1 items-center gap-3">
                   <div className="flex flex-1 flex-col items-start gap-0.5">
-                    <span className="font-mono font-bold text-sm text-card-foreground uppercase">
+                    <span className="font-bold font-mono text-card-foreground text-sm uppercase">
                       Agent notities
                     </span>
                     <span className="font-mono text-muted-foreground text-xs">

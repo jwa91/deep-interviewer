@@ -93,12 +93,6 @@ interviewRoutes.get("/", (c) => {
   const sessions = listSessions();
   return c.json({ sessions });
 });
-
-import {
-  MOCK_MESSAGES,
-  MOCK_PROGRESS,
-  MOCK_RESPONSES,
-} from "@/features/interview/mocks/interview-data";
 import { mockInterviewService } from "../services/mock-interview";
 
 // ═══════════════════════════════════════════════════════════════
@@ -254,7 +248,7 @@ interviewRoutes.post("/:id/chat", async (c) => {
         // Start new message for text after tool
         await stream.writeSSE({
           event: "message_start",
-          data: JSON.stringify({ messageId: messageId + "_2" }),
+          data: JSON.stringify({ messageId: `${messageId}_2` }),
         });
       }
 
@@ -263,7 +257,7 @@ interviewRoutes.post("/:id/chat", async (c) => {
       for (const token of tokens) {
         await stream.writeSSE({
           event: "token",
-          data: JSON.stringify({ content: token + " ", messageId }),
+          data: JSON.stringify({ content: `${token} `, messageId }),
         });
         await new Promise((r) => setTimeout(r, 50));
       }

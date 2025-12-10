@@ -40,7 +40,7 @@ const SpotlightPicture = React.forwardRef<HTMLDivElement, SpotlightPictureProps>
           </div>
 
           {/* Clipped Image positioned on top */}
-          <div className="absolute left-0 right-0 top-0 z-10">
+          <div className="absolute top-0 right-0 left-0 z-10">
             <div className="relative">
               <svg viewBox="0 0 370 383" className="h-auto w-full" aria-label={imageAlt}>
                 <defs>
