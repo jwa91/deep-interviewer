@@ -1,3 +1,5 @@
+import type React from "react";
+
 import {
 	Accordion,
 	AccordionContent,
@@ -40,7 +42,9 @@ function renderFieldValue(value: unknown): React.ReactNode {
 
 	// Arrays: comma-separated
 	if (Array.isArray(value)) {
-		if (value.length === 0) return null;
+		if (value.length === 0) {
+			return null;
+		}
 		return (
 			<div className="font-medium text-sm leading-relaxed">
 				{value.map((item) => String(item)).join(", ")}
@@ -227,7 +231,9 @@ export function AgentNoteCard({
 											<div className="space-y-3 rounded-md border-2 border-border bg-background p-3">
 												{otherFields.map(([key, value]) => {
 													const rendered = renderFieldValue(value);
-													if (!rendered) return null;
+													if (!rendered) {
+														return null;
+													}
 													return (
 														<div key={key} className="space-y-1">
 															<h4 className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">
