@@ -2,7 +2,6 @@
 export { AgentNoteCard } from "./components/agent-note-card";
 export { ChatContainer } from "./components/chat-container";
 export { CompletionModal } from "./components/completion-modal";
-export { DebugView } from "./components/debug-view";
 export { MessageBubble } from "./components/message-bubble";
 export { MessageInput } from "./components/message-input";
 export { MessageList } from "./components/message-list";

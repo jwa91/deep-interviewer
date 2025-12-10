@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import type { FormEvent, KeyboardEvent } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface MessageInputProps {
   readonly onSend: (message: string) => void;
@@ -15,6 +15,18 @@ export function MessageInput({
   placeholder = "Typ je bericht...",
 }: MessageInputProps) {
   const [message, setMessage] = useState("");
+
+  // Allow setting message externally (for debug quick actions)
+  useEffect(() => {
+    const handleDebugFill = (e: CustomEvent<string>) => {
+        setMessage(e.detail);
+        // Optional: auto-submit
+        // onSend(e.detail);
+        // setMessage("");
+    };
+    window.addEventListener("debug:fill-message", handleDebugFill as EventListener);
+    return () => window.removeEventListener("debug:fill-message", handleDebugFill as EventListener);
+  }, []);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();

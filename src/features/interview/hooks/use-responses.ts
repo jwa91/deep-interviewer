@@ -29,28 +29,6 @@ export function useResponses({ sessionId }: UseResponsesOptions): UseResponsesRe
     setError(null);
 
     try {
-      if (sessionId === "debug-session") {
-        // Return mock data for debug session
-        setData({
-            sessionId: "debug-session",
-            completedTopics: ["ai_background"],
-            totalTopics: 9,
-            responses: {
-                ai_background: {
-                    topic: "ai_background",
-                    data: {
-                        summary: "Dit is een voorbeeld samenvatting voor de debug modus.",
-                        quotes: ["Dit is een voorbeeld quote.", "Nog een quote."]
-                    },
-                    timestamp: new Date().toISOString(),
-                    source: "agent"
-                }
-            }
-        });
-        setIsLoading(false);
-        return;
-      }
-
       const response = await fetch(`${API_BASE}/api/interviews/${sessionId}/responses`);
 
       if (!response.ok) {

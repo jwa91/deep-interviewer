@@ -143,6 +143,16 @@ export function useInterviewSession(): UseInterviewSessionReturn {
 
         const data = (await response.json()) as CreateSessionResponse & { isResumed?: boolean };
 
+        // Debug mode handling: auto-add query param and reload to activate debug view
+        if (code === "DEBUG_MODE") {
+            const url = new URL(window.location.href);
+            if (!url.searchParams.has("debug")) {
+                url.searchParams.set("debug", "true");
+                window.location.href = url.toString();
+                return; // Stop execution to allow reload
+            }
+        }
+
         const newSession: SessionState = {
           code,
           sessionId: data.id,

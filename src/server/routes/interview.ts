@@ -36,6 +36,17 @@ interviewRoutes.post("/", async (c) => {
   const body = await c.req.json().catch(() => ({}));
   const code = body.code as string | undefined;
 
+  // Debug session backdoor
+  if (code === "DEBUG_MODE") {
+    mockInterviewService.reset(); // Always reset on new login
+    return c.json({
+      id: "debug-session",
+      createdAt: new Date().toISOString(),
+      message: "Debug session initiated.",
+      isResumed: false, // Treat as new session on explicit login
+    });
+  }
+
   // Validate invite code
   if (!code) {
     return c.json({ error: "Invite code is required" }, 400);
@@ -83,12 +94,44 @@ interviewRoutes.get("/", (c) => {
   return c.json({ sessions });
 });
 
+import { MOCK_MESSAGES, MOCK_PROGRESS, MOCK_RESPONSES } from "@/features/interview/mocks/interview-data";
+import { mockInterviewService } from "../services/mock-interview";
+
+// ═══════════════════════════════════════════════════════════════
+// DEBUG ROUTES (Must come before generic /:id routes)
+// ═══════════════════════════════════════════════════════════════
+
+interviewRoutes.post("/debug/reset", (c) => {
+  mockInterviewService.reset();
+  return c.json({ message: "Debug session reset" });
+});
+
+interviewRoutes.post("/debug/jump", async (c) => {
+  const { step } = await c.req.json();
+  mockInterviewService.jumpTo(step);
+  return c.json({ message: `Jumped to step ${step}` });
+});
+
+interviewRoutes.get("/debug/suggested-reply", (c) => {
+  return c.json({ reply: mockInterviewService.getSuggestedReply() });
+});
+
 // ═══════════════════════════════════════════════════════════════
 // GET /api/interviews/:id - Get interview state
 // ═══════════════════════════════════════════════════════════════
 
 interviewRoutes.get("/:id", async (c) => {
   const { id } = c.req.param();
+
+  if (id === "debug-session") {
+    const state = mockInterviewService.getState();
+    return c.json({
+      id: "debug-session",
+      createdAt: state.createdAt,
+      messages: state.messages,
+      progress: state.progress,
+    });
+  }
 
   const session = getSession(id);
   if (!session) {
@@ -175,6 +218,62 @@ interviewRoutes.get("/:id", async (c) => {
 
 interviewRoutes.post("/:id/chat", async (c) => {
   const { id } = c.req.param();
+
+  // Debug session handling
+  if (id === "debug-session") {
+    const body = await c.req.json();
+    const message = body.message as string;
+    
+    return streamSSE(c, async (stream) => {
+        const result = await mockInterviewService.processMessage(message);
+        const messageId = `msg_${Date.now()}`;
+        
+        // Start message
+        await stream.writeSSE({ event: "message_start", data: JSON.stringify({ messageId }) });
+        
+        // Simulate thinking delay
+        await new Promise(r => setTimeout(r, 500));
+        
+        // Tool calls first if any
+        if (result.toolCalls.length > 0) {
+            for (const tool of result.toolCalls) {
+                 await stream.writeSSE({
+                    event: "tool_start",
+                    data: JSON.stringify({ name: tool.name, input: tool.args })
+                 });
+                 await new Promise(r => setTimeout(r, 800)); // Visible delay
+                 await stream.writeSSE({
+                    event: "tool_end",
+                    data: JSON.stringify({ name: tool.name, output: "Success" }) // Mock output
+                 });
+            }
+            // Start new message for text after tool
+             await stream.writeSSE({ event: "message_start", data: JSON.stringify({ messageId: messageId + "_2" }) });
+        }
+
+        // Stream text
+        const tokens = result.fullResponse.split(" ");
+        for (const token of tokens) {
+            await stream.writeSSE({
+                event: "token",
+                data: JSON.stringify({ content: token + " ", messageId })
+            });
+            await new Promise(r => setTimeout(r, 50));
+        }
+        
+        await stream.writeSSE({ event: "message_end", data: JSON.stringify({ messageId }) });
+        
+        await stream.writeSSE({
+            event: "progress",
+            data: JSON.stringify(result.progress)
+        });
+        
+        await stream.writeSSE({
+            event: "done",
+            data: JSON.stringify(result)
+        });
+    });
+  }
 
   const session = getSession(id);
   if (!session) {
@@ -400,6 +499,17 @@ interviewRoutes.get("/:id/results", async (c) => {
 interviewRoutes.get("/:id/responses", async (c) => {
   const { id } = c.req.param();
 
+  if (id === "debug-session") {
+    const state = mockInterviewService.getState();
+    const responses = state.responses;
+    return c.json({
+      sessionId: "debug-session",
+      responses: responses,
+      completedTopics: Object.keys(responses),
+      totalTopics: 9,
+    });
+  }
+
   const session = getSession(id);
   if (!session) {
     return c.json({ error: "Interview not found" }, 404);
@@ -483,6 +593,34 @@ interviewRoutes.get("/:id/responses/:topic", async (c) => {
 
   if (!validTopics.includes(topic)) {
     return c.json({ error: `Invalid topic: ${topic}` }, 400);
+  }
+
+  if (id === "debug-session") {
+    const state = mockInterviewService.getState();
+    const data = state.responses[topic];
+    
+    if (!data) {
+        return c.json({ error: `No response recorded for topic: ${topic}` }, 404);
+    }
+
+    return c.json({
+      topic,
+      data: data.data, // The stored response object has { topic, data, ... } structure, or is it direct?
+      // Check MockInterviewService structure: 
+      // this.state.responses[topic] = { topic, data: args, timestamp, source }
+      // So we return the whole object or just parts?
+      // The real endpoint returns { topic, data, timestamp, source }.
+      // Our mock state stores exactly that.
+      // So 'data' here is the full response object.
+      // Wait, let's verify mockInterviewService storage.
+      // responses[topic] = { topic, data: step.toolCall.args, timestamp, source }
+      // So `data` IS the full DTO.
+      // So we should return `data.data` as `data`, `data.timestamp` as `timestamp`...
+      // Or just return `data` spread?
+      // Real endpoint: returns { topic, data, timestamp, source }.
+      // Our `data` variable holds exactly that object.
+      ...data
+    });
   }
 
   const session = getSession(id);

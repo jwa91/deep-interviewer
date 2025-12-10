@@ -5,11 +5,11 @@ import {
   ChatContainer,
   CompletionModal,
   WelcomeScreen,
-  DebugView,
   createDefaultProgress,
   useChatStream,
   useInterviewSession,
 } from "./features/interview";
+import { DebugOverlay } from "./features/interview/components/debug-overlay";
 import type { ChatItem, Message, ProgressState } from "./features/interview";
 import { WELCOME_MESSAGE } from "./shared/constants";
 import { toolNameToQuestionId } from "./shared/schema";
@@ -36,16 +36,7 @@ const restoreChatItems = (messages: Message[]): ChatItem[] => {
   const items: ChatItem[] = [];
 
   for (const msg of messages) {
-    // Add the text message
-    if (msg.content) {
-      items.push({
-        type: "message",
-        id: msg.id,
-        data: msg,
-      });
-    }
-
-    // If message has tool calls, add tool cards
+    // If message has tool calls, add tool cards FIRST (so they appear before the text that follows)
     if (msg.toolCalls && msg.toolCalls.length > 0) {
       for (const [index, toolCall] of msg.toolCalls.entries()) {
         const questionId = toolNameToQuestionId(toolCall.name);
@@ -60,6 +51,15 @@ const restoreChatItems = (messages: Message[]): ChatItem[] => {
           });
         }
       }
+    }
+
+    // Add the text message
+    if (msg.content) {
+      items.push({
+        type: "message",
+        id: msg.id,
+        data: msg,
+      });
     }
   }
 
@@ -177,11 +177,12 @@ function App() {
   const searchParams = new URLSearchParams(window.location.search);
   const isDebug = searchParams.get("debug") === "true";
 
-  if (isDebug) {
-    return <DebugView />;
-  }
-
-  return <MainApp />;
+  return (
+    <>
+      {isDebug && <DebugOverlay />}
+      <MainApp />
+    </>
+  );
 }
 
 export default App;
