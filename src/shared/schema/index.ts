@@ -45,6 +45,8 @@ export {
 export {
   QuestionCompletionSchema,
   type QuestionCompletion,
+  ProgressStateSchema,
+  type ProgressState,
   CollectedResponsesSchema,
   type CollectedResponses,
   InterviewProgressSchema,

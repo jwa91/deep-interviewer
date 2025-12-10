@@ -1,5 +1,7 @@
-import { WELCOME_MESSAGE } from "@/shared/constants";
-import type { Message, ProgressState } from "../types";
+// ═══════════════════════════════════════════════════════════════
+// MOCK INTERVIEW DATA
+// Used by backend mock service for testing/demo mode
+// ═══════════════════════════════════════════════════════════════
 
 export const MOCK_RESPONSES = {
   ai_background: {
@@ -114,85 +116,3 @@ export const MOCK_RESPONSES = {
   },
 };
 
-export const MOCK_MESSAGES: Message[] = [
-  {
-    id: "msg_1",
-    role: "assistant",
-    content: WELCOME_MESSAGE,
-    timestamp: new Date(Date.now() - 1000000),
-  },
-  {
-    id: "msg_2",
-    role: "user",
-    content:
-      "Hoi, is goed. Ik had er nog niet zoveel ervaring mee, alleen wat gespeeld met ChatGPT.",
-    timestamp: new Date(Date.now() - 900000),
-  },
-  {
-    id: "msg_3",
-    role: "assistant",
-    content: "Helder. En waar gebruikte je ChatGPT dan voornamelijk voor?",
-    toolCalls: [
-      {
-        name: "record_ai_background",
-        args: {
-          userType: "novice",
-          experienceLevel: 2,
-          toolsUsed: ["ChatGPT"],
-          useCaseSubjects: ["brainstorming"],
-          summary: "Deelnemer heeft beperkte ervaring, voornamelijk ChatGPT.",
-          quotes: ["Alleen wat gespeeld met ChatGPT"],
-        },
-        id: "call_1",
-      },
-    ],
-    timestamp: new Date(Date.now() - 800000),
-  },
-  {
-    id: "msg_4",
-    role: "user",
-    content: "Vooral voor het brainstormen over nieuwe ideeën voor marketing teksten.",
-    timestamp: new Date(Date.now() - 700000),
-  },
-  {
-    id: "msg_5",
-    role: "assistant",
-    content: "Duidelijk! Wat was je algemene indruk van de training vandaag?",
-    toolCalls: [
-      {
-        name: "record_overall_impression",
-        args: {
-          overallRating: 4,
-          sentiment: "positive",
-          summary: "Positieve indruk",
-          quotes: [],
-        },
-        id: "call_2",
-      },
-    ],
-    timestamp: new Date(Date.now() - 600000),
-  },
-  {
-    id: "msg_6",
-    role: "user",
-    content: "Ik vond het erg leerzaam en leuk gebracht.",
-    timestamp: new Date(Date.now() - 500000),
-  },
-];
-
-export const MOCK_PROGRESS: ProgressState = {
-  questionsCompleted: {
-    ai_background: true,
-    overall_impression: true,
-    perceived_content: true,
-    difficulty: true,
-    content_quality: true,
-    presentation: true,
-    clarity: true,
-    suggestions: true,
-    course_parts: true,
-  },
-  completedCount: 9,
-  totalQuestions: 9,
-  isComplete: true,
-};

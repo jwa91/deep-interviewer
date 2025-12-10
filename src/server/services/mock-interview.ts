@@ -1,6 +1,6 @@
-import { MOCK_RESPONSES } from "@/features/interview/mocks/interview-data";
-import type { ProgressState } from "@/features/interview/types";
 import { WELCOME_MESSAGE } from "@/shared/constants";
+import { MOCK_RESPONSES } from "@/shared/mocks";
+import type { ProgressState } from "@/shared/schema";
 
 interface ScriptStep {
   id: string;

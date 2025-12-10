@@ -32,6 +32,19 @@ export const QuestionCompletionSchema = z.object({
 export type QuestionCompletion = z.infer<typeof QuestionCompletionSchema>;
 
 // ═══════════════════════════════════════════════════════════════
+// PROGRESS STATE - API/UI progress representation
+// ═══════════════════════════════════════════════════════════════
+
+export const ProgressStateSchema = z.object({
+  questionsCompleted: QuestionCompletionSchema,
+  completedCount: z.number().int().min(0).max(9),
+  totalQuestions: z.literal(9),
+  isComplete: z.boolean(),
+});
+
+export type ProgressState = z.infer<typeof ProgressStateSchema>;
+
+// ═══════════════════════════════════════════════════════════════
 // COLLECTED RESPONSES - All question data once filled
 // ═══════════════════════════════════════════════════════════════
 

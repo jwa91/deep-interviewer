@@ -4,11 +4,11 @@ An AI-powered conversational interview agent that collects course feedback throu
 
 ## Status
 
-| Component | Status |
-|-----------|--------|
-| Backend API | ✅ Working |
-| Frontend | ⏳ Not connected |
-| Docker | ⏳ Not tested |
+| Component   | Status        |
+| ----------- | ------------- |
+| Backend API | ✅ Working    |
+| Frontend    | ✅ Working    |
+| Docker      | ⏳ Not tested |
 
 ## Overview
 
@@ -18,10 +18,16 @@ Built with LangChain's LangGraph, this agent conducts interviews in Dutch, natur
 
 ```
 src/
-├── shared/schema/       # Zod schemas for all 9 interview questions
-├── agents/interviewer/  # LangGraph agent, tools, prompts, state
-└── server/              # Hono API with SSE streaming
+├── agents/           # LangGraph agent (prompts, tools, state) - backend only
+├── server/           # Hono API server (routes, persistence) - backend only
+├── shared/           # Isomorphic code (schemas, constants, mocks)
+├── features/         # Feature modules (interview UI)
+├── components/ui/    # shadcn/ui components
+├── lib/              # Frontend utilities (cn helper)
+└── styles/           # CSS tokens and themes
 ```
+
+**Import rules:** `shared` → nothing | `agents` → `shared` | `server` → `agents`, `shared` | `features` → `shared`, `components`
 
 ## API Endpoints
 
