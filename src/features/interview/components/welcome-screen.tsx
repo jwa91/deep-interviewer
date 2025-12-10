@@ -34,7 +34,7 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
         }}
       />
 
-      <Card className="w-full max-w-5xl bg-card overflow-hidden">
+      <Card className="w-full max-w-5xl bg-accent overflow-hidden relative z-10">
         <CardContent className="p-6 md:p-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
             {/* Left Column: Text Content */}
@@ -42,46 +42,53 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
               <h1 className="font-black font-heading text-3xl md:text-4xl text-foreground">
                 Hoi LLM fundamentals deelnemer
               </h1>
-              
+
               <div className="space-y-4 font-mono text-muted-foreground leading-relaxed text-sm md:text-base">
                 <p>
-                  Bedankt voor je deelname aan de LLM fundamentals workshop. Tijdens de training hebben we gekeken naar de werking en het gebruik van LLM's. Ik ben erg benieuwd hoe je de training hebt ervaren. Om de enquete daarover een beetje in een leuke vorm te gieten, heb ik een AI agent gemaakt die je zal interviewen over de training. De interviewer heeft in totaal 9 vragen voor je, en ik denk dat het invullen ervan ongeveer 10 minuten tijd kost. Alle feedback wordt gewaardeerd!
+                  Bedankt voor je deelname aan de LLM fundamentals workshop. Tijdens de training
+                  hebben we gekeken naar de werking en het gebruik van LLM's. Ik ben erg benieuwd
+                  hoe je de training hebt ervaren. Om de enquete daarover een beetje in een leuke
+                  vorm te gieten, heb ik een AI agent gemaakt die je zal interviewen over de
+                  training. De interviewer heeft in totaal 9 vragen voor je, en ik denk dat het
+                  invullen ervan ongeveer 10 minuten tijd kost. Alle feedback wordt gewaardeerd!
                 </p>
-                
+
                 <p>
                   Je kunt de Agent ook vragen naar de slides, mocht je nog eens wat na willen lezen.
                 </p>
-                
+
                 <p>
-                  Je kunt dit interview op elk moment onderbreken en later hervatten met dezelfde code, maar ik zou het fijn vinden als je de feedback die je wilt geven geeft binnen ongeveer 2 weken.
+                  Je kunt dit interview op elk moment onderbreken en later hervatten met dezelfde
+                  code, maar ik zou het fijn vinden als je de feedback die je wilt geven geeft
+                  binnen ongeveer 2 weken.
                 </p>
-                
+
                 <p>
-                  Als laatste: mocht je nu of in de toekomst nog bepaalde Ai gerelateerde vragen of uitdagingen hebben, denk ik heel graag met je mee. Stuur me gerust een Teams berichtje of email in dat geval.
+                  Als laatste: mocht je nu of in de toekomst nog bepaalde Ai gerelateerde vragen of
+                  uitdagingen hebben, denk ik heel graag met je mee. Stuur me gerust een Teams
+                  berichtje of email in dat geval.
                 </p>
-                
-                <p className="font-bold text-foreground pt-2">
-                  Groeten, Jan Willem
-                </p>
+
+                <p className="font-bold text-foreground pt-2">Groeten, Jan Willem</p>
               </div>
             </div>
 
             {/* Right Column: Picture & Form */}
             <div className="flex flex-col gap-8">
               <div className="w-full max-w-[300px] mx-auto md:max-w-[350px]">
-                <SpotlightPicture 
+                <SpotlightPicture
                   imageSrc="/avatar_no_background_jw_altink_optimized.png"
                   imageAlt="Jan Willem Altink"
                   className="w-full"
                 />
               </div>
 
-              <div className="space-y-6 bg-secondary/30 p-6 rounded-xl border border-border/50">
+              <div className="space-y-6 bg-[var(--color-accent-4)] p-6 rounded-xl border-2 border-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <div className="text-center">
                   <h2 className="font-bold font-heading text-xl text-foreground">
                     Start Interview
                   </h2>
-                  <p className="mt-1 font-mono text-xs text-muted-foreground">
+                  <p className="mt-1 font-mono text-sm text-muted-foreground">
                     Voer je persoonlijke code in om te beginnen
                   </p>
                 </div>
@@ -94,7 +101,7 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
                       placeholder="Bijv. ABC123"
                       value={code}
                       onChange={(e) => setCode(e.target.value.toUpperCase())}
-                      className="h-12 text-center font-black font-mono text-lg tracking-[0.2em] bg-background"
+                      className="h-12 text-left font-mono italic text-lg tracking-normal bg-background placeholder:text-muted-foreground/70"
                       disabled={isLoading}
                       autoComplete="off"
                     />
