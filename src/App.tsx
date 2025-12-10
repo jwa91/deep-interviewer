@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { Spinner } from "./components/ui/spinner";
+import { CompletionModal } from "./features/completion";
 import {
 	ChatContainer,
-	CompletionModal,
-	WelcomeScreen,
 	createDefaultProgress,
 	useChatStream,
 	useInterviewSession,
 } from "./features/interview";
+import { WelcomeScreen } from "./features/welcome";
 import type { ChatItem, Message, ProgressState } from "./features/interview";
-import { DebugOverlay } from "./features/interview/components/debug-overlay";
+import { DebugOverlay } from "./features/debug";
 import { useAppConfig } from "./hooks/use-app-config";
 import { WELCOME_MESSAGE } from "./shared/constants";
 import { toolNameToQuestionId } from "./shared/schema";
