@@ -1,5 +1,4 @@
-import { Button } from "@/components/ui/button";
-import { MessageInput } from "./input";
+import { CompletionFooter, MessageInput } from "./input";
 import { MessageList } from "./messages";
 import { ChatHeader } from "./progress";
 import type { ChatItem, ProgressState } from "./types";
@@ -52,19 +51,10 @@ export function ChatContainer({
 					</div>
 				)}
 
-				<div className="min-h-0 flex-1">
-					<MessageList chatItems={chatItems} sessionId={sessionId} />
-				</div>
+				<MessageList chatItems={chatItems} sessionId={sessionId} />
 
 				{progress.isComplete ? (
-					<div className="border-border border-t-2 bg-background p-4 text-center">
-						<p className="mb-3 font-mono text-muted-foreground text-sm">
-							Het interview is afgerond. Bedankt voor je deelname!
-						</p>
-						<Button onClick={onShowCompletion} className="font-bold">
-							Bekijk afronding
-						</Button>
-					</div>
+					<CompletionFooter onShowCompletion={onShowCompletion} />
 				) : (
 					<MessageInput
 						onSend={onSendMessage}

@@ -2,7 +2,7 @@
 export { ChatContainer } from "./chat-container";
 
 // Subfeatures
-export { MessageInput, TypingIndicator } from "./input";
+export { CompletionFooter, MessageInput, TypingIndicator } from "./input";
 export {
 	AgentNoteCard,
 	MessageBubble,

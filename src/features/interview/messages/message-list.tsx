@@ -22,31 +22,33 @@ export function MessageList({ chatItems, sessionId }: MessageListProps) {
 	}, [chatItems.length, chatItems[chatItems.length - 1]]);
 
 	return (
-		<ScrollArea ref={viewportRef} className="h-full">
-			<div className="space-y-4 px-4 py-4">
-				{chatItems.map((item) => {
-					if (item.type === "message") {
-						return <MessageBubble key={item.id} message={item.data} />;
-					}
+		<div className="min-h-0 flex-1">
+			<ScrollArea ref={viewportRef} className="h-full">
+				<div className="space-y-4 px-4 py-4">
+					{chatItems.map((item) => {
+						if (item.type === "message") {
+							return <MessageBubble key={item.id} message={item.data} />;
+						}
 
-					if (item.type === "tool_card") {
-						return (
-							<AgentNoteCard
-								key={item.id}
-								questionId={item.data.questionId}
-								state={item.data.state}
-								sessionId={sessionId}
-							/>
-						);
-					}
+						if (item.type === "tool_card") {
+							return (
+								<AgentNoteCard
+									key={item.id}
+									questionId={item.data.questionId}
+									state={item.data.state}
+									sessionId={sessionId}
+								/>
+							);
+						}
 
-					if (item.type === "slide_link") {
-						return <SlideLinkCard key={item.id} url={item.data.url} />;
-					}
+						if (item.type === "slide_link") {
+							return <SlideLinkCard key={item.id} url={item.data.url} />;
+						}
 
-					return null;
-				})}
-			</div>
-		</ScrollArea>
+						return null;
+					})}
+				</div>
+			</ScrollArea>
+		</div>
 	);
 }
