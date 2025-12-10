@@ -1,3 +1,10 @@
+import {
+  agentStateFactory,
+  inviteFactory,
+  progressFactory,
+  questionsCompletedFactory,
+  sessionFactory,
+} from "@/test/factories";
 import { Hono } from "hono";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -32,8 +39,8 @@ vi.mock("../services/mock-interview", () => ({
 }));
 
 import { createInterviewAgent, createInterviewInput } from "@/agents/interviewer";
-import { getCheckpointer, getSession, createSession, updateSession } from "../persistence";
 import { getInvite, linkSessionToInvite } from "../invites";
+import { createSession, getCheckpointer, getSession } from "../persistence";
 import { mockInterviewService } from "../services/mock-interview";
 
 // ═══════════════════════════════════════════════════════════════
@@ -41,44 +48,23 @@ import { mockInterviewService } from "../services/mock-interview";
 // ═══════════════════════════════════════════════════════════════
 
 describe("Response API Endpoints", () => {
-  const mockSession = {
-    id: "test-session-123",
-    createdAt: "2024-01-15T10:00:00.000Z",
-    updatedAt: "2024-01-15T10:00:00.000Z",
-    isComplete: false,
-  };
+  const mockSession = sessionFactory.withId("test-session-123");
 
-  const mockState = {
-    values: {
-      sessionId: "test-session-123",
-      startedAt: "2024-01-15T10:00:00.000Z",
-      questionsCompleted: {
-        ai_background: true,
-        overall_impression: false,
-        perceived_content: false,
-        difficulty: true,
-        content_quality: false,
-        presentation: false,
-        clarity: false,
-        suggestions: false,
-        course_parts: false,
+  const mockState = agentStateFactory.withResponses(
+    {
+      ai_background: {
+        experienceLevel: 3,
+        summary: "Test summary",
+        userType: "regular",
       },
-      responses: {
-        ai_background: {
-          experienceLevel: 3,
-          summary: "Test summary",
-          userType: "regular",
-        },
-        difficulty: {
-          difficultyRating: 3,
-          paceRating: 3,
-          summary: "Difficulty feedback",
-        },
+      difficulty: {
+        difficultyRating: 3,
+        paceRating: 3,
+        summary: "Difficulty feedback",
       },
-      messages: [],
-      isComplete: false,
     },
-  };
+    { sessionId: "test-session-123" }
+  );
 
   const mockAgent = {
     getState: vi.fn().mockResolvedValue(mockState),
@@ -97,7 +83,6 @@ describe("Response API Endpoints", () => {
     it("returns 404 when session not found", async () => {
       vi.mocked(getSession).mockReturnValue(undefined);
 
-      // Import fresh to get mocked dependencies
       const { interviewRoutes } = await import("./interview");
       const app = new Hono().route("/api/interviews", interviewRoutes);
 
@@ -293,7 +278,6 @@ describe("Response API Endpoints", () => {
       const { interviewRoutes } = await import("./interview");
       const app = new Hono().route("/api/interviews", interviewRoutes);
 
-      // Update a topic that wasn't completed before
       await app.request("/api/interviews/test-session-123/responses/presentation", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -321,16 +305,8 @@ describe("POST /api/interviews - Session Creation", () => {
   });
 
   it("creates new session with valid invite code", async () => {
-    const mockInvite = {
-      code: "VALID123",
-      createdAt: "2024-01-15T10:00:00.000Z",
-    };
-    const mockNewSession = {
-      id: "new-session-456",
-      createdAt: "2024-01-15T10:00:00.000Z",
-      updatedAt: "2024-01-15T10:00:00.000Z",
-      isComplete: false,
-    };
+    const mockInvite = inviteFactory.withCode("VALID123");
+    const mockNewSession = sessionFactory.withId("new-session-456");
 
     vi.mocked(getInvite).mockReturnValue(mockInvite);
     vi.mocked(createSession).mockReturnValue(mockNewSession);
@@ -387,17 +363,8 @@ describe("POST /api/interviews - Session Creation", () => {
   });
 
   it("resumes existing session when invite has linked sessionId", async () => {
-    const mockInvite = {
-      code: "EXISTING123",
-      sessionId: "existing-session-789",
-      createdAt: "2024-01-15T10:00:00.000Z",
-    };
-    const mockExistingSession = {
-      id: "existing-session-789",
-      createdAt: "2024-01-15T09:00:00.000Z",
-      updatedAt: "2024-01-15T09:00:00.000Z",
-      isComplete: false,
-    };
+    const mockInvite = inviteFactory.linked("existing-session-789", { code: "EXISTING123" });
+    const mockExistingSession = sessionFactory.withId("existing-session-789");
 
     vi.mocked(getInvite).mockReturnValue(mockInvite);
     vi.mocked(getSession).mockReturnValue(mockExistingSession);
@@ -420,17 +387,8 @@ describe("POST /api/interviews - Session Creation", () => {
   });
 
   it("creates new session when linked sessionId no longer exists", async () => {
-    const mockInvite = {
-      code: "ORPHANED123",
-      sessionId: "deleted-session",
-      createdAt: "2024-01-15T10:00:00.000Z",
-    };
-    const mockNewSession = {
-      id: "new-session-999",
-      createdAt: "2024-01-15T10:00:00.000Z",
-      updatedAt: "2024-01-15T10:00:00.000Z",
-      isComplete: false,
-    };
+    const mockInvite = inviteFactory.linked("deleted-session", { code: "ORPHANED123" });
+    const mockNewSession = sessionFactory.withId("new-session-999");
 
     vi.mocked(getInvite).mockReturnValue(mockInvite);
     vi.mocked(getSession).mockReturnValue(undefined); // Session was deleted
@@ -473,16 +431,8 @@ describe("POST /api/interviews - Session Creation", () => {
   });
 
   it("creates session with participantId when provided", async () => {
-    const mockInvite = {
-      code: "VALID123",
-      createdAt: "2024-01-15T10:00:00.000Z",
-    };
-    const mockNewSession = {
-      id: "new-session-456",
-      createdAt: "2024-01-15T10:00:00.000Z",
-      updatedAt: "2024-01-15T10:00:00.000Z",
-      isComplete: false,
-    };
+    const mockInvite = inviteFactory.withCode("VALID123");
+    const mockNewSession = sessionFactory.withId("new-session-456");
 
     vi.mocked(getInvite).mockReturnValue(mockInvite);
     vi.mocked(createSession).mockReturnValue(mockNewSession);
@@ -507,53 +457,26 @@ describe("POST /api/interviews - Session Creation", () => {
 // ═══════════════════════════════════════════════════════════════
 
 describe("GET /api/interviews/:id - Get Session State", () => {
-  const mockSession = {
-    id: "test-session-123",
-    createdAt: "2024-01-15T10:00:00.000Z",
-    updatedAt: "2024-01-15T10:00:00.000Z",
-    isComplete: false,
-  };
+  const mockSession = sessionFactory.withId("test-session-123");
 
-  const mockState = {
-    values: {
-      sessionId: "test-session-123",
-      startedAt: "2024-01-15T10:00:00.000Z",
-      messages: [
-        {
-          _getType: () => "human",
-          content: "Hello",
-          tool_calls: undefined,
-        },
-        {
-          _getType: () => "ai",
-          content: "Hi there!",
-          tool_calls: undefined,
-        },
-      ],
-      questionsCompleted: {
-        ai_background: true,
-        overall_impression: false,
-        perceived_content: false,
-        difficulty: false,
-        content_quality: false,
-        presentation: false,
-        clarity: false,
-        suggestions: false,
-        course_parts: false,
+  const mockStateWithMessages = agentStateFactory.withMessages(
+    [
+      {
+        _getType: () => "human",
+        content: "Hello",
+        tool_calls: undefined,
       },
-      isComplete: false,
-    },
-  };
-
-  const mockStateEmpty = {
-    values: {
+      {
+        _getType: () => "ai",
+        content: "Hi there!",
+        tool_calls: undefined,
+      },
+    ],
+    {
       sessionId: "test-session-123",
-      startedAt: "2024-01-15T10:00:00.000Z",
-      messages: [],
-      questionsCompleted: {},
-      isComplete: false,
-    },
-  };
+      questionsCompleted: questionsCompletedFactory.withCompleted("ai_background"),
+    }
+  );
 
   let mockAgent: {
     getState: ReturnType<typeof vi.fn>;
@@ -564,7 +487,7 @@ describe("GET /api/interviews/:id - Get Session State", () => {
     vi.clearAllMocks();
     vi.resetModules();
     mockAgent = {
-      getState: vi.fn().mockResolvedValue(mockState),
+      getState: vi.fn().mockResolvedValue(mockStateWithMessages),
     };
     vi.mocked(getSession).mockReturnValue(mockSession);
     vi.mocked(getCheckpointer).mockResolvedValue({} as never);
@@ -572,8 +495,7 @@ describe("GET /api/interviews/:id - Get Session State", () => {
   });
 
   it("returns session state with messages and progress", async () => {
-    // Ensure mock returns the state with messages
-    mockAgent.getState.mockResolvedValue(mockState);
+    mockAgent.getState.mockResolvedValue(mockStateWithMessages);
 
     const { interviewRoutes } = await import("./interview");
     const app = new Hono().route("/api/interviews", interviewRoutes);
@@ -605,12 +527,10 @@ describe("GET /api/interviews/:id - Get Session State", () => {
   });
 
   it("returns empty messages and default progress when no state exists", async () => {
-    // Create a new agent mock that throws
     const mockAgentEmpty = {
       getState: vi.fn().mockRejectedValue(new Error("No state")),
     };
-    
-    // Replace the mock for this test
+
     vi.mocked(createInterviewAgent).mockReturnValueOnce(mockAgentEmpty as never);
 
     const { interviewRoutes } = await import("./interview");
@@ -623,8 +543,7 @@ describe("GET /api/interviews/:id - Get Session State", () => {
     expect(json.messages).toEqual([]);
     expect(json.progress.completedCount).toBe(0);
     expect(json.progress.isComplete).toBe(false);
-    
-    // Restore the original mock
+
     vi.mocked(createInterviewAgent).mockReturnValue(mockAgent as never);
   });
 
@@ -632,12 +551,7 @@ describe("GET /api/interviews/:id - Get Session State", () => {
     const mockDebugState = {
       createdAt: "2024-01-15T10:00:00.000Z",
       messages: [{ role: "user", content: "Test" }],
-      progress: {
-        questionsCompleted: {},
-        completedCount: 0,
-        totalQuestions: 9,
-        isComplete: false,
-      },
+      progress: progressFactory.empty(),
     };
 
     vi.mocked(mockInterviewService.getState).mockReturnValue(mockDebugState as never);
@@ -659,12 +573,7 @@ describe("GET /api/interviews/:id - Get Session State", () => {
 // ═══════════════════════════════════════════════════════════════
 
 describe("POST /api/interviews/:id/chat - Chat Streaming", () => {
-  const mockSession = {
-    id: "test-session-123",
-    createdAt: "2024-01-15T10:00:00.000Z",
-    updatedAt: "2024-01-15T10:00:00.000Z",
-    isComplete: false,
-  };
+  const mockSession = sessionFactory.withId("test-session-123");
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -728,22 +637,7 @@ describe("POST /api/interviews/:id/chat - Chat Streaming", () => {
           args: { experienceLevel: 3 },
         },
       ],
-      progress: {
-        questionsCompleted: {
-          ai_background: true,
-          overall_impression: false,
-          perceived_content: false,
-          difficulty: false,
-          content_quality: false,
-          presentation: false,
-          clarity: false,
-          suggestions: false,
-          course_parts: false,
-        },
-        completedCount: 1,
-        totalQuestions: 9,
-        isComplete: false,
-      },
+      progress: progressFactory.withCompleted("ai_background"),
     };
 
     vi.mocked(mockInterviewService.processMessage).mockResolvedValue(mockProcessResult as never);
@@ -800,13 +694,14 @@ describe("POST /api/interviews/:id/chat - Chat Streaming", () => {
     }
 
     const mockStreamAgent = {
-      getState: vi.fn().mockResolvedValue({
-        values: {
-          messages: [],
-          questionsCompleted: {},
-          isComplete: false,
-        },
-      }),
+      getState: vi
+        .fn()
+        .mockResolvedValue(
+          agentStateFactory.build({
+            messages: [],
+            questionsCompleted: questionsCompletedFactory.build(),
+          })
+        ),
       streamEvents: vi.fn().mockReturnValue(mockStream()),
     };
 

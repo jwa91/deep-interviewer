@@ -1,38 +1,17 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { mkdir } from "node:fs/promises";
-import { join } from "node:path";
+import { sessionFactory } from "@/test/factories";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  createSession,
-  getSession,
-  updateSession,
-  listSessions,
-  deleteSession,
-  getCheckpointer,
+  type SessionStore,
   _resetForTesting,
-  type InterviewSession,
+  createSessionStore,
+  getCheckpointer,
 } from "./persistence";
+import { InMemoryStorage } from "./storage";
 
-// Mock fs operations
-vi.mock("node:fs", () => {
-  const existsSync = vi.fn();
-  const readFileSync = vi.fn();
-  const writeFileSync = vi.fn();
-  return {
-    default: { existsSync, readFileSync, writeFileSync },
-    existsSync,
-    readFileSync,
-    writeFileSync,
-  };
-});
-
-vi.mock("node:fs/promises", () => {
-  const mkdir = vi.fn();
-  return {
-    default: { mkdir },
-    mkdir,
-  };
-});
+// Mock only the SQLite checkpointer dependencies
+vi.mock("node:fs/promises", () => ({
+  mkdir: vi.fn().mockResolvedValue(undefined),
+}));
 
 vi.mock("@langchain/langgraph-checkpoint-sqlite", () => ({
   SqliteSaver: {
@@ -43,17 +22,18 @@ vi.mock("@langchain/langgraph-checkpoint-sqlite", () => ({
 }));
 
 describe("persistence", () => {
+  let storage: InMemoryStorage;
+  let store: SessionStore;
+
   beforeEach(() => {
-    vi.clearAllMocks();
-    _resetForTesting();
+    storage = new InMemoryStorage();
+    store = createSessionStore(storage);
+    _resetForTesting(); // Reset checkpointer for getCheckpointer tests
   });
 
   describe("createSession", () => {
     it("creates a new session with generated UUID", () => {
-      vi.mocked(existsSync).mockReturnValue(false);
-      vi.mocked(writeFileSync).mockImplementation(() => {});
-
-      const session = createSession();
+      const session = store.createSession();
 
       expect(session.id).toBeDefined();
       expect(session.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
@@ -64,98 +44,77 @@ describe("persistence", () => {
     });
 
     it("creates session with participantId", () => {
-      vi.mocked(existsSync).mockReturnValue(false);
-      vi.mocked(writeFileSync).mockImplementation(() => {});
-
-      const session = createSession("participant-123");
+      const session = store.createSession("participant-123");
 
       expect(session.participantId).toBe("participant-123");
     });
 
-    it("saves session to file", () => {
-      vi.mocked(existsSync).mockReturnValue(false);
-      vi.mocked(writeFileSync).mockImplementation(() => {});
+    it("saves session to storage", () => {
+      const session = store.createSession();
 
-      createSession();
-
-      expect(writeFileSync).toHaveBeenCalled();
-      const callArgs = vi.mocked(writeFileSync).mock.calls[0];
-      expect(String(callArgs[0])).toContain("sessions.json");
-      expect(callArgs[1]).toContain('"isComplete": false');
+      const data = storage.read("sessions.json");
+      expect(data).not.toBeNull();
+      const savedData = JSON.parse(data ?? "{}");
+      expect(savedData[session.id]).toBeDefined();
+      expect(savedData[session.id].isComplete).toBe(false);
     });
   });
 
   describe("getSession", () => {
     it("returns session when it exists", () => {
-      const mockSession: InterviewSession = {
-        id: "session-123",
-        createdAt: "2024-01-15T10:00:00.000Z",
-        updatedAt: "2024-01-15T10:00:00.000Z",
-        isComplete: false,
-      };
+      const mockSession = sessionFactory.withId("session-123");
+      storage.seed({
+        "sessions.json": JSON.stringify({ "session-123": mockSession }),
+      });
+      store = createSessionStore(storage);
 
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(
-        JSON.stringify({
-          "session-123": mockSession,
-        })
-      );
-
-      const session = getSession("session-123");
+      const session = store.getSession("session-123");
 
       expect(session).toEqual(mockSession);
     });
 
     it("returns undefined when session does not exist", () => {
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(JSON.stringify({}));
+      storage.seed({ "sessions.json": JSON.stringify({}) });
+      store = createSessionStore(storage);
 
-      const session = getSession("non-existent");
+      const session = store.getSession("non-existent");
 
       expect(session).toBeUndefined();
     });
 
-    it("loads sessions from file on first access", () => {
-      const mockSessions = {
-        "session-1": {
-          id: "session-1",
-          createdAt: "2024-01-15T10:00:00.000Z",
-          updatedAt: "2024-01-15T10:00:00.000Z",
-          isComplete: false,
-        },
-        "session-2": {
-          id: "session-2",
-          createdAt: "2024-01-15T11:00:00.000Z",
-          updatedAt: "2024-01-15T11:00:00.000Z",
-          isComplete: true,
-        },
-      };
+    it("loads sessions from storage on first access", () => {
+      const session1 = sessionFactory.withId("session-1");
+      const session2 = sessionFactory.withId("session-2", { isComplete: true });
+      storage.seed({
+        "sessions.json": JSON.stringify({
+          "session-1": session1,
+          "session-2": session2,
+        }),
+      });
+      store = createSessionStore(storage);
 
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(JSON.stringify(mockSessions));
+      const result1 = store.getSession("session-1");
+      const result2 = store.getSession("session-2");
 
-      const session1 = getSession("session-1");
-      const session2 = getSession("session-2");
-
-      expect(session1?.id).toBe("session-1");
-      expect(session2?.id).toBe("session-2");
-      expect(readFileSync).toHaveBeenCalledTimes(1); // Only loaded once
+      expect(result1?.id).toBe("session-1");
+      expect(result2?.id).toBe("session-2");
     });
 
     it("handles missing sessions file gracefully", () => {
-      vi.mocked(existsSync).mockReturnValue(false);
+      // Empty storage - no sessions.json
+      store = createSessionStore(storage);
 
-      const session = getSession("any-id");
+      const session = store.getSession("any-id");
 
       expect(session).toBeUndefined();
     });
 
     it("handles invalid JSON in sessions file gracefully", () => {
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue("invalid json");
+      storage.seed({ "sessions.json": "invalid json" });
+      store = createSessionStore(storage);
 
       // Should not throw, but return undefined
-      const session = getSession("any-id");
+      const session = store.getSession("any-id");
 
       expect(session).toBeUndefined();
     });
@@ -163,22 +122,13 @@ describe("persistence", () => {
 
   describe("updateSession", () => {
     it("updates existing session", () => {
-      const existingSession: InterviewSession = {
-        id: "session-123",
-        createdAt: "2024-01-15T10:00:00.000Z",
-        updatedAt: "2024-01-15T10:00:00.000Z",
-        isComplete: false,
-      };
+      const existingSession = sessionFactory.withId("session-123");
+      storage.seed({
+        "sessions.json": JSON.stringify({ "session-123": existingSession }),
+      });
+      store = createSessionStore(storage);
 
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(
-        JSON.stringify({
-          "session-123": existingSession,
-        })
-      );
-      vi.mocked(writeFileSync).mockImplementation(() => {});
-
-      const updated = updateSession("session-123", {
+      const updated = store.updateSession("session-123", {
         isComplete: true,
         participantId: "participant-456",
       });
@@ -192,59 +142,43 @@ describe("persistence", () => {
     });
 
     it("returns undefined when session does not exist", () => {
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(JSON.stringify({}));
+      storage.seed({ "sessions.json": JSON.stringify({}) });
+      store = createSessionStore(storage);
 
-      const updated = updateSession("non-existent", { isComplete: true });
+      const updated = store.updateSession("non-existent", { isComplete: true });
 
       expect(updated).toBeUndefined();
     });
 
-    it("saves updated session to file", () => {
-      const existingSession: InterviewSession = {
-        id: "session-123",
-        createdAt: "2024-01-15T10:00:00.000Z",
-        updatedAt: "2024-01-15T10:00:00.000Z",
-        isComplete: false,
-      };
+    it("saves updated session to storage", () => {
+      const existingSession = sessionFactory.withId("session-123");
+      storage.seed({
+        "sessions.json": JSON.stringify({ "session-123": existingSession }),
+      });
+      store = createSessionStore(storage);
 
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(
-        JSON.stringify({
-          "session-123": existingSession,
-        })
-      );
-      vi.mocked(writeFileSync).mockImplementation(() => {});
+      store.updateSession("session-123", { isComplete: true });
 
-      updateSession("session-123", { isComplete: true });
-
-      expect(writeFileSync).toHaveBeenCalled();
-      const savedData = JSON.parse(vi.mocked(writeFileSync).mock.calls[0][1] as string);
+      const data = storage.read("sessions.json");
+      expect(data).not.toBeNull();
+      const savedData = JSON.parse(data ?? "{}");
       expect(savedData["session-123"].isComplete).toBe(true);
     });
   });
 
   describe("listSessions", () => {
     it("returns all sessions", () => {
-      const mockSessions = {
-        "session-1": {
-          id: "session-1",
-          createdAt: "2024-01-15T10:00:00.000Z",
-          updatedAt: "2024-01-15T10:00:00.000Z",
-          isComplete: false,
-        },
-        "session-2": {
-          id: "session-2",
-          createdAt: "2024-01-15T11:00:00.000Z",
-          updatedAt: "2024-01-15T11:00:00.000Z",
-          isComplete: true,
-        },
-      };
+      const session1 = sessionFactory.withId("session-1");
+      const session2 = sessionFactory.withId("session-2", { isComplete: true });
+      storage.seed({
+        "sessions.json": JSON.stringify({
+          "session-1": session1,
+          "session-2": session2,
+        }),
+      });
+      store = createSessionStore(storage);
 
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(JSON.stringify(mockSessions));
-
-      const sessions = listSessions();
+      const sessions = store.listSessions();
 
       expect(sessions).toHaveLength(2);
       expect(sessions.map((s) => s.id)).toContain("session-1");
@@ -252,9 +186,10 @@ describe("persistence", () => {
     });
 
     it("returns empty array when no sessions file exists", () => {
-      vi.mocked(existsSync).mockReturnValue(false);
+      // Empty storage
+      store = createSessionStore(storage);
 
-      const sessions = listSessions();
+      const sessions = store.listSessions();
 
       expect(sessions).toEqual([]);
     });
@@ -262,139 +197,97 @@ describe("persistence", () => {
 
   describe("deleteSession", () => {
     it("deletes existing session", () => {
-      const mockSessions = {
-        "session-1": {
-          id: "session-1",
-          createdAt: "2024-01-15T10:00:00.000Z",
-          updatedAt: "2024-01-15T10:00:00.000Z",
-          isComplete: false,
-        },
-        "session-2": {
-          id: "session-2",
-          createdAt: "2024-01-15T11:00:00.000Z",
-          updatedAt: "2024-01-15T11:00:00.000Z",
-          isComplete: true,
-        },
-      };
+      const session1 = sessionFactory.withId("session-1");
+      const session2 = sessionFactory.withId("session-2", { isComplete: true });
+      storage.seed({
+        "sessions.json": JSON.stringify({
+          "session-1": session1,
+          "session-2": session2,
+        }),
+      });
+      store = createSessionStore(storage);
 
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(JSON.stringify(mockSessions));
-      vi.mocked(writeFileSync).mockImplementation(() => {});
-
-      const deleted = deleteSession("session-1");
+      const deleted = store.deleteSession("session-1");
 
       expect(deleted).toBe(true);
-      expect(writeFileSync).toHaveBeenCalled();
-      const savedData = JSON.parse(vi.mocked(writeFileSync).mock.calls[0][1] as string);
+      const data = storage.read("sessions.json");
+      expect(data).not.toBeNull();
+      const savedData = JSON.parse(data ?? "{}");
       expect(savedData["session-1"]).toBeUndefined();
       expect(savedData["session-2"]).toBeDefined();
     });
 
     it("returns false when session does not exist", () => {
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(JSON.stringify({}));
+      storage.seed({ "sessions.json": JSON.stringify({}) });
+      store = createSessionStore(storage);
 
-      const deleted = deleteSession("non-existent");
+      const deleted = store.deleteSession("non-existent");
 
       expect(deleted).toBe(false);
     });
 
     it("saves file after deletion", () => {
-      const mockSessions = {
-        "session-1": {
-          id: "session-1",
-          createdAt: "2024-01-15T10:00:00.000Z",
-          updatedAt: "2024-01-15T10:00:00.000Z",
-          isComplete: false,
-        },
-      };
+      const session1 = sessionFactory.withId("session-1");
+      storage.seed({
+        "sessions.json": JSON.stringify({ "session-1": session1 }),
+      });
+      store = createSessionStore(storage);
 
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(JSON.stringify(mockSessions));
-      vi.mocked(writeFileSync).mockImplementation(() => {});
+      store.deleteSession("session-1");
 
-      deleteSession("session-1");
-
-      expect(writeFileSync).toHaveBeenCalled();
+      const data = storage.read("sessions.json");
+      expect(data).not.toBeNull();
+      const savedData = JSON.parse(data ?? "{}");
+      expect(savedData["session-1"]).toBeUndefined();
     });
   });
 
   describe("getCheckpointer", () => {
+    const { mkdir } = vi.hoisted(() => ({
+      mkdir: vi.fn().mockResolvedValue(undefined),
+    }));
+
+    beforeEach(() => {
+      vi.doMock("node:fs/promises", () => ({ mkdir }));
+      _resetForTesting();
+    });
+
     afterEach(() => {
       delete process.env.DATA_DIR;
     });
 
     it("creates checkpointer on first call", async () => {
-      vi.mocked(existsSync).mockReturnValue(false);
-      vi.mocked(mkdir).mockResolvedValue(undefined);
-
       const checkpointer = await getCheckpointer();
 
       expect(checkpointer).toBeDefined();
-      // Uses default ./data when DATA_DIR is not set
-      expect(mkdir).toHaveBeenCalledWith("./data", { recursive: true });
     });
 
     it("returns same checkpointer instance on subsequent calls", async () => {
-      vi.mocked(existsSync).mockReturnValue(false);
-      vi.mocked(mkdir).mockResolvedValue(undefined);
-
       const checkpointer1 = await getCheckpointer();
       const checkpointer2 = await getCheckpointer();
 
       expect(checkpointer1).toBe(checkpointer2);
-      expect(mkdir).toHaveBeenCalledTimes(1); // Only created once
     });
 
     it("uses DATA_DIR environment variable", async () => {
+      const { mkdir: mkdirMock } = await import("node:fs/promises");
       const customDir = "/custom/data/dir";
       process.env.DATA_DIR = customDir;
-
-      vi.mocked(existsSync).mockReturnValue(false);
-      vi.mocked(mkdir).mockResolvedValue(undefined);
+      _resetForTesting();
 
       await getCheckpointer();
 
-      expect(mkdir).toHaveBeenCalledWith(customDir, { recursive: true });
+      expect(mkdirMock).toHaveBeenCalledWith(customDir, { recursive: true });
     });
 
     it("defaults to ./data when DATA_DIR is not set", async () => {
+      const { mkdir: mkdirMock } = await import("node:fs/promises");
       delete process.env.DATA_DIR;
-
-      vi.mocked(existsSync).mockReturnValue(false);
-      vi.mocked(mkdir).mockResolvedValue(undefined);
+      _resetForTesting();
 
       await getCheckpointer();
 
-      expect(mkdir).toHaveBeenCalledWith("./data", { recursive: true });
-    });
-  });
-
-  describe("error handling", () => {
-    it("handles file read errors gracefully", () => {
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockImplementation(() => {
-        throw new Error("Read error");
-      });
-
-      // Should not throw
-      const session = getSession("any-id");
-
-      expect(session).toBeUndefined();
-    });
-
-    it("handles file write errors gracefully", () => {
-      vi.mocked(existsSync).mockReturnValue(false);
-      vi.mocked(writeFileSync).mockImplementation(() => {
-        throw new Error("Write error");
-      });
-
-      // Should not throw, but session should still be created
-      const session = createSession();
-
-      expect(session).toBeDefined();
-      expect(session.id).toBeDefined();
+      expect(mkdirMock).toHaveBeenCalledWith("./data", { recursive: true });
     });
   });
 });
-

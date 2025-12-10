@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { SpotlightPicture } from "./spotlight-picture";
 
 describe("SpotlightPicture", () => {
@@ -171,4 +171,3 @@ describe("SpotlightPicture", () => {
     expect(ref.current).toBeInstanceOf(HTMLElement);
   });
 });
-

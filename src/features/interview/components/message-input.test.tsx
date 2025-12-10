@@ -1,6 +1,6 @@
-import { render, screen, waitFor, act } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MessageInput } from "./message-input";
 
 describe("MessageInput", () => {
@@ -116,7 +116,9 @@ describe("MessageInput", () => {
   it("shows disabled placeholder when disabled", () => {
     render(<MessageInput onSend={mockOnSend} disabled />);
 
-    expect(screen.getByPlaceholderText("Even geduld, de interviewer is aan het typen...")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Even geduld, de interviewer is aan het typen...")
+    ).toBeInTheDocument();
   });
 
   it("disables submit button when message is empty", () => {
@@ -196,4 +198,3 @@ describe("MessageInput", () => {
     expect(mockOnSend).toHaveBeenNthCalledWith(2, "Message 2");
   });
 });
-

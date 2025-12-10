@@ -22,8 +22,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default:
-          "h-11 px-4 py-2 has-[>svg]:px-3" /* Slightly taller for brutalist feel? Standard is 9 (36px). Let's try 11 (44px) or keep 9. User didn't specify size changes, but bold borders eat space. */,
+        default: "h-11 px-4 py-2 has-[>svg]:px-3",
         sm: "h-9 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5",
         lg: "h-12 rounded-md px-8 has-[>svg]:px-4",
         icon: "size-10",
@@ -38,34 +37,46 @@ const buttonVariants = cva(
   }
 );
 
+type ButtonProps = React.ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean;
+  };
+
+/**
+ * Button component with variant styles and asChild support for Radix Slot.
+ *
+ * When asChild is true, the button styles are applied to the child element
+ * (e.g., an anchor tag) using Radix Slot.
+ */
 function Button({
   className,
   variant,
   size,
   asChild = false,
+  disabled,
+  children,
   ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
-  }) {
-  const Comp = asChild ? Slot : "button";
+}: ButtonProps) {
+  const buttonClassName = cn(buttonVariants({ variant, size, className }));
 
+  // When asChild is true, render children through Slot
+  // Slot requires exactly one child element
+  if (asChild) {
+    return (
+      <Slot data-slot="button" className={buttonClassName} {...props}>
+        {children}
+      </Slot>
+    );
+  }
+
+  // Standard button rendering with optional disabled icon
   return (
-    <Comp
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    >
-      {asChild ? (
-        props.children
-      ) : (
-        <>
-          <span>{props.children}</span>
-          {props.disabled && <Ban className="size-4 opacity-50" />}
-        </>
-      )}
-    </Comp>
+    <button data-slot="button" className={buttonClassName} disabled={disabled} {...props}>
+      <span>{children}</span>
+      {disabled && <Ban className="size-4 opacity-50" />}
+    </button>
   );
 }
 
 export { Button, buttonVariants };
+export type { ButtonProps };

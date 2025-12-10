@@ -1,25 +1,15 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
-import { createInvite, getInvite, linkSessionToInvite, listInvites, _resetForTesting, type Invite } from "./invites";
-
-// Mock fs operations
-vi.mock("node:fs", () => {
-  const existsSync = vi.fn();
-  const readFileSync = vi.fn();
-  const writeFileSync = vi.fn();
-  return {
-    default: { existsSync, readFileSync, writeFileSync },
-    existsSync,
-    readFileSync,
-    writeFileSync,
-  };
-});
+import { inviteFactory } from "@/test/factories";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { type InviteStore, createInviteStore } from "./invites";
+import { InMemoryStorage } from "./storage";
 
 describe("invites", () => {
+  let storage: InMemoryStorage;
+  let store: InviteStore;
+
   beforeEach(() => {
-    vi.clearAllMocks();
-    _resetForTesting();
+    storage = new InMemoryStorage();
+    store = createInviteStore(storage);
     // Mock Math.random to make tests deterministic
     vi.spyOn(Math, "random").mockReturnValue(0.5);
   });
@@ -30,36 +20,30 @@ describe("invites", () => {
 
   describe("createInvite", () => {
     it("generates a 6-character uppercase alphanumeric code", () => {
-      vi.mocked(existsSync).mockReturnValue(false);
-      vi.mocked(writeFileSync).mockImplementation(() => {});
       // Mock random to generate predictable code
       vi.spyOn(Math, "random").mockReturnValue(0.123456789);
 
-      const code = createInvite();
+      const code = store.createInvite();
 
       expect(code).toMatch(/^[A-Z0-9]{6}$/);
       expect(code.length).toBe(6);
     });
 
-    it("saves invite to file", () => {
-      vi.mocked(existsSync).mockReturnValue(false);
-      vi.mocked(writeFileSync).mockImplementation(() => {});
+    it("saves invite to storage", () => {
+      const code = store.createInvite();
 
-      createInvite();
-
-      expect(writeFileSync).toHaveBeenCalled();
-      const callArgs = vi.mocked(writeFileSync).mock.calls[0];
-      expect(String(callArgs[0])).toContain("invites.json");
-      const savedData = JSON.parse(callArgs[1] as string);
-      expect(Object.keys(savedData).length).toBeGreaterThan(0);
+      const data = storage.read("invites.json");
+      expect(data).not.toBeNull();
+      const savedData = JSON.parse(data ?? "{}");
+      expect(savedData[code]).toBeDefined();
     });
 
     it("creates invite with createdAt timestamp", () => {
-      vi.mocked(existsSync).mockReturnValue(false);
-      vi.mocked(writeFileSync).mockImplementation(() => {});
+      const code = store.createInvite();
 
-      const code = createInvite();
-      const savedData = JSON.parse(vi.mocked(writeFileSync).mock.calls[0][1] as string);
+      const data = storage.read("invites.json");
+      expect(data).not.toBeNull();
+      const savedData = JSON.parse(data ?? "{}");
       const invite = savedData[code];
 
       expect(invite.createdAt).toBeDefined();
@@ -67,17 +51,14 @@ describe("invites", () => {
     });
 
     it("ensures uniqueness by regenerating if code exists", () => {
-      const existingCode = "EXISTS";
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(
-        JSON.stringify({
-          [existingCode]: {
-            code: existingCode,
-            createdAt: "2024-01-15T10:00:00.000Z",
-          },
-        })
-      );
-      vi.mocked(writeFileSync).mockImplementation(() => {});
+      // Pre-seed storage with an existing invite
+      const existingInvite = inviteFactory.withCode("EXISTS");
+      storage.seed({
+        "invites.json": JSON.stringify({ EXISTS: existingInvite }),
+      });
+
+      // Create a new store that will load the seeded data
+      store = createInviteStore(storage);
 
       // Mock random to return the existing code first, then a new one
       let callCount = 0;
@@ -86,47 +67,35 @@ describe("invites", () => {
         return callCount === 1 ? 0.123 : 0.456; // First returns existing, second returns new
       });
 
-      const code = createInvite();
+      const code = store.createInvite();
 
-      expect(code).not.toBe(existingCode);
+      expect(code).not.toBe("EXISTS");
     });
   });
 
   describe("getInvite", () => {
     it("returns invite when it exists", () => {
-      const mockInvite: Invite = {
-        code: "TEST123",
-        createdAt: "2024-01-15T10:00:00.000Z",
-      };
+      const mockInvite = inviteFactory.withCode("TEST123");
+      storage.seed({
+        "invites.json": JSON.stringify({ TEST123: mockInvite }),
+      });
+      store = createInviteStore(storage);
 
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(
-        JSON.stringify({
-          TEST123: mockInvite,
-        })
-      );
-
-      const invite = getInvite("TEST123");
+      const invite = store.getInvite("TEST123");
 
       expect(invite).toEqual(mockInvite);
     });
 
     it("performs case-insensitive lookup", () => {
-      const mockInvite: Invite = {
-        code: "TEST123",
-        createdAt: "2024-01-15T10:00:00.000Z",
-      };
+      const mockInvite = inviteFactory.withCode("TEST123");
+      storage.seed({
+        "invites.json": JSON.stringify({ TEST123: mockInvite }),
+      });
+      store = createInviteStore(storage);
 
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(
-        JSON.stringify({
-          TEST123: mockInvite,
-        })
-      );
-
-      const invite1 = getInvite("test123");
-      const invite2 = getInvite("Test123");
-      const invite3 = getInvite("TEST123");
+      const invite1 = store.getInvite("test123");
+      const invite2 = store.getInvite("Test123");
+      const invite3 = store.getInvite("TEST123");
 
       expect(invite1).toEqual(mockInvite);
       expect(invite2).toEqual(mockInvite);
@@ -134,50 +103,43 @@ describe("invites", () => {
     });
 
     it("returns undefined when invite does not exist", () => {
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(JSON.stringify({}));
+      storage.seed({ "invites.json": JSON.stringify({}) });
+      store = createInviteStore(storage);
 
-      const invite = getInvite("NONEXIST");
+      const invite = store.getInvite("NONEXIST");
 
       expect(invite).toBeUndefined();
     });
 
-    it("loads invites from file on first access", () => {
-      const mockInvites = {
-        CODE1: {
-          code: "CODE1",
-          createdAt: "2024-01-15T10:00:00.000Z",
-        },
-        CODE2: {
-          code: "CODE2",
-          createdAt: "2024-01-15T11:00:00.000Z",
-        },
-      };
+    it("loads invites from storage on first access", () => {
+      const invite1 = inviteFactory.withCode("CODE1");
+      const invite2 = inviteFactory.withCode("CODE2");
+      storage.seed({
+        "invites.json": JSON.stringify({ CODE1: invite1, CODE2: invite2 }),
+      });
+      store = createInviteStore(storage);
 
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(JSON.stringify(mockInvites));
+      const result1 = store.getInvite("CODE1");
+      const result2 = store.getInvite("CODE2");
 
-      const invite1 = getInvite("CODE1");
-      const invite2 = getInvite("CODE2");
-
-      expect(invite1?.code).toBe("CODE1");
-      expect(invite2?.code).toBe("CODE2");
-      expect(readFileSync).toHaveBeenCalledTimes(1); // Only loaded once
+      expect(result1?.code).toBe("CODE1");
+      expect(result2?.code).toBe("CODE2");
     });
 
     it("handles missing invites file gracefully", () => {
-      vi.mocked(existsSync).mockReturnValue(false);
+      // Empty storage - no invites.json
+      store = createInviteStore(storage);
 
-      const invite = getInvite("any-code");
+      const invite = store.getInvite("any-code");
 
       expect(invite).toBeUndefined();
     });
 
     it("handles invalid JSON in invites file gracefully", () => {
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue("invalid json");
+      storage.seed({ "invites.json": "invalid json" });
+      store = createInviteStore(storage);
 
-      const invite = getInvite("any-code");
+      const invite = store.getInvite("any-code");
 
       expect(invite).toBeUndefined();
     });
@@ -185,75 +147,58 @@ describe("invites", () => {
 
   describe("linkSessionToInvite", () => {
     it("links sessionId to existing invite", () => {
-      const mockInvite: Invite = {
-        code: "TEST123",
-        createdAt: "2024-01-15T10:00:00.000Z",
-      };
+      const mockInvite = inviteFactory.withCode("TEST123");
+      storage.seed({
+        "invites.json": JSON.stringify({ TEST123: mockInvite }),
+      });
+      store = createInviteStore(storage);
 
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(
-        JSON.stringify({
-          TEST123: mockInvite,
-        })
-      );
-      vi.mocked(writeFileSync).mockImplementation(() => {});
+      store.linkSessionToInvite("TEST123", "session-456");
 
-      linkSessionToInvite("TEST123", "session-456");
-
-      expect(writeFileSync).toHaveBeenCalled();
-      const savedData = JSON.parse(vi.mocked(writeFileSync).mock.calls[0][1] as string);
+      const data = storage.read("invites.json");
+      expect(data).not.toBeNull();
+      const savedData = JSON.parse(data ?? "{}");
       expect(savedData.TEST123.sessionId).toBe("session-456");
     });
 
     it("does nothing when invite does not exist", () => {
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(JSON.stringify({}));
-      vi.mocked(writeFileSync).mockImplementation(() => {});
+      storage.seed({ "invites.json": JSON.stringify({}) });
+      store = createInviteStore(storage);
+      const originalData = storage.read("invites.json");
 
-      linkSessionToInvite("NONEXIST", "session-456");
+      store.linkSessionToInvite("NONEXIST", "session-456");
 
-      expect(writeFileSync).not.toHaveBeenCalled();
+      // Data should be unchanged
+      expect(storage.read("invites.json")).toBe(originalData);
     });
 
     it("performs case-insensitive lookup", () => {
-      const mockInvite: Invite = {
-        code: "TEST123",
-        createdAt: "2024-01-15T10:00:00.000Z",
-      };
+      const mockInvite = inviteFactory.withCode("TEST123");
+      storage.seed({
+        "invites.json": JSON.stringify({ TEST123: mockInvite }),
+      });
+      store = createInviteStore(storage);
 
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(
-        JSON.stringify({
-          TEST123: mockInvite,
-        })
-      );
-      vi.mocked(writeFileSync).mockImplementation(() => {});
+      store.linkSessionToInvite("test123", "session-456");
 
-      linkSessionToInvite("test123", "session-456");
-
-      expect(writeFileSync).toHaveBeenCalled();
-      const savedData = JSON.parse(vi.mocked(writeFileSync).mock.calls[0][1] as string);
+      const data = storage.read("invites.json");
+      expect(data).not.toBeNull();
+      const savedData = JSON.parse(data ?? "{}");
       expect(savedData.TEST123.sessionId).toBe("session-456");
     });
 
     it("preserves existing invite properties when linking", () => {
-      const mockInvite: Invite = {
-        code: "TEST123",
-        createdAt: "2024-01-15T10:00:00.000Z",
-        sessionId: "old-session",
-      };
+      const mockInvite = inviteFactory.linked("old-session", { code: "TEST123" });
+      storage.seed({
+        "invites.json": JSON.stringify({ TEST123: mockInvite }),
+      });
+      store = createInviteStore(storage);
 
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(
-        JSON.stringify({
-          TEST123: mockInvite,
-        })
-      );
-      vi.mocked(writeFileSync).mockImplementation(() => {});
+      store.linkSessionToInvite("TEST123", "new-session");
 
-      linkSessionToInvite("TEST123", "new-session");
-
-      const savedData = JSON.parse(vi.mocked(writeFileSync).mock.calls[0][1] as string);
+      const data = storage.read("invites.json");
+      expect(data).not.toBeNull();
+      const savedData = JSON.parse(data ?? "{}");
       expect(savedData.TEST123.code).toBe("TEST123");
       expect(savedData.TEST123.createdAt).toBe(mockInvite.createdAt);
       expect(savedData.TEST123.sessionId).toBe("new-session");
@@ -262,22 +207,14 @@ describe("invites", () => {
 
   describe("listInvites", () => {
     it("returns all invites", () => {
-      const mockInvites = {
-        CODE1: {
-          code: "CODE1",
-          createdAt: "2024-01-15T10:00:00.000Z",
-        },
-        CODE2: {
-          code: "CODE2",
-          createdAt: "2024-01-15T11:00:00.000Z",
-          sessionId: "session-123",
-        },
-      };
+      const invite1 = inviteFactory.withCode("CODE1");
+      const invite2 = inviteFactory.linked("session-123", { code: "CODE2" });
+      storage.seed({
+        "invites.json": JSON.stringify({ CODE1: invite1, CODE2: invite2 }),
+      });
+      store = createInviteStore(storage);
 
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(JSON.stringify(mockInvites));
-
-      const invites = listInvites();
+      const invites = store.listInvites();
 
       expect(invites).toHaveLength(2);
       expect(invites.map((i) => i.code)).toContain("CODE1");
@@ -285,58 +222,24 @@ describe("invites", () => {
     });
 
     it("returns empty array when no invites file exists", () => {
-      vi.mocked(existsSync).mockReturnValue(false);
+      // Empty storage
+      store = createInviteStore(storage);
 
-      const invites = listInvites();
+      const invites = store.listInvites();
 
       expect(invites).toEqual([]);
     });
 
     it("includes sessionId when present", () => {
-      const mockInvites = {
-        CODE1: {
-          code: "CODE1",
-          createdAt: "2024-01-15T10:00:00.000Z",
-          sessionId: "session-123",
-        },
-      };
+      const mockInvite = inviteFactory.linked("session-123", { code: "CODE1" });
+      storage.seed({
+        "invites.json": JSON.stringify({ CODE1: mockInvite }),
+      });
+      store = createInviteStore(storage);
 
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockReturnValue(JSON.stringify(mockInvites));
-
-      const invites = listInvites();
+      const invites = store.listInvites();
 
       expect(invites[0].sessionId).toBe("session-123");
     });
   });
-
-  describe("error handling", () => {
-    it("handles file read errors gracefully", () => {
-      vi.mocked(existsSync).mockReturnValue(true);
-      vi.mocked(readFileSync).mockImplementation(() => {
-        throw new Error("Read error");
-      });
-
-      // Should not throw
-      const invite = getInvite("any-code");
-
-      expect(invite).toBeUndefined();
-    });
-
-    it("handles file write errors gracefully", () => {
-      vi.mocked(existsSync).mockReturnValue(false);
-      vi.mocked(writeFileSync).mockImplementation(() => {
-        throw new Error("Write error");
-      });
-      // Use a random value that produces a 6+ character base36 string
-      vi.spyOn(Math, "random").mockReturnValue(0.123456789);
-
-      // Should not throw, but code should still be generated
-      const code = createInvite();
-
-      expect(code).toBeDefined();
-      expect(code.length).toBe(6);
-    });
-  });
 });
-

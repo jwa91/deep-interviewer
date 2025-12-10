@@ -1,91 +1,148 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+/**
+ * Invite Store
+ *
+ * Manages invite codes for interview sessions.
+ * Uses dependency injection for storage to enable easy testing.
+ */
 
-interface Invite {
+import type { KeyValueStorage } from "./storage";
+import { createNodeFileStorage } from "./storage";
+
+// ═══════════════════════════════════════════════════════════════
+// TYPES
+// ═══════════════════════════════════════════════════════════════
+
+export interface Invite {
   code: string;
   sessionId?: string;
   createdAt: string;
 }
 
-const DATA_DIR = process.env.DATA_DIR || "./data";
-const INVITES_FILE = join(DATA_DIR, "invites.json");
+export interface InviteStore {
+  createInvite(): string;
+  getInvite(code: string): Invite | undefined;
+  linkSessionToInvite(code: string, sessionId: string): void;
+  listInvites(): Invite[];
+}
 
-// In-memory cache
-let invites = new Map<string, Invite>();
-let initialized = false;
+// ═══════════════════════════════════════════════════════════════
+// FACTORY
+// ═══════════════════════════════════════════════════════════════
 
-function ensureInitialized() {
-  if (initialized) {
-    return;
-  }
+const INVITES_FILE = "invites.json";
 
-  try {
-    if (existsSync(INVITES_FILE)) {
-      const data = JSON.parse(readFileSync(INVITES_FILE, "utf-8"));
-      invites = new Map(Object.entries(data));
+/**
+ * Creates an invite store with the given storage backend.
+ *
+ * @param storage - Storage implementation (defaults to file storage)
+ * @returns InviteStore instance
+ *
+ * @example
+ * // Production usage
+ * const store = createInviteStore();
+ *
+ * @example
+ * // Test usage
+ * const store = createInviteStore(new InMemoryStorage());
+ */
+export function createInviteStore(storage: KeyValueStorage = createNodeFileStorage()): InviteStore {
+  // In-memory cache
+  let invites = new Map<string, Invite>();
+  let initialized = false;
+
+  function ensureInitialized(): void {
+    if (initialized) {
+      return;
     }
-  } catch (error) {
-    console.error("Failed to load invites:", error);
-  }
-  initialized = true;
-}
 
-function saveInvites() {
-  try {
-    const data = Object.fromEntries(invites);
-    writeFileSync(INVITES_FILE, JSON.stringify(data, null, 2));
-  } catch (error) {
-    console.error("Failed to save invites:", error);
-  }
-}
-
-export function createInvite(): string {
-  ensureInitialized();
-
-  // Generate random 6-char code (uppercase alphanumeric)
-  const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-
-  // Ensure uniqueness (extremely unlikely to collide but good practice)
-  if (invites.has(code)) {
-    return createInvite();
+    try {
+      const data = storage.read(INVITES_FILE);
+      if (data) {
+        const parsed = JSON.parse(data);
+        invites = new Map(Object.entries(parsed));
+      }
+    } catch (error) {
+      console.error("Failed to load invites:", error);
+    }
+    initialized = true;
   }
 
-  const invite: Invite = {
-    code,
-    createdAt: new Date().toISOString(),
+  function saveInvites(): void {
+    try {
+      const data = Object.fromEntries(invites);
+      storage.write(INVITES_FILE, JSON.stringify(data, null, 2));
+    } catch (error) {
+      console.error("Failed to save invites:", error);
+    }
+  }
+
+  return {
+    createInvite(): string {
+      ensureInitialized();
+
+      // Generate random 6-char code (uppercase alphanumeric)
+      const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+      // Ensure uniqueness (extremely unlikely to collide but good practice)
+      if (invites.has(code)) {
+        return this.createInvite();
+      }
+
+      const invite: Invite = {
+        code,
+        createdAt: new Date().toISOString(),
+      };
+
+      invites.set(code, invite);
+      saveInvites();
+
+      return code;
+    },
+
+    getInvite(code: string): Invite | undefined {
+      ensureInitialized();
+      return invites.get(code.toUpperCase()); // Case-insensitive lookup
+    },
+
+    linkSessionToInvite(code: string, sessionId: string): void {
+      ensureInitialized();
+      const upperCode = code.toUpperCase();
+      const invite = invites.get(upperCode);
+
+      if (invite) {
+        invites.set(upperCode, { ...invite, sessionId });
+        saveInvites();
+      }
+    },
+
+    listInvites(): Invite[] {
+      ensureInitialized();
+      return Array.from(invites.values());
+    },
   };
-
-  invites.set(code, invite);
-  saveInvites();
-
-  return code;
 }
 
-export function getInvite(code: string): Invite | undefined {
-  ensureInitialized();
-  return invites.get(code.toUpperCase()); // Case-insensitive lookup
-}
+// ═══════════════════════════════════════════════════════════════
+// DEFAULT INSTANCE (for backwards compatibility during migration)
+// ═══════════════════════════════════════════════════════════════
 
-export function linkSessionToInvite(code: string, sessionId: string): void {
-  ensureInitialized();
-  const upperCode = code.toUpperCase();
-  const invite = invites.get(upperCode);
+let defaultStore: InviteStore | null = null;
 
-  if (invite) {
-    invites.set(upperCode, { ...invite, sessionId });
-    saveInvites();
+function getDefaultStore(): InviteStore {
+  if (!defaultStore) {
+    defaultStore = createInviteStore();
   }
+  return defaultStore;
 }
 
-export function listInvites(): Invite[] {
-  ensureInitialized();
-  return Array.from(invites.values());
-}
+// Legacy exports - use these during migration, then switch to DI
+export const createInvite = () => getDefaultStore().createInvite();
+export const getInvite = (code: string) => getDefaultStore().getInvite(code);
+export const linkSessionToInvite = (code: string, sessionId: string) =>
+  getDefaultStore().linkSessionToInvite(code, sessionId);
+export const listInvites = () => getDefaultStore().listInvites();
 
-// For testing purposes only - resets internal state
+// For testing - resets the default store
 export function _resetForTesting(): void {
-  invites = new Map<string, Invite>();
-  initialized = false;
+  defaultStore = null;
 }
-
-export type { Invite };

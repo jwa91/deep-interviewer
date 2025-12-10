@@ -1,7 +1,7 @@
-import { renderHook, waitFor, act } from "@testing-library/react";
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { useChatStream, createDefaultProgress } from "./use-chat-stream";
+import { act, renderHook, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ProgressState } from "../types";
+import { createDefaultProgress, useChatStream } from "./use-chat-stream";
 
 describe("createDefaultProgress", () => {
   it("creates progress with all questions incomplete", () => {
@@ -75,12 +75,15 @@ describe("useChatStream", () => {
         readCount++;
         if (readCount === 1) {
           // First read: return some data to keep stream open
-          return { done: false, value: new TextEncoder().encode("event: token\ndata: {\"content\":\"test\"}\n\n") };
+          return {
+            done: false,
+            value: new TextEncoder().encode('event: token\ndata: {"content":"test"}\n\n'),
+          };
         }
         // Keep returning data for a few reads, then end
         if (readCount < 5) {
           // Add a small delay to allow the second sendMessage to be attempted
-          await new Promise(resolve => setTimeout(resolve, 10));
+          await new Promise((resolve) => setTimeout(resolve, 10));
           return { done: false, value: new TextEncoder().encode("") };
         }
         return { done: true, value: undefined };
@@ -98,7 +101,7 @@ describe("useChatStream", () => {
     act(() => {
       result.current.sendMessage("First");
     });
-    
+
     // Wait for streaming to start
     await waitFor(() => expect(result.current.isStreaming).toBe(true));
 
@@ -106,10 +109,10 @@ describe("useChatStream", () => {
     await act(async () => {
       await result.current.sendMessage("Second");
     });
-    
+
     // Should only have called fetch once
     expect(vi.mocked(global.fetch).mock.calls.length).toBe(1);
-    
+
     // Wait for stream to complete
     await waitFor(() => expect(result.current.isStreaming).toBe(false));
   });
@@ -140,7 +143,9 @@ describe("useChatStream", () => {
 
     await waitFor(() => {
       expect(result.current.chatItems.length).toBeGreaterThan(0);
-      const userMessage = result.current.chatItems.find((item) => item.type === "message" && item.data.role === "user");
+      const userMessage = result.current.chatItems.find(
+        (item) => item.type === "message" && item.data.role === "user"
+      );
       expect(userMessage).toBeDefined();
       expect(userMessage?.data.content).toBe("Hello");
     });
@@ -178,7 +183,8 @@ describe("useChatStream", () => {
 
     await waitFor(() => {
       const assistantMessage = result.current.chatItems.find(
-        (item) => item.type === "message" && item.data.role === "assistant" && item.data.id === messageId
+        (item) =>
+          item.type === "message" && item.data.role === "assistant" && item.data.id === messageId
       );
       expect(assistantMessage).toBeDefined();
       expect(assistantMessage?.data.content).toBe("Hi");
@@ -615,7 +621,10 @@ describe("useChatStream", () => {
     await waitFor(() => {
       expect(result.current.isStreaming).toBe(false);
       const emptyMessage = result.current.chatItems.find(
-        (item) => item.type === "message" && item.data.role === "assistant" && item.data.content.trim() === ""
+        (item) =>
+          item.type === "message" &&
+          item.data.role === "assistant" &&
+          item.data.content.trim() === ""
       );
       expect(emptyMessage).toBeUndefined();
     });
@@ -696,4 +705,3 @@ describe("useChatStream", () => {
     });
   });
 });
-

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { FieldRenderer, FIELD_LABELS } from "./field-renderer";
+import { FIELD_LABELS, FieldRenderer } from "./field-renderer";
 
 describe("FieldRenderer", () => {
   it("returns null for null value", () => {
@@ -54,9 +54,7 @@ describe("FieldRenderer", () => {
       const stars = container.querySelectorAll('[class*="rounded-sm"]');
       expect(stars.length).toBe(5);
       // First 4 should have bg-primary, last should be transparent
-      const filledStars = Array.from(stars).filter((star) =>
-        star.className.includes("bg-primary")
-      );
+      const filledStars = Array.from(stars).filter((star) => star.className.includes("bg-primary"));
       expect(filledStars.length).toBe(4);
     });
 
@@ -64,9 +62,7 @@ describe("FieldRenderer", () => {
       const { container } = render(<FieldRenderer label="Rating" value={5} />);
 
       const stars = container.querySelectorAll('[class*="rounded-sm"]');
-      const filledStars = Array.from(stars).filter((star) =>
-        star.className.includes("bg-primary")
-      );
+      const filledStars = Array.from(stars).filter((star) => star.className.includes("bg-primary"));
       expect(filledStars.length).toBe(5);
     });
 
@@ -74,9 +70,7 @@ describe("FieldRenderer", () => {
       const { container } = render(<FieldRenderer label="Rating" value={0} />);
 
       const stars = container.querySelectorAll('[class*="rounded-sm"]');
-      const filledStars = Array.from(stars).filter((star) =>
-        star.className.includes("bg-primary")
-      );
+      const filledStars = Array.from(stars).filter((star) => star.className.includes("bg-primary"));
       expect(filledStars.length).toBe(0);
     });
 
@@ -246,4 +240,3 @@ describe("FieldRenderer", () => {
     });
   });
 });
-
