@@ -1,6 +1,11 @@
 # ═══════════════════════════════════════════════════════════════
 # Deep Interviewer - Docker Compose
 # ═══════════════════════════════════════════════════════════════
+#
+# Model configuration defaults are defined in src/agents/interviewer/config.ts
+# Override via .env file or environment variables as needed.
+#
+# ═══════════════════════════════════════════════════════════════
 
 services:
   app:
@@ -21,9 +26,12 @@ services:
       - LANGSMITH_API_KEY=${LANGSMITH_API_KEY}
       - LANGSMITH_ENDPOINT=${LANGSMITH_ENDPOINT}
       - LANGSMITH_TRACING=${LANGSMITH_TRACING}
-      # Model configuration (optional)
-      - MODEL_PROVIDER=${MODEL_PROVIDER:-anthropic}
-      - MODEL_NAME=${MODEL_NAME:-claude-haiku-4-5}
+      # Model configuration (optional - defaults in src/agents/interviewer/config.ts)
+      - MODEL_PROVIDER=${MODEL_PROVIDER}
+      - MODEL_NAME=${MODEL_NAME}
+      - MODEL_TEMPERATURE=${MODEL_TEMPERATURE}
+      # Content configuration
+      - WORKSHOP_SLIDES_URL=${WORKSHOP_SLIDES_URL}
     volumes:
       # Persist SQLite database
       - interview-data:/app/data

@@ -29,9 +29,9 @@ Je moet informatie verzamelen voor 9 feedback-onderwerpen. Je hebt een tool voor
 
 ### Tool Aanroepen
 1. **Volgorde van handelen**:
-   - EERST: Bevestig kort wat je gaat doen (bijv. "Helder, dat noteer ik.")
-   - DAN: Roep de tool aan (in hetzelfde bericht)
-   - NA DE TOOL: Wacht op de bevestiging en ga DAN pas door met de volgende vraag.
+  - EERST: Bevestig kort wat je gaat doen (bijv. "Helder, dat noteer ik.")
+  - DAN: Roep de tool aan (in hetzelfde bericht)
+  - NA DE TOOL: Wacht op de bevestiging en ga DAN pas door met de volgende vraag.
    - **VERBODEN**: Stel NOOIT een nieuwe vraag in hetzelfde bericht als de tool aanroep. De tool aanroep moet het laatste zijn wat je doet in die beurt.
 2. **Snelheid in het begin**: Probeer in de eerste paar berichten al direct 1 of 2 tools aan te roepen als de informatie er is. Vraag niet eindeloos door op details als de grote lijn duidelijk is.
 3. **Onthoud alles** - hou rekening met alle informatie die tijdens het gesprek is gedeeld.
@@ -93,14 +93,14 @@ Jij: "Duidelijk, het praktijkdeel was favoriet. En hoe vond je het tempo van de 
  * when some questions are already completed.
  */
 export function generateProgressReminder(
-  completedQuestions: string[],
-  remainingQuestions: string[]
+	completedQuestions: string[],
+	remainingQuestions: string[],
 ): string {
-  if (completedQuestions.length === 0) {
-    return "";
-  }
+	if (completedQuestions.length === 0) {
+		return "";
+	}
 
-  return `
+	return `
 
 ## Huidige Voortgang
 Je hebt al feedback verzameld over: ${completedQuestions.join(", ")}
@@ -113,9 +113,12 @@ Focus op de resterende onderwerpen, maar als de deelnemer terug wil komen op een
  * Generates the full system prompt with progress info
  */
 export function getSystemPrompt(
-  completedQuestions: string[] = [],
-  remainingQuestions: string[] = []
+	completedQuestions: string[] = [],
+	remainingQuestions: string[] = [],
 ): string {
-  const progressReminder = generateProgressReminder(completedQuestions, remainingQuestions);
-  return INTERVIEWER_SYSTEM_PROMPT + progressReminder;
+	const progressReminder = generateProgressReminder(
+		completedQuestions,
+		remainingQuestions,
+	);
+	return INTERVIEWER_SYSTEM_PROMPT + progressReminder;
 }

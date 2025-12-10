@@ -16,12 +16,12 @@ const app = new Hono();
 // Middleware
 app.use("*", logger());
 app.use(
-  "*",
-  cors({
-    origin: "*", // Configure for production
-    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization"],
-  })
+	"*",
+	cors({
+		origin: "*", // Configure for production
+		allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+		allowHeaders: ["Content-Type", "Authorization"],
+	}),
 );
 
 // ═══════════════════════════════════════════════════════════════
@@ -30,30 +30,38 @@ app.use(
 
 // Health check
 app.get("/health", (c) =>
-  c.json({
-    status: "ok",
-    timestamp: new Date().toISOString(),
-  })
+	c.json({
+		status: "ok",
+		timestamp: new Date().toISOString(),
+	}),
+);
+
+// Public configuration endpoint
+// Returns non-sensitive configuration that frontend needs
+app.get("/api/config", (c) =>
+	c.json({
+		workshopSlidesUrl: process.env.WORKSHOP_SLIDES_URL || null,
+	}),
 );
 
 // API info (development only - in production, static files are served at /)
 if (process.env.NODE_ENV !== "production") {
-  app.get("/", (c) =>
-    c.json({
-      name: "Deep Interviewer API",
-      version: "0.1.0",
-      endpoints: {
-        health: "GET /health",
-        interviews: {
-          list: "GET /api/interviews",
-          create: "POST /api/interviews",
-          get: "GET /api/interviews/:id",
-          chat: "POST /api/interviews/:id/chat",
-          results: "GET /api/interviews/:id/results",
-        },
-      },
-    })
-  );
+	app.get("/", (c) =>
+		c.json({
+			name: "Deep Interviewer API",
+			version: "0.1.0",
+			endpoints: {
+				health: "GET /health",
+				interviews: {
+					list: "GET /api/interviews",
+					create: "POST /api/interviews",
+					get: "GET /api/interviews/:id",
+					chat: "POST /api/interviews/:id/chat",
+					results: "GET /api/interviews/:id/results",
+				},
+			},
+		}),
+	);
 }
 
 // Interview routes
@@ -64,17 +72,17 @@ app.route("/api/interviews", interviewRoutes);
 // ═══════════════════════════════════════════════════════════════
 
 if (process.env.NODE_ENV === "production") {
-  app.use("/*", serveStatic({ root: "./client" }));
+	app.use("/*", serveStatic({ root: "./client" }));
 
-  // SPA fallback
-  app.get("*", async (c) => {
-    try {
-      const indexHtml = await readFile("./client/index.html", "utf-8");
-      return c.html(indexHtml);
-    } catch (_e) {
-      return c.text("Not found", 404);
-    }
-  });
+	// SPA fallback
+	app.get("*", async (c) => {
+		try {
+			const indexHtml = await readFile("./client/index.html", "utf-8");
+			return c.html(indexHtml);
+		} catch (_e) {
+			return c.text("Not found", 404);
+		}
+	});
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -101,8 +109,8 @@ console.log(`
 `);
 
 serve({
-  fetch: app.fetch,
-  port,
+	fetch: app.fetch,
+	port,
 });
 
 console.log(`Server running at http://localhost:${port}`);
