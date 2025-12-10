@@ -18,7 +18,7 @@ const SpotlightPicture = React.forwardRef<HTMLDivElement, SpotlightPictureProps>
         <div className="relative">
           {/* SVG Background (in back) */}
           <div className="relative">
-            <svg viewBox="0 0 370 383" className="h-auto w-full">
+            <svg viewBox="0 0 370 383" className="h-auto w-full" aria-hidden="true">
               {/* Black outline/base shape using shadow color */}
               <path
                 d="M353.721 104.805C394.031 158.873 352.658 257.913 261.311 326.017C169.965 394.121 
@@ -42,7 +42,7 @@ const SpotlightPicture = React.forwardRef<HTMLDivElement, SpotlightPictureProps>
           {/* Clipped Image positioned on top */}
           <div className="absolute top-0 right-0 left-0 z-10">
             <div className="relative">
-              <svg viewBox="0 0 370 383" className="h-auto w-full" aria-label={imageAlt}>
+              <svg viewBox="0 0 370 383" className="h-auto w-full" role="img" aria-label={imageAlt}>
                 <defs>
                   <clipPath id={clipId}>
                     {/* Optimized clip path with perfectly aligned right edge */}

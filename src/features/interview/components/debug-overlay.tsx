@@ -10,7 +10,6 @@ interface DebugOverlayProps {
 export function DebugOverlay({ onAutoReply }: DebugOverlayProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [suggestedReply, setSuggestedReply] = useState("");
-  const [currentStep, setCurrentStep] = useState(0);
 
   const fetchSuggestedReply = useCallback(async () => {
     try {

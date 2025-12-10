@@ -190,6 +190,7 @@ class MockInterviewService {
     return step?.suggestedUserReply || "";
   }
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Replaying interview state requires step-by-step reconstruction with tool calls and progress
   jumpTo(stepIndex: number) {
     if (stepIndex < 0 || stepIndex >= SCRIPT.length) {
       return;

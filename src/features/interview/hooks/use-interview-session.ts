@@ -120,6 +120,7 @@ export function useInterviewSession(): UseInterviewSessionReturn {
   }, []);
 
   const startSession = useCallback(
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Session initialization has inherent complexity with resumption, debug mode, and error handling
     async (code: string) => {
       setIsLoading(true);
       setError(null);
