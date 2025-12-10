@@ -166,7 +166,6 @@ export function useInterviewSession(): UseInterviewSessionReturn {
 				};
 
 				storeSession(newSession);
-				setSession(newSession);
 
 				// If resumed, we need to fetch the existing state to restore progress and messages
 				if (data.isResumed) {
@@ -175,6 +174,9 @@ export function useInterviewSession(): UseInterviewSessionReturn {
 					setProgress(createDefaultProgress());
 					setExistingMessages([]);
 				}
+
+				// Set session after ensuring messages are loaded (if resuming)
+				setSession(newSession);
 			} catch (err) {
 				const message =
 					err instanceof Error

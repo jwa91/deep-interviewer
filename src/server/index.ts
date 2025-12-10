@@ -5,7 +5,7 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import { interviewRoutes } from "./routes/index.js";
+import { interviewRoutes, adminRoutes } from "./routes/index.js";
 
 // ═══════════════════════════════════════════════════════════════
 // SERVER SETUP
@@ -66,6 +66,7 @@ if (process.env.NODE_ENV !== "production") {
 
 // Interview routes
 app.route("/api/interviews", interviewRoutes);
+app.route("/api/admin", adminRoutes);
 
 // ═══════════════════════════════════════════════════════════════
 // STATIC FILES (Production only)

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { Spinner } from "./components/ui/spinner";
+import { AdminPage } from "./features/admin/AdminPage";
 import { CompletionModal } from "./features/completion";
 import {
 	ChatContainer,
@@ -217,6 +218,11 @@ function App() {
 	// Check for debug mode
 	const searchParams = new URLSearchParams(window.location.search);
 	const isDebug = searchParams.get("debug") === "true";
+
+	// Simple routing for admin
+	if (window.location.pathname === "/admin") {
+		return <AdminPage />;
+	}
 
 	return (
 		<>

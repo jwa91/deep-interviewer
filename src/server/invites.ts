@@ -16,10 +16,11 @@ export interface Invite {
 	code: string;
 	sessionId?: string;
 	createdAt: string;
+	codeType?: string;
 }
 
 export interface InviteStore {
-	createInvite(): string;
+	createInvite(codeType?: string): string;
 	getInvite(code: string): Invite | undefined;
 	linkSessionToInvite(code: string, sessionId: string): void;
 	listInvites(): Invite[];
@@ -79,7 +80,7 @@ export function createInviteStore(
 	}
 
 	return {
-		createInvite(): string {
+		createInvite(codeType?: string): string {
 			ensureInitialized();
 
 			// Generate random 6-char code (uppercase alphanumeric)
@@ -87,12 +88,13 @@ export function createInviteStore(
 
 			// Ensure uniqueness (extremely unlikely to collide but good practice)
 			if (invites.has(code)) {
-				return this.createInvite();
+				return this.createInvite(codeType);
 			}
 
 			const invite: Invite = {
 				code,
 				createdAt: new Date().toISOString(),
+				...(codeType ? { codeType } : {}),
 			};
 
 			invites.set(code, invite);
@@ -138,7 +140,8 @@ function getDefaultStore(): InviteStore {
 }
 
 // Legacy exports - use these during migration, then switch to DI
-export const createInvite = () => getDefaultStore().createInvite();
+export const createInvite = (codeType?: string) =>
+	getDefaultStore().createInvite(codeType);
 export const getInvite = (code: string) => getDefaultStore().getInvite(code);
 export const linkSessionToInvite = (code: string, sessionId: string) =>
 	getDefaultStore().linkSessionToInvite(code, sessionId);
