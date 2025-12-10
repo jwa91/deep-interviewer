@@ -39,7 +39,7 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
             {/* Left Column: Text Content */}
             <div className="space-y-6">
-              <h1 className="font-black font-heading text-3xl md:text-4xl text-foreground">
+              <h1 className="font-heading font-black text-3xl md:text-4xl text-foreground">
                 Hoi LLM fundamentals deelnemer
               </h1>
 
@@ -83,9 +83,9 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
                 />
               </div>
 
-              <div className="space-y-6 bg-[var(--color-accent-4)] p-6 rounded-xl border-2 border-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div className="space-y-6 bg-[var(--color-accent-4)] p-6 rounded-lg border-2 border-border brutal-shadow">
                 <div className="text-center">
-                  <h2 className="font-bold font-heading text-xl text-foreground">
+                  <h2 className="font-heading font-bold text-xl text-foreground">
                     Start Interview
                   </h2>
                   <p className="mt-1 font-mono text-sm text-muted-foreground">

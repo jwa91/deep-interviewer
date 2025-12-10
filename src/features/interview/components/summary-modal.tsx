@@ -96,7 +96,7 @@ export function SummaryModal({ sessionId, open, onOpenChange }: SummaryModalProp
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="brutal-shadow max-h-[85vh] w-[90vw] max-w-4xl overflow-hidden border-2 border-border bg-background p-0 text-foreground">
         <DialogHeader className="border-border border-b-2 px-8 py-6">
-          <DialogTitle className="font-black font-heading text-primary text-2xl">
+          <DialogTitle className="font-heading font-black text-2xl text-primary">
             Jouw Antwoorden
           </DialogTitle>
         </DialogHeader>

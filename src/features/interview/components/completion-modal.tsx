@@ -33,7 +33,7 @@ export function CompletionModal({ isOpen, onClose }: CompletionModalProps) {
               />
             </svg>
           </div>
-          <DialogTitle className="font-black font-heading text-2xl text-foreground">
+          <DialogTitle className="font-heading font-black text-2xl text-foreground">
             Bedankt voor je feedback!
           </DialogTitle>
           <DialogDescription className="mt-2 font-mono text-base text-muted-foreground">

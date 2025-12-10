@@ -15,7 +15,7 @@ export function FieldRenderer({ label, value }: FieldRendererProps) {
     }
     return (
       <div className="space-y-1">
-        <h4 className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">
+        <h4 className="font-mono font-bold text-xs text-muted-foreground uppercase tracking-wide">
           {label}
         </h4>
         <div className="text-sm font-medium leading-relaxed">
@@ -29,11 +29,11 @@ export function FieldRenderer({ label, value }: FieldRendererProps) {
   if (typeof value === "boolean") {
     return (
       <div className="space-y-1">
-        <h4 className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">
+        <h4 className="font-mono font-bold text-xs text-muted-foreground uppercase tracking-wide">
           {label}
         </h4>
         <span
-          className={`font-bold font-mono text-sm ${value ? "text-primary" : "text-muted-foreground"}`}
+          className={`font-mono font-bold text-sm ${value ? "text-primary" : "text-muted-foreground"}`}
         >
           {value ? "Ja" : "Nee"}
         </span>
@@ -45,7 +45,7 @@ export function FieldRenderer({ label, value }: FieldRendererProps) {
   if (typeof value === "number") {
     return (
       <div className="space-y-1">
-        <h4 className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">
+        <h4 className="font-mono font-bold text-xs text-muted-foreground uppercase tracking-wide">
           {label}
         </h4>
         <div className="flex items-center gap-1.5 h-6">
@@ -62,7 +62,7 @@ export function FieldRenderer({ label, value }: FieldRendererProps) {
               ))}
             </div>
           ) : (
-            <span className="font-bold font-mono text-foreground text-sm">{value}</span>
+            <span className="font-mono font-bold text-sm text-foreground">{value}</span>
           )}
         </div>
       </div>
@@ -72,7 +72,7 @@ export function FieldRenderer({ label, value }: FieldRendererProps) {
   // Handle strings and other types
   return (
     <div className="space-y-1">
-      <h4 className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">
+      <h4 className="font-mono font-bold text-xs text-muted-foreground uppercase tracking-wide">
         {label}
       </h4>
       <p className="font-mono text-foreground text-sm leading-relaxed">{String(value)}</p>
