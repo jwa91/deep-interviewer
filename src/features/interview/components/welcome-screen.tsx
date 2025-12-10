@@ -69,7 +69,7 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
                 </p>
 
                 <p>
-                  Als laatste: mocht je nu of in de toekomst nog bepaalde Ai gerelateerde vragen of
+                  Als laatste: mocht je nu of in de toekomst nog bepaalde AI gerelateerde vragen of
                   uitdagingen hebben, denk ik heel graag met je mee. Stuur me gerust een Teams
                   berichtje of email in dat geval.
                 </p>

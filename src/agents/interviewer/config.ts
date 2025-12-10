@@ -15,8 +15,8 @@ export interface ModelConfig {
 
 const DEFAULT_CONFIG: ModelConfig = {
   provider: "anthropic",
-  modelName: "claude-sonnet-4-20250514",
-  temperature: 0.7,
+  modelName: "claude-haiku-4-5",
+  temperature: 0.3,
 };
 
 // ═══════════════════════════════════════════════════════════════
