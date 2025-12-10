@@ -272,7 +272,7 @@ class MockInterviewService {
       if (step.toolCall) {
         // Update responses map FIRST so it's available for fetching
         const topic = Object.keys(MOCK_RESPONSES).find((k) =>
-          k.includes(step.toolCall?.name.replace("record_", ""))
+          k.includes(step.toolCall?.name.replace("record_", "") ?? "")
         );
         if (topic) {
           this.state.responses[topic] = {
@@ -344,7 +344,7 @@ class MockInterviewService {
 
       // Update mock state
       const topic = Object.keys(MOCK_RESPONSES).find((k) =>
-        k.includes(nextStep.toolCall?.name.replace("record_", ""))
+        k.includes(nextStep.toolCall?.name.replace("record_", "") ?? "")
       );
       if (topic) {
         // Update responses map immediately so it's available for the tool card fetch
