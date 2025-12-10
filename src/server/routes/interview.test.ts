@@ -10,14 +10,31 @@ vi.mock("../persistence", () => ({
   getCheckpointer: vi.fn(),
 }));
 
+// Mock the invites module
+vi.mock("../invites", () => ({
+  getInvite: vi.fn(),
+  linkSessionToInvite: vi.fn(),
+}));
+
 // Mock the agent module
 vi.mock("@/agents/interviewer", () => ({
   createInterviewAgent: vi.fn(),
   createInterviewInput: vi.fn(),
 }));
 
-import { createInterviewAgent } from "@/agents/interviewer";
-import { getCheckpointer, getSession } from "../persistence";
+// Mock the mock-interview service
+vi.mock("../services/mock-interview", () => ({
+  mockInterviewService: {
+    reset: vi.fn(),
+    getState: vi.fn(),
+    processMessage: vi.fn(),
+  },
+}));
+
+import { createInterviewAgent, createInterviewInput } from "@/agents/interviewer";
+import { getCheckpointer, getSession, createSession, updateSession } from "../persistence";
+import { getInvite, linkSessionToInvite } from "../invites";
+import { mockInterviewService } from "../services/mock-interview";
 
 // ═══════════════════════════════════════════════════════════════
 // RESPONSE ENDPOINT TESTS
@@ -289,5 +306,521 @@ describe("Response API Endpoints", () => {
       const updateCall = mockAgent.updateState.mock.calls[0];
       expect(updateCall[1].questionsCompleted.presentation).toBe(true);
     });
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// SESSION CREATION TESTS
+// ═══════════════════════════════════════════════════════════════
+
+describe("POST /api/interviews - Session Creation", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("creates new session with valid invite code", async () => {
+    const mockInvite = {
+      code: "VALID123",
+      createdAt: "2024-01-15T10:00:00.000Z",
+    };
+    const mockNewSession = {
+      id: "new-session-456",
+      createdAt: "2024-01-15T10:00:00.000Z",
+      updatedAt: "2024-01-15T10:00:00.000Z",
+      isComplete: false,
+    };
+
+    vi.mocked(getInvite).mockReturnValue(mockInvite);
+    vi.mocked(createSession).mockReturnValue(mockNewSession);
+    vi.mocked(linkSessionToInvite).mockImplementation(() => {});
+
+    const { interviewRoutes } = await import("./interview");
+    const app = new Hono().route("/api/interviews", interviewRoutes);
+
+    const res = await app.request("/api/interviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: "VALID123" }),
+    });
+
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.id).toBe("new-session-456");
+    expect(json.createdAt).toBe(mockNewSession.createdAt);
+    expect(json.isResumed).toBe(false);
+    expect(createSession).toHaveBeenCalled();
+    expect(linkSessionToInvite).toHaveBeenCalledWith("VALID123", "new-session-456");
+  });
+
+  it("returns 400 when invite code is missing", async () => {
+    const { interviewRoutes } = await import("./interview");
+    const app = new Hono().route("/api/interviews", interviewRoutes);
+
+    const res = await app.request("/api/interviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({}),
+    });
+
+    expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json.error).toBe("Invite code is required");
+  });
+
+  it("returns 403 when invite code is invalid", async () => {
+    vi.mocked(getInvite).mockReturnValue(undefined);
+
+    const { interviewRoutes } = await import("./interview");
+    const app = new Hono().route("/api/interviews", interviewRoutes);
+
+    const res = await app.request("/api/interviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: "INVALID" }),
+    });
+
+    expect(res.status).toBe(403);
+    const json = await res.json();
+    expect(json.error).toBe("Invalid invite code");
+  });
+
+  it("resumes existing session when invite has linked sessionId", async () => {
+    const mockInvite = {
+      code: "EXISTING123",
+      sessionId: "existing-session-789",
+      createdAt: "2024-01-15T10:00:00.000Z",
+    };
+    const mockExistingSession = {
+      id: "existing-session-789",
+      createdAt: "2024-01-15T09:00:00.000Z",
+      updatedAt: "2024-01-15T09:00:00.000Z",
+      isComplete: false,
+    };
+
+    vi.mocked(getInvite).mockReturnValue(mockInvite);
+    vi.mocked(getSession).mockReturnValue(mockExistingSession);
+
+    const { interviewRoutes } = await import("./interview");
+    const app = new Hono().route("/api/interviews", interviewRoutes);
+
+    const res = await app.request("/api/interviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: "EXISTING123" }),
+    });
+
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.id).toBe("existing-session-789");
+    expect(json.isResumed).toBe(true);
+    expect(json.message).toContain("Resuming");
+    expect(createSession).not.toHaveBeenCalled();
+  });
+
+  it("creates new session when linked sessionId no longer exists", async () => {
+    const mockInvite = {
+      code: "ORPHANED123",
+      sessionId: "deleted-session",
+      createdAt: "2024-01-15T10:00:00.000Z",
+    };
+    const mockNewSession = {
+      id: "new-session-999",
+      createdAt: "2024-01-15T10:00:00.000Z",
+      updatedAt: "2024-01-15T10:00:00.000Z",
+      isComplete: false,
+    };
+
+    vi.mocked(getInvite).mockReturnValue(mockInvite);
+    vi.mocked(getSession).mockReturnValue(undefined); // Session was deleted
+    vi.mocked(createSession).mockReturnValue(mockNewSession);
+    vi.mocked(linkSessionToInvite).mockImplementation(() => {});
+
+    const { interviewRoutes } = await import("./interview");
+    const app = new Hono().route("/api/interviews", interviewRoutes);
+
+    const res = await app.request("/api/interviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: "ORPHANED123" }),
+    });
+
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.id).toBe("new-session-999");
+    expect(json.isResumed).toBe(false);
+    expect(createSession).toHaveBeenCalled();
+  });
+
+  it("handles DEBUG_MODE code", async () => {
+    vi.mocked(mockInterviewService.reset).mockImplementation(() => {});
+
+    const { interviewRoutes } = await import("./interview");
+    const app = new Hono().route("/api/interviews", interviewRoutes);
+
+    const res = await app.request("/api/interviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: "DEBUG_MODE" }),
+    });
+
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.id).toBe("debug-session");
+    expect(json.isResumed).toBe(false);
+    expect(mockInterviewService.reset).toHaveBeenCalled();
+  });
+
+  it("creates session with participantId when provided", async () => {
+    const mockInvite = {
+      code: "VALID123",
+      createdAt: "2024-01-15T10:00:00.000Z",
+    };
+    const mockNewSession = {
+      id: "new-session-456",
+      createdAt: "2024-01-15T10:00:00.000Z",
+      updatedAt: "2024-01-15T10:00:00.000Z",
+      isComplete: false,
+    };
+
+    vi.mocked(getInvite).mockReturnValue(mockInvite);
+    vi.mocked(createSession).mockReturnValue(mockNewSession);
+    vi.mocked(linkSessionToInvite).mockImplementation(() => {});
+
+    const { interviewRoutes } = await import("./interview");
+    const app = new Hono().route("/api/interviews", interviewRoutes);
+
+    const res = await app.request("/api/interviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: "VALID123", participantId: "participant-789" }),
+    });
+
+    expect(res.status).toBe(200);
+    expect(createSession).toHaveBeenCalledWith("participant-789");
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// GET /api/interviews/:id TESTS
+// ═══════════════════════════════════════════════════════════════
+
+describe("GET /api/interviews/:id - Get Session State", () => {
+  const mockSession = {
+    id: "test-session-123",
+    createdAt: "2024-01-15T10:00:00.000Z",
+    updatedAt: "2024-01-15T10:00:00.000Z",
+    isComplete: false,
+  };
+
+  const mockState = {
+    values: {
+      sessionId: "test-session-123",
+      startedAt: "2024-01-15T10:00:00.000Z",
+      messages: [
+        {
+          _getType: () => "human",
+          content: "Hello",
+          tool_calls: undefined,
+        },
+        {
+          _getType: () => "ai",
+          content: "Hi there!",
+          tool_calls: undefined,
+        },
+      ],
+      questionsCompleted: {
+        ai_background: true,
+        overall_impression: false,
+        perceived_content: false,
+        difficulty: false,
+        content_quality: false,
+        presentation: false,
+        clarity: false,
+        suggestions: false,
+        course_parts: false,
+      },
+      isComplete: false,
+    },
+  };
+
+  const mockStateEmpty = {
+    values: {
+      sessionId: "test-session-123",
+      startedAt: "2024-01-15T10:00:00.000Z",
+      messages: [],
+      questionsCompleted: {},
+      isComplete: false,
+    },
+  };
+
+  const mockAgent = {
+    getState: vi.fn().mockResolvedValue(mockState),
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(getSession).mockReturnValue(mockSession);
+    vi.mocked(getCheckpointer).mockResolvedValue({} as never);
+    vi.mocked(createInterviewAgent).mockReturnValue(mockAgent as never);
+  });
+
+  it("returns session state with messages and progress", async () => {
+    // Reset and set up mock to return the state with messages
+    mockAgent.getState.mockReset();
+    mockAgent.getState.mockResolvedValue(mockState);
+
+    const { interviewRoutes } = await import("./interview");
+    const app = new Hono().route("/api/interviews", interviewRoutes);
+
+    const res = await app.request("/api/interviews/test-session-123");
+    expect(res.status).toBe(200);
+
+    const json = await res.json();
+    expect(json.id).toBe("test-session-123");
+    expect(json.messages).toHaveLength(2);
+    expect(json.messages[0].role).toBe("user");
+    expect(json.messages[0].content).toBe("Hello");
+    expect(json.messages[1].role).toBe("assistant");
+    expect(json.messages[1].content).toBe("Hi there!");
+    expect(json.progress.completedCount).toBe(1);
+    expect(json.progress.totalQuestions).toBe(9);
+    
+    // Reset mock for other tests
+    mockAgent.getState.mockReset();
+    mockAgent.getState.mockResolvedValue(mockState);
+  });
+
+  it("returns 404 when session not found", async () => {
+    vi.mocked(getSession).mockReturnValue(undefined);
+
+    const { interviewRoutes } = await import("./interview");
+    const app = new Hono().route("/api/interviews", interviewRoutes);
+
+    const res = await app.request("/api/interviews/unknown-id");
+    expect(res.status).toBe(404);
+    const json = await res.json();
+    expect(json.error).toBe("Interview not found");
+  });
+
+  it("returns empty messages and default progress when no state exists", async () => {
+    // Create a new agent mock that throws
+    const mockAgentEmpty = {
+      getState: vi.fn().mockRejectedValue(new Error("No state")),
+    };
+    
+    // Temporarily replace the mock
+    const originalMock = vi.mocked(createInterviewAgent);
+    vi.mocked(createInterviewAgent).mockReturnValueOnce(mockAgentEmpty as never);
+
+    const { interviewRoutes } = await import("./interview");
+    const app = new Hono().route("/api/interviews", interviewRoutes);
+
+    const res = await app.request("/api/interviews/test-session-123");
+    expect(res.status).toBe(200);
+
+    const json = await res.json();
+    expect(json.messages).toEqual([]);
+    expect(json.progress.completedCount).toBe(0);
+    expect(json.progress.isComplete).toBe(false);
+  });
+
+  it("handles debug-session ID", async () => {
+    const mockDebugState = {
+      createdAt: "2024-01-15T10:00:00.000Z",
+      messages: [{ role: "user", content: "Test" }],
+      progress: {
+        questionsCompleted: {},
+        completedCount: 0,
+        totalQuestions: 9,
+        isComplete: false,
+      },
+    };
+
+    vi.mocked(mockInterviewService.getState).mockReturnValue(mockDebugState as never);
+
+    const { interviewRoutes } = await import("./interview");
+    const app = new Hono().route("/api/interviews", interviewRoutes);
+
+    const res = await app.request("/api/interviews/debug-session");
+    expect(res.status).toBe(200);
+
+    const json = await res.json();
+    expect(json.id).toBe("debug-session");
+    expect(json.messages).toEqual(mockDebugState.messages);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// POST /api/interviews/:id/chat TESTS (SSE Streaming)
+// ═══════════════════════════════════════════════════════════════
+
+describe("POST /api/interviews/:id/chat - Chat Streaming", () => {
+  const mockSession = {
+    id: "test-session-123",
+    createdAt: "2024-01-15T10:00:00.000Z",
+    updatedAt: "2024-01-15T10:00:00.000Z",
+    isComplete: false,
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(getSession).mockReturnValue(mockSession);
+  });
+
+  it("returns 404 when session not found", async () => {
+    vi.mocked(getSession).mockReturnValue(undefined);
+
+    const { interviewRoutes } = await import("./interview");
+    const app = new Hono().route("/api/interviews", interviewRoutes);
+
+    const res = await app.request("/api/interviews/unknown-id/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "Hello" }),
+    });
+
+    expect(res.status).toBe(404);
+    const json = await res.json();
+    expect(json.error).toBe("Interview not found");
+  });
+
+  it("returns 400 when message is missing", async () => {
+    const { interviewRoutes } = await import("./interview");
+    const app = new Hono().route("/api/interviews", interviewRoutes);
+
+    const res = await app.request("/api/interviews/test-session-123/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({}),
+    });
+
+    expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json.error).toBe("Message is required");
+  });
+
+  it("returns 400 when message is not a string", async () => {
+    const { interviewRoutes } = await import("./interview");
+    const app = new Hono().route("/api/interviews", interviewRoutes);
+
+    const res = await app.request("/api/interviews/test-session-123/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: 123 }),
+    });
+
+    expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json.error).toBe("Message is required");
+  });
+
+  it("handles debug-session with SSE streaming", async () => {
+    const mockProcessResult = {
+      fullResponse: "Hello! How can I help?",
+      toolCalls: [
+        {
+          name: "record_ai_background",
+          args: { experienceLevel: 3 },
+        },
+      ],
+      progress: {
+        questionsCompleted: {
+          ai_background: true,
+          overall_impression: false,
+          perceived_content: false,
+          difficulty: false,
+          content_quality: false,
+          presentation: false,
+          clarity: false,
+          suggestions: false,
+          course_parts: false,
+        },
+        completedCount: 1,
+        totalQuestions: 9,
+        isComplete: false,
+      },
+    };
+
+    vi.mocked(mockInterviewService.processMessage).mockResolvedValue(mockProcessResult as never);
+
+    const { interviewRoutes } = await import("./interview");
+    const app = new Hono().route("/api/interviews", interviewRoutes);
+
+    const res = await app.request("/api/interviews/debug-session/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "Hello" }),
+    });
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toContain("text/event-stream");
+    expect(mockInterviewService.processMessage).toHaveBeenCalledWith("Hello");
+
+    // Read SSE stream
+    const reader = res.body?.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    const events: string[] = [];
+
+    if (reader) {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+        events.push(...lines.filter((line) => line.trim()));
+      }
+    }
+
+    // Verify SSE events were sent
+    expect(events.length).toBeGreaterThan(0);
+    expect(events.some((e) => e.includes("message_start"))).toBe(true);
+    expect(events.some((e) => e.includes("token"))).toBe(true);
+    expect(events.some((e) => e.includes("tool_start"))).toBe(true);
+    expect(events.some((e) => e.includes("progress"))).toBe(true);
+    expect(events.some((e) => e.includes("done"))).toBe(true);
+  });
+
+  it("streams real agent response with proper SSE format", async () => {
+    async function* mockStream() {
+      yield {
+        event: "on_chat_model_stream",
+        data: { chunk: { content: "Hello" } },
+      };
+      yield {
+        event: "on_chat_model_stream",
+        data: { chunk: { content: " there" } },
+      };
+    }
+
+    const mockStreamAgent = {
+      getState: vi.fn().mockResolvedValue({
+        values: {
+          messages: [],
+          questionsCompleted: {},
+          isComplete: false,
+        },
+      }),
+      streamEvents: vi.fn().mockReturnValue(mockStream()),
+    };
+
+    vi.mocked(getCheckpointer).mockResolvedValue({} as never);
+    vi.mocked(createInterviewAgent).mockReturnValueOnce(mockStreamAgent as never);
+    vi.mocked(createInterviewInput).mockReturnValue({
+      messages: [],
+    } as never);
+
+    const { interviewRoutes } = await import("./interview");
+    const app = new Hono().route("/api/interviews", interviewRoutes);
+
+    const res = await app.request("/api/interviews/test-session-123/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "Hello" }),
+    });
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toContain("text/event-stream");
   });
 });
