@@ -1,13 +1,13 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
 import {
 	Card,
+	CardContent,
 	CardHeader,
 	CardTitle,
-	CardContent,
 } from "../../components/ui/card";
-import { toast } from "sonner";
+import { Input } from "../../components/ui/input";
 
 export function AdminPage() {
 	const [codeType, setCodeType] = useState("");
@@ -29,7 +29,7 @@ export function AdminPage() {
 			setGeneratedCode(data.code);
 			setLastCodeType(data.codeType);
 			toast.success("Invite code generated");
-		} catch (e) {
+		} catch (_e) {
 			toast.error("Failed to generate code");
 		}
 	};
@@ -38,11 +38,17 @@ export function AdminPage() {
 		setIsDownloading(true);
 		try {
 			const params = new URLSearchParams();
-			if (fromDate) params.append("fromDate", new Date(fromDate).toISOString());
-			if (excludeTest) params.append("excludeTypes", "test");
+			if (fromDate) {
+				params.append("fromDate", new Date(fromDate).toISOString());
+			}
+			if (excludeTest) {
+				params.append("excludeTypes", "test");
+			}
 
 			const res = await fetch(`/api/admin/export?${params.toString()}`);
-			if (!res.ok) throw new Error("Export failed");
+			if (!res.ok) {
+				throw new Error("Export failed");
+			}
 
 			const blob = await res.blob();
 			const url = window.URL.createObjectURL(blob);
@@ -55,7 +61,7 @@ export function AdminPage() {
 			document.body.removeChild(a);
 
 			toast.success("Export downloaded");
-		} catch (e) {
+		} catch (_e) {
 			toast.error("Failed to download data");
 		} finally {
 			setIsDownloading(false);
@@ -63,8 +69,8 @@ export function AdminPage() {
 	};
 
 	return (
-		<div className="container mx-auto p-8 max-w-2xl space-y-8 bg-background min-h-screen text-foreground">
-			<h1 className="text-3xl font-bold">Admin Dashboard</h1>
+		<div className="container mx-auto min-h-screen max-w-2xl space-y-8 bg-background p-8 text-foreground">
+			<h1 className="font-bold text-3xl">Admin Dashboard</h1>
 
 			<Card>
 				<CardHeader>
@@ -80,11 +86,11 @@ export function AdminPage() {
 						<Button onClick={handleGenerate}>Generate</Button>
 					</div>
 					{generatedCode && (
-						<div className="p-4 bg-muted rounded-md text-center">
-							<p className="text-sm text-muted-foreground">
+						<div className="rounded-md bg-muted p-4 text-center">
+							<p className="text-muted-foreground text-sm">
 								Generated Code ({lastCodeType || "standard"}):
 							</p>
-							<p className="text-4xl font-mono font-bold mt-2 select-all">
+							<p className="mt-2 select-all font-bold font-mono text-4xl">
 								{generatedCode}
 							</p>
 						</div>
@@ -98,7 +104,7 @@ export function AdminPage() {
 				</CardHeader>
 				<CardContent className="space-y-4">
 					<div className="grid gap-2">
-						<label htmlFor="fromDate" className="text-sm font-medium">
+						<label htmlFor="fromDate" className="font-medium text-sm">
 							From Date
 						</label>
 						<Input
@@ -119,7 +125,7 @@ export function AdminPage() {
 						/>
 						<label
 							htmlFor="excludeTest"
-							className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+							className="font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 						>
 							Exclude "test" codes
 						</label>
