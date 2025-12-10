@@ -35,3 +35,8 @@ export const QUESTION_TITLES: Record<string, string> = {
   suggestions: "Suggesties",
   course_parts: "Cursus Onderdelen",
 };
+
+/**
+ * URL for the workshop slides.
+ */
+export const WORKSHOP_SLIDES_URL = "https://link.excalidraw.com/p/readonly/dKWLQmAK049howtnYdZ0";

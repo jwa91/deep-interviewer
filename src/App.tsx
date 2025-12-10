@@ -11,7 +11,7 @@ import {
 } from "./features/interview";
 import type { ChatItem, Message, ProgressState } from "./features/interview";
 import { DebugOverlay } from "./features/interview/components/debug-overlay";
-import { WELCOME_MESSAGE } from "./shared/constants";
+import { WELCOME_MESSAGE, WORKSHOP_SLIDES_URL } from "./shared/constants";
 import { toolNameToQuestionId } from "./shared/schema";
 
 // Welcome message for new sessions - matches what's stored in LangGraph state
@@ -32,13 +32,34 @@ const messageToItem = (message: Message): ChatItem => {
 };
 
 // Helper to restore chat items from messages including tool calls
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: logic requires handling multiple item types
 const restoreChatItems = (messages: Message[]): ChatItem[] => {
   const items: ChatItem[] = [];
 
   for (const msg of messages) {
-    // If message has tool calls, add tool cards FIRST (so they appear before the text that follows)
+    // Add the text message first (so it introduces the tool output)
+    if (msg.content) {
+      items.push({
+        type: "message",
+        id: msg.id,
+        data: msg,
+      });
+    }
+
+    // If message has tool calls, add tool cards after the text
     if (msg.toolCalls && msg.toolCalls.length > 0) {
       for (const [index, toolCall] of msg.toolCalls.entries()) {
+        if (toolCall.name === "provide_workshop_slides") {
+          items.push({
+            type: "slide_link",
+            id: `${msg.id}_slide_${index}`,
+            data: {
+              url: WORKSHOP_SLIDES_URL,
+            },
+          });
+          continue;
+        }
+
         const questionId = toolNameToQuestionId(toolCall.name);
         if (questionId) {
           items.push({
@@ -51,15 +72,6 @@ const restoreChatItems = (messages: Message[]): ChatItem[] => {
           });
         }
       }
-    }
-
-    // Add the text message
-    if (msg.content) {
-      items.push({
-        type: "message",
-        id: msg.id,
-        data: msg,
-      });
     }
   }
 

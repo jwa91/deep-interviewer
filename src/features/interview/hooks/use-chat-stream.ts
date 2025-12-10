@@ -1,3 +1,4 @@
+import { WORKSHOP_SLIDES_URL } from "@/shared/constants";
 import { toolNameToQuestionId } from "@/shared/schema";
 import type { Dispatch, SetStateAction } from "react";
 import { useCallback, useRef, useState } from "react";
@@ -200,7 +201,7 @@ export function useChatStream({
                         type: "slide_link",
                         id: slideLinkId,
                         data: {
-                          url: "https://link.excalidraw.com/p/readonly/dKWLQmAK049howtnYdZ0",
+                          url: WORKSHOP_SLIDES_URL,
                         },
                       },
                     ]);

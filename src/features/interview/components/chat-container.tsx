@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Bot } from "lucide-react";
+import { HeeyooLogo } from "@/components/ui/heeyoo-logo";
 import type { ChatItem, ProgressState } from "../types";
 import { MessageInput } from "./message-input";
 import { MessageList } from "./message-list";
@@ -40,14 +40,14 @@ export function ChatContainer({
       <header className="sticky top-0 z-10 border-border border-b-2 bg-background">
         <div className="mx-auto max-w-3xl px-4 py-3">
           <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="brutal-shadow flex h-10 w-10 items-center justify-center rounded-md border-2 border-border bg-primary">
-                <Bot className="h-5 w-5 text-primary-foreground" />
-              </div>
+            <div className="flex items-center gap-4">
+              <HeeyooLogo height={40} width={152} className="hidden sm:block" />
               <div>
-                <h1 className="font-black font-heading text-foreground text-xl">Cursus Feedback</h1>
+                <h1 className="font-black font-heading text-foreground text-xl">
+                  LLM Fundamentals
+                </h1>
                 <p className="font-bold font-mono text-muted-foreground text-xs uppercase tracking-wide">
-                  Interview in voortgang
+                  Cursus feedback
                 </p>
               </div>
             </div>

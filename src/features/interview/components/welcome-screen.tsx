@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { SpotlightPicture } from "@/components/ui/spotlight-picture";
+import { HeeyooLogo } from "@/components/ui/heeyoo-logo";
 import type { FormEvent } from "react";
 import { useState } from "react";
 
@@ -39,6 +40,10 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
           <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-2 md:gap-12">
             {/* Left Column: Text Content */}
             <div className="space-y-6">
+              <div className="mb-2">
+                <HeeyooLogo className="origin-left scale-90 md:scale-100" />
+              </div>
+
               <h1 className="font-black font-heading text-3xl text-foreground md:text-4xl">
                 Hoi LLM fundamentals deelnemer
               </h1>
