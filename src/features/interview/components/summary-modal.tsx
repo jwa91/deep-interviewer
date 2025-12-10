@@ -5,7 +5,7 @@ import { QUESTION_TITLES } from "@/shared/constants";
 import { QuoteIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useResponses } from "../hooks/use-responses";
-import type { TopicResponse as TopicResponseType } from "../types";
+import type { TopicResponseDTO as TopicResponseType } from "../types";
 import { FIELD_LABELS, FieldRenderer } from "./field-renderer";
 
 interface SummaryModalProps {
