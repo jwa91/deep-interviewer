@@ -109,11 +109,12 @@ export interface ToolCardData {
   state: "active" | "completed";
 }
 
-export type ChatItemType = "message" | "tool_card";
+export type ChatItemType = "message" | "tool_card" | "slide_link";
 
 export type ChatItem =
   | { type: "message"; id: string; data: Message }
-  | { type: "tool_card"; id: string; data: ToolCardData };
+  | { type: "tool_card"; id: string; data: ToolCardData }
+  | { type: "slide_link"; id: string; data: { url: string } };
 
 // ═══════════════════════════════════════════════════════════════
 // API TYPES

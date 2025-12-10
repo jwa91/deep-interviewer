@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import type { ChatItem } from "../types";
 import { AgentNoteCard } from "./agent-note-card";
 import { MessageBubble } from "./message-bubble";
+import { SlideLinkCard } from "./slide-link-card";
 
 interface MessageListProps {
   readonly chatItems: ChatItem[];
@@ -37,6 +38,10 @@ export function MessageList({ chatItems, sessionId }: MessageListProps) {
                 sessionId={sessionId}
               />
             );
+          }
+
+          if (item.type === "slide_link") {
+            return <SlideLinkCard key={item.id} url={item.data.url} />;
           }
 
           return null;

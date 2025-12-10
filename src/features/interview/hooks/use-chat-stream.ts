@@ -190,6 +190,23 @@ export function useChatStream({
                 // Handle tool_start - add tool card
                 if (eventType === "tool_start" && data.name) {
                   const toolData = data as SSEToolStartEvent;
+
+                  // Special handling for workshop slides
+                  if (toolData.name === "provide_workshop_slides") {
+                    const slideLinkId = `slide_link_${generateId()}`;
+                    setChatItems((prev) => [
+                      ...prev,
+                      {
+                        type: "slide_link",
+                        id: slideLinkId,
+                        data: {
+                          url: "https://link.excalidraw.com/p/readonly/dKWLQmAK049howtnYdZ0",
+                        },
+                      },
+                    ]);
+                    continue;
+                  }
+
                   const questionId = toolNameToQuestionId(toolData.name);
                   if (questionId) {
                     const toolCardId = `tool_${questionId}_${generateId()}`;
