@@ -9,19 +9,30 @@ import {
   listSessions,
   deleteSession,
   getCheckpointer,
+  _resetForTesting,
   type InterviewSession,
 } from "./persistence";
 
 // Mock fs operations
-vi.mock("node:fs", () => ({
-  existsSync: vi.fn(),
-  readFileSync: vi.fn(),
-  writeFileSync: vi.fn(),
-}));
+vi.mock("node:fs", () => {
+  const existsSync = vi.fn();
+  const readFileSync = vi.fn();
+  const writeFileSync = vi.fn();
+  return {
+    default: { existsSync, readFileSync, writeFileSync },
+    existsSync,
+    readFileSync,
+    writeFileSync,
+  };
+});
 
-vi.mock("node:fs/promises", () => ({
-  mkdir: vi.fn(),
-}));
+vi.mock("node:fs/promises", () => {
+  const mkdir = vi.fn();
+  return {
+    default: { mkdir },
+    mkdir,
+  };
+});
 
 vi.mock("@langchain/langgraph-checkpoint-sqlite", () => ({
   SqliteSaver: {
@@ -32,18 +43,9 @@ vi.mock("@langchain/langgraph-checkpoint-sqlite", () => ({
 }));
 
 describe("persistence", () => {
-  const mockDataDir = "/tmp/test-data";
-  const mockSessionsFile = join(mockDataDir, "sessions.json");
-
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset module state by clearing the internal cache
-    vi.resetModules();
-    process.env.DATA_DIR = mockDataDir;
-  });
-
-  afterEach(() => {
-    delete process.env.DATA_DIR;
+    _resetForTesting();
   });
 
   describe("createSession", () => {
@@ -78,8 +80,8 @@ describe("persistence", () => {
 
       expect(writeFileSync).toHaveBeenCalled();
       const callArgs = vi.mocked(writeFileSync).mock.calls[0];
-      expect(callArgs[0]).toBe(mockSessionsFile);
-      expect(callArgs[1]).toContain('"isComplete":false');
+      expect(String(callArgs[0])).toContain("sessions.json");
+      expect(callArgs[1]).toContain('"isComplete": false');
     });
   });
 
@@ -318,6 +320,10 @@ describe("persistence", () => {
   });
 
   describe("getCheckpointer", () => {
+    afterEach(() => {
+      delete process.env.DATA_DIR;
+    });
+
     it("creates checkpointer on first call", async () => {
       vi.mocked(existsSync).mockReturnValue(false);
       vi.mocked(mkdir).mockResolvedValue(undefined);
@@ -325,7 +331,8 @@ describe("persistence", () => {
       const checkpointer = await getCheckpointer();
 
       expect(checkpointer).toBeDefined();
-      expect(mkdir).toHaveBeenCalledWith(mockDataDir, { recursive: true });
+      // Uses default ./data when DATA_DIR is not set
+      expect(mkdir).toHaveBeenCalledWith("./data", { recursive: true });
     });
 
     it("returns same checkpointer instance on subsequent calls", async () => {

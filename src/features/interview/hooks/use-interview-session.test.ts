@@ -340,17 +340,28 @@ describe("useInterviewSession", () => {
     expect(result.current.progress.completedCount).toBe(2);
   });
 
-  it("clears session and resets state", () => {
+  it("clears session and resets state", async () => {
     const storedSession: SessionState = {
       code: "TEST123",
       sessionId: "session-123",
     };
     mockSessionStorage.setItem("interview_session", JSON.stringify(storedSession));
 
+    // Mock the initial fetch check
+    vi.mocked(global.fetch).mockResolvedValue({
+      ok: false,
+      status: 404,
+    } as Response);
+
     const { result } = renderHook(() => useInterviewSession());
 
+    // Wait for initial load to complete
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
     // Set some state first
-    act(() => {
+    await act(async () => {
       result.current.updateProgress({
         questionsCompleted: {
           ai_background: true,
@@ -369,7 +380,7 @@ describe("useInterviewSession", () => {
       });
     });
 
-    act(() => {
+    await act(async () => {
       result.current.clearSession();
     });
 

@@ -1,30 +1,30 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { createInvite, getInvite, linkSessionToInvite, listInvites, type Invite } from "./invites";
+import { createInvite, getInvite, linkSessionToInvite, listInvites, _resetForTesting, type Invite } from "./invites";
 
 // Mock fs operations
-vi.mock("node:fs", () => ({
-  existsSync: vi.fn(),
-  readFileSync: vi.fn(),
-  writeFileSync: vi.fn(),
-}));
+vi.mock("node:fs", () => {
+  const existsSync = vi.fn();
+  const readFileSync = vi.fn();
+  const writeFileSync = vi.fn();
+  return {
+    default: { existsSync, readFileSync, writeFileSync },
+    existsSync,
+    readFileSync,
+    writeFileSync,
+  };
+});
 
 describe("invites", () => {
-  const mockDataDir = "/tmp/test-data";
-  const mockInvitesFile = join(mockDataDir, "invites.json");
-
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset module state
-    vi.resetModules();
-    process.env.DATA_DIR = mockDataDir;
+    _resetForTesting();
     // Mock Math.random to make tests deterministic
     vi.spyOn(Math, "random").mockReturnValue(0.5);
   });
 
   afterEach(() => {
-    delete process.env.DATA_DIR;
     vi.restoreAllMocks();
   });
 
@@ -49,7 +49,7 @@ describe("invites", () => {
 
       expect(writeFileSync).toHaveBeenCalled();
       const callArgs = vi.mocked(writeFileSync).mock.calls[0];
-      expect(callArgs[0]).toBe(mockInvitesFile);
+      expect(String(callArgs[0])).toContain("invites.json");
       const savedData = JSON.parse(callArgs[1] as string);
       expect(Object.keys(savedData).length).toBeGreaterThan(0);
     });
@@ -328,6 +328,8 @@ describe("invites", () => {
       vi.mocked(writeFileSync).mockImplementation(() => {
         throw new Error("Write error");
       });
+      // Use a random value that produces a 6+ character base36 string
+      vi.spyOn(Math, "random").mockReturnValue(0.123456789);
 
       // Should not throw, but code should still be generated
       const code = createInvite();

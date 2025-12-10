@@ -81,3 +81,11 @@ export function listInvites(): Invite[] {
   ensureInitialized();
   return Array.from(invites.values());
 }
+
+// For testing purposes only - resets internal state
+export function _resetForTesting(): void {
+  invites = new Map<string, Invite>();
+  initialized = false;
+}
+
+export type { Invite };

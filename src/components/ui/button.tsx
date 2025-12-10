@@ -56,8 +56,14 @@ function Button({
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     >
-      <span>{props.children}</span>
-      {props.disabled && !asChild && <Ban className="size-4 opacity-50" />}
+      {asChild ? (
+        props.children
+      ) : (
+        <>
+          <span>{props.children}</span>
+          {props.disabled && <Ban className="size-4 opacity-50" />}
+        </>
+      )}
     </Comp>
   );
 }

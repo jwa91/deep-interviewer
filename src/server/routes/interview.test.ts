@@ -87,6 +87,7 @@ describe("Response API Endpoints", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.resetModules();
     vi.mocked(getSession).mockReturnValue(mockSession);
     vi.mocked(getCheckpointer).mockResolvedValue({} as never);
     vi.mocked(createInterviewAgent).mockReturnValue(mockAgent as never);
@@ -316,6 +317,7 @@ describe("Response API Endpoints", () => {
 describe("POST /api/interviews - Session Creation", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.resetModules();
   });
 
   it("creates new session with valid invite code", async () => {
@@ -553,20 +555,24 @@ describe("GET /api/interviews/:id - Get Session State", () => {
     },
   };
 
-  const mockAgent = {
-    getState: vi.fn().mockResolvedValue(mockState),
+  let mockAgent: {
+    getState: ReturnType<typeof vi.fn>;
+    streamEvents?: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.resetModules();
+    mockAgent = {
+      getState: vi.fn().mockResolvedValue(mockState),
+    };
     vi.mocked(getSession).mockReturnValue(mockSession);
     vi.mocked(getCheckpointer).mockResolvedValue({} as never);
     vi.mocked(createInterviewAgent).mockReturnValue(mockAgent as never);
   });
 
   it("returns session state with messages and progress", async () => {
-    // Reset and set up mock to return the state with messages
-    mockAgent.getState.mockReset();
+    // Ensure mock returns the state with messages
     mockAgent.getState.mockResolvedValue(mockState);
 
     const { interviewRoutes } = await import("./interview");
@@ -584,10 +590,6 @@ describe("GET /api/interviews/:id - Get Session State", () => {
     expect(json.messages[1].content).toBe("Hi there!");
     expect(json.progress.completedCount).toBe(1);
     expect(json.progress.totalQuestions).toBe(9);
-    
-    // Reset mock for other tests
-    mockAgent.getState.mockReset();
-    mockAgent.getState.mockResolvedValue(mockState);
   });
 
   it("returns 404 when session not found", async () => {
@@ -608,8 +610,7 @@ describe("GET /api/interviews/:id - Get Session State", () => {
       getState: vi.fn().mockRejectedValue(new Error("No state")),
     };
     
-    // Temporarily replace the mock
-    const originalMock = vi.mocked(createInterviewAgent);
+    // Replace the mock for this test
     vi.mocked(createInterviewAgent).mockReturnValueOnce(mockAgentEmpty as never);
 
     const { interviewRoutes } = await import("./interview");
@@ -622,6 +623,9 @@ describe("GET /api/interviews/:id - Get Session State", () => {
     expect(json.messages).toEqual([]);
     expect(json.progress.completedCount).toBe(0);
     expect(json.progress.isComplete).toBe(false);
+    
+    // Restore the original mock
+    vi.mocked(createInterviewAgent).mockReturnValue(mockAgent as never);
   });
 
   it("handles debug-session ID", async () => {
@@ -664,6 +668,7 @@ describe("POST /api/interviews/:id/chat - Chat Streaming", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.resetModules();
     vi.mocked(getSession).mockReturnValue(mockSession);
   });
 

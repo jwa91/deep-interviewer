@@ -156,17 +156,11 @@ describe("SpotlightPicture", () => {
   });
 
   it("handles empty imageSrc gracefully", () => {
-    // Suppress console warning for empty href in test
-    const consoleSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-    
     const { container } = render(<SpotlightPicture imageSrc="" />);
 
     const image = container.querySelector("image");
-    expect(image).toBeInTheDocument();
-    // Empty string is valid for SVG image href, but triggers a warning
-    expect(image?.getAttribute("href")).toBe("");
-    
-    consoleSpy.mockRestore();
+    // When imageSrc is empty, the image element should not be rendered
+    expect(image).not.toBeInTheDocument();
   });
 
   it("forwards ref correctly", () => {

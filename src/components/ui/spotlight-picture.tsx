@@ -54,13 +54,15 @@ const SpotlightPicture = React.forwardRef<HTMLDivElement, SpotlightPictureProps>
                   </clipPath>
                 </defs>
 
-                <image
-                  href={imageSrc}
-                  width="100%"
-                  height="100%"
-                  preserveAspectRatio="xMidYMid slice"
-                  clipPath={`url(#${clipId})`}
-                />
+                {imageSrc && (
+                  <image
+                    href={imageSrc}
+                    width="100%"
+                    height="100%"
+                    preserveAspectRatio="xMidYMid slice"
+                    clipPath={`url(#${clipId})`}
+                  />
+                )}
               </svg>
             </div>
           </div>

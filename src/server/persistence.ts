@@ -144,3 +144,10 @@ export function deleteSession(id: string): boolean {
   }
   return result;
 }
+
+// For testing purposes only - resets internal state
+export function _resetForTesting(): void {
+  sessions = new Map<string, InterviewSession>();
+  initialized = false;
+  checkpointer = null;
+}
