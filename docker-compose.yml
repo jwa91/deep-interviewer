@@ -1,9 +1,9 @@
 # ═══════════════════════════════════════════════════════════════
-# Deep Interviewer - Docker Compose for Local Development
+# Deep Interviewer - Docker Compose
 # ═══════════════════════════════════════════════════════════════
 
 services:
-  api:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
@@ -38,4 +38,3 @@ services:
 volumes:
   interview-data:
     driver: local
-

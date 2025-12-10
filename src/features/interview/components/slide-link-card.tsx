@@ -16,7 +16,9 @@ export function SlideLinkCard({ url }: SlideLinkCardProps) {
         {/* Card */}
         <div className="brutal-shadow max-w-[80%] overflow-hidden rounded-lg border-2 border-border bg-card">
           <div className="p-4">
-            <h3 className="mb-2 font-bold text-card-foreground text-sm uppercase">Workshop Slides</h3>
+            <h3 className="mb-2 font-bold text-card-foreground text-sm uppercase">
+              Workshop Slides
+            </h3>
             <p className="mb-4 font-mono text-muted-foreground text-sm">
               Hier zijn de slides van de workshop die je hebt gevraagd.
             </p>
@@ -35,4 +37,3 @@ export function SlideLinkCard({ url }: SlideLinkCardProps) {
     </div>
   );
 }
-

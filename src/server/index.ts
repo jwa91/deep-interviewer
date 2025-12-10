@@ -1,5 +1,7 @@
 import "dotenv/config";
 import { serve } from "@hono/node-server";
+import { serveStatic } from "@hono/node-server/serve-static";
+import { readFile } from "node:fs/promises";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -54,6 +56,24 @@ app.get("/", (c) =>
 
 // Interview routes
 app.route("/api/interviews", interviewRoutes);
+
+// ═══════════════════════════════════════════════════════════════
+// STATIC FILES (Production only)
+// ═══════════════════════════════════════════════════════════════
+
+if (process.env.NODE_ENV === "production") {
+  app.use("/*", serveStatic({ root: "./client" }));
+
+  // SPA fallback
+  app.get("*", async (c) => {
+    try {
+      const indexHtml = await readFile("./client/index.html", "utf-8");
+      return c.html(indexHtml);
+    } catch (e) {
+      return c.text("Not found", 404);
+    }
+  });
+}
 
 // ═══════════════════════════════════════════════════════════════
 // START SERVER

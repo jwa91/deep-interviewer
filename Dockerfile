@@ -19,7 +19,8 @@ RUN pnpm install --frozen-lockfile
 # Copy source code
 COPY . .
 
-# Build the server
+# Build the frontend and server
+RUN pnpm build
 RUN pnpm build:server
 
 # ---- Production Stage ----
@@ -45,7 +46,11 @@ RUN pnpm rebuild better-sqlite3
 # Copy built server code
 COPY --from=build /app/dist-server ./dist-server
 
-# Copy shared types (needed at runtime)
+# Copy built frontend code
+COPY --from=build /app/dist ./client
+
+# Copy shared types (needed at runtime if referenced dynamically, though compiled code should be enough)
+# Keeping it safe as previous dockerfile had it
 COPY --from=build /app/src/shared ./src/shared
 
 # Create data directory for SQLite
@@ -65,4 +70,3 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 
 # Start the server
 CMD ["node", "dist-server/server/index.js"]
-
