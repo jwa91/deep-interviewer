@@ -2,14 +2,6 @@
 
 An AI-powered conversational interview agent that collects course feedback through natural dialogue instead of boring survey forms.
 
-## Status
-
-| Component   | Status        |
-| ----------- | ------------- |
-| Backend API | ✅ Working    |
-| Frontend    | ✅ Working    |
-| Docker      | ⏳ Not tested |
-
 ## Overview
 
 Built with LangChain's LangGraph, this agent conducts interviews in Dutch, naturally weaving in 9 feedback questions while maintaining a friendly, conversational tone. Instead of rigid forms, participants chat with an AI that adapts to their responses and goes deeper when interesting insights emerge.
@@ -35,6 +27,14 @@ src/
 - `GET /api/interviews/:id` - Get interview state and progress
 - `POST /api/interviews/:id/chat` - Send message (SSE streaming)
 - `GET /api/interviews/:id/results` - Get completed interview results
+
+## Documentation
+
+- [Repository Structure](docs/repo-structure.md) - Project layout and import rules
+- [API Guide](docs/api-guide.md) - REST & SSE endpoint reference for frontend integration
+- [Application Flowchart](docs/application-flowchart.md) - System architecture diagram
+- [Agent Runtime Sequence](docs/agent-runtime-sequence.md) - Detailed sequence diagram of agent flow
+- [Data Flow](docs/data-flow.md) - High-level data flow visualization
 
 ## Tech Stack
 

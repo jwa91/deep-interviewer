@@ -18,9 +18,23 @@ The backend exposes a streaming chat API using Server-Sent Events (SSE). The fro
 
 ```
 POST /api/interviews
+Content-Type: application/json
+Body: { "code": "invite-code-here" }
 ```
 
-Returns `{ id, createdAt }`. Store the `id` for subsequent requests.
+Requires a valid invite code. Returns:
+
+```json
+{
+  "id": "uuid",
+  "createdAt": "2024-01-15T10:00:00.000Z",
+  "message": "Interview session created...",
+  "isResumed": false
+}
+```
+
+- `isResumed: true` means the user is resuming an existing session tied to this invite code
+- Store the `id` for subsequent requests
 
 ---
 
@@ -36,21 +50,24 @@ Returns an SSE stream with the following event types:
 
 ### Event Types
 
-| Event        | Description                 | Data                                                                 |
-| ------------ | --------------------------- | -------------------------------------------------------------------- |
-| `token`      | Streaming text chunk        | `{ content: "..." }`                                                 |
-| `tool_start` | Agent is recording feedback | `{ name: "record_...", input: {...} }`                               |
-| `tool_end`   | Feedback recorded           | `{ name: "record_...", output: "✓ ..." }`                            |
-| `progress`   | Updated completion status   | `{ questionsCompleted, isComplete, completedCount, totalQuestions }` |
-| `done`       | Stream finished             | `{ fullResponse, toolCalls, progress }`                              |
-| `error`      | Something went wrong        | `{ error: "..." }`                                                   |
+| Event           | Description                 | Data                                                                 |
+| --------------- | --------------------------- | -------------------------------------------------------------------- |
+| `message_start` | New message segment begins  | `{ messageId: "msg_..." }`                                           |
+| `token`         | Streaming text chunk        | `{ content: "...", messageId: "msg_..." }`                           |
+| `message_end`   | Message segment complete    | `{ messageId: "msg_..." }`                                           |
+| `tool_start`    | Agent is recording feedback | `{ name: "record_...", input: {...} }`                               |
+| `tool_end`      | Feedback recorded           | `{ name: "record_...", output: "✓ ..." }`                            |
+| `progress`      | Updated completion status   | `{ questionsCompleted, isComplete, completedCount, totalQuestions }` |
+| `done`          | Stream finished             | `{ fullResponse, toolCalls, progress }`                              |
+| `error`         | Something went wrong        | `{ error: "..." }`                                                   |
 
 ### Handling the Stream
 
-1. **Accumulate `token` events** to build the agent's response in real-time
-2. **Show `tool_start`/`tool_end`** as UI feedback (e.g., "Recording your feedback...")
-3. **Use `progress`** to show completion (e.g., "2/9 questions answered")
-4. **Use `done`** to finalize the message and get the complete response
+1. **Track `message_start`/`message_end`** to handle message boundaries (tool calls split messages)
+2. **Accumulate `token` events** per `messageId` to build the agent's response in real-time
+3. **Show `tool_start`/`tool_end`** as UI feedback (e.g., "Recording your feedback...")
+4. **Use `progress`** to show completion (e.g., "2/9 questions answered")
+5. **Use `done`** to finalize and get the complete response
 
 ### Progress Object
 
