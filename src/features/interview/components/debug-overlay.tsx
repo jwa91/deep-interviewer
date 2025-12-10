@@ -1,8 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useCallback, useEffect, useState } from "react";
 
-const API_BASE = "http://localhost:3001";
-
 interface DebugOverlayProps {
   onAutoReply?: (text: string) => void;
 }
@@ -13,7 +11,7 @@ export function DebugOverlay({ onAutoReply }: DebugOverlayProps) {
 
   const fetchSuggestedReply = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/interviews/debug/suggested-reply`);
+      const res = await fetch("/api/interviews/debug/suggested-reply");
       const data = await res.json();
       setSuggestedReply(data.reply);
     } catch {
@@ -29,12 +27,12 @@ export function DebugOverlay({ onAutoReply }: DebugOverlayProps) {
   }, [fetchSuggestedReply]);
 
   const handleReset = async () => {
-    await fetch(`${API_BASE}/api/interviews/debug/reset`, { method: "POST" });
+    await fetch("/api/interviews/debug/reset", { method: "POST" });
     window.location.reload();
   };
 
   const handleJump = async (step: number) => {
-    await fetch(`${API_BASE}/api/interviews/debug/jump`, {
+    await fetch("/api/interviews/debug/jump", {
       method: "POST",
       body: JSON.stringify({ step }),
       headers: { "Content-Type": "application/json" },

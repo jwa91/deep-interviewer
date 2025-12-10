@@ -11,8 +11,6 @@ import type {
   SSEToolStartEvent,
 } from "../types";
 
-const API_BASE = "http://localhost:3001";
-
 interface UseChatStreamOptions {
   sessionId: string | null;
   onProgressUpdate?: (progress: ProgressState) => void;
@@ -89,7 +87,7 @@ export function useChatStream({
       let currentMessageId: string | null = null;
 
       try {
-        const response = await fetch(`${API_BASE}/api/interviews/${sessionId}/chat`, {
+        const response = await fetch(`/api/interviews/${sessionId}/chat`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: content }),

@@ -8,7 +8,6 @@ import type {
 } from "../types";
 import { createDefaultProgress } from "./use-chat-stream";
 
-const API_BASE = "http://localhost:3001";
 const SESSION_STORAGE_KEY = "interview_session";
 
 interface UseInterviewSessionReturn {
@@ -68,7 +67,7 @@ export function useInterviewSession(): UseInterviewSessionReturn {
 
       try {
         // Verify session still exists on backend
-        const response = await fetch(`${API_BASE}/api/interviews/${stored.sessionId}`);
+        const response = await fetch(`/api/interviews/${stored.sessionId}`);
 
         if (response.ok) {
           const data = (await response.json()) as GetSessionResponse;
@@ -102,7 +101,7 @@ export function useInterviewSession(): UseInterviewSessionReturn {
   }, []);
 
   const resumeSession = useCallback(async (sessionId: string) => {
-    const sessionResponse = await fetch(`${API_BASE}/api/interviews/${sessionId}`);
+    const sessionResponse = await fetch(`/api/interviews/${sessionId}`);
     if (sessionResponse.ok) {
       const sessionData = (await sessionResponse.json()) as GetSessionResponse;
       setProgress(sessionData.progress);
@@ -127,7 +126,7 @@ export function useInterviewSession(): UseInterviewSessionReturn {
 
       try {
         // Create session or resume existing one using the code
-        const response = await fetch(`${API_BASE}/api/interviews`, {
+        const response = await fetch("/api/interviews", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

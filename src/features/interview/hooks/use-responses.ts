@@ -1,8 +1,6 @@
 import { useCallback, useState } from "react";
 import type { GetAllResponsesResponse } from "../types";
 
-const API_BASE = "http://localhost:3001";
-
 interface UseResponsesOptions {
   sessionId: string;
 }
@@ -29,7 +27,7 @@ export function useResponses({ sessionId }: UseResponsesOptions): UseResponsesRe
     setError(null);
 
     try {
-      const response = await fetch(`${API_BASE}/api/interviews/${sessionId}/responses`);
+      const response = await fetch(`/api/interviews/${sessionId}/responses`);
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);

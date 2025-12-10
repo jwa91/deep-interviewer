@@ -1,8 +1,6 @@
 import { useCallback, useState } from "react";
 import type { QuestionId, TopicResponseDTO } from "../types";
 
-const API_BASE = "http://localhost:3001";
-
 interface UseTopicResponseOptions {
   sessionId: string;
   topic: QuestionId;
@@ -41,7 +39,7 @@ export function useTopicResponse({
     setError(null);
 
     try {
-      const response = await fetch(`${API_BASE}/api/interviews/${sessionId}/responses/${topic}`);
+      const response = await fetch(`/api/interviews/${sessionId}/responses/${topic}`);
 
       if (!response.ok) {
         if (response.status === 404) {
