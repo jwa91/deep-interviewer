@@ -59,9 +59,9 @@ export function DebugOverlay({ onAutoReply }: DebugOverlayProps) {
   }
 
   return (
-    <div className="fixed bottom-4 left-4 z-50 w-80 rounded-lg border-2 border-primary bg-background p-4 brutal-shadow">
+    <div className="brutal-shadow fixed bottom-4 left-4 z-50 w-80 rounded-lg border-2 border-primary bg-background p-4">
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="font-mono font-bold text-sm text-primary uppercase">Debug Controller</h3>
+        <h3 className="font-bold font-mono text-primary text-sm uppercase">Debug Controller</h3>
         <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => setIsOpen(false)}>
           ✕
         </Button>
