@@ -13,6 +13,7 @@ interface ChatContainerProps {
   readonly error: string | null;
   readonly onSendMessage: (message: string) => void;
   readonly onLeave: () => void;
+  readonly onShowCompletion: () => void;
 }
 
 export function ChatContainer({
@@ -23,6 +24,7 @@ export function ChatContainer({
   error,
   onSendMessage,
   onLeave,
+  onShowCompletion,
 }: ChatContainerProps) {
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background">
@@ -51,9 +53,21 @@ export function ChatContainer({
                 </p>
               </div>
             </div>
-            <Button variant="outline" size="sm" onClick={onLeave}>
-              Chat verlaten
-            </Button>
+            <div className="flex items-center gap-2">
+              {progress.isComplete && (
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={onShowCompletion}
+                  className="hidden xs:inline-flex"
+                >
+                  Bekijk afronding
+                </Button>
+              )}
+              <Button variant="outline" size="sm" onClick={onLeave}>
+                Chat verlaten
+              </Button>
+            </div>
           </div>
           <ProgressBar progress={progress} sessionId={sessionId} />
         </div>
@@ -71,11 +85,22 @@ export function ChatContainer({
           <MessageList chatItems={chatItems} sessionId={sessionId} />
         </div>
 
-        <MessageInput
-          onSend={onSendMessage}
-          disabled={isStreaming}
-          placeholder="Typ je antwoord..."
-        />
+        {progress.isComplete ? (
+          <div className="border-border border-t-2 bg-background p-4 text-center">
+            <p className="mb-3 font-mono text-muted-foreground text-sm">
+              Het interview is afgerond. Bedankt voor je deelname!
+            </p>
+            <Button onClick={onShowCompletion} className="font-bold">
+              Bekijk afronding
+            </Button>
+          </div>
+        ) : (
+          <MessageInput
+            onSend={onSendMessage}
+            disabled={isStreaming}
+            placeholder="Typ je antwoord..."
+          />
+        )}
       </main>
     </div>
   );

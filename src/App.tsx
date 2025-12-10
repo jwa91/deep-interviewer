@@ -178,6 +178,7 @@ function MainApp() {
         error={chatError}
         onSendMessage={sendMessage}
         onLeave={handleLeave}
+        onShowCompletion={() => setShowCompletionModal(true)}
       />
       <CompletionModal isOpen={showCompletionModal} onClose={() => setShowCompletionModal(false)} />
     </>
