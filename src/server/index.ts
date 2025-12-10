@@ -36,23 +36,25 @@ app.get("/health", (c) =>
   })
 );
 
-// API info
-app.get("/", (c) =>
-  c.json({
-    name: "Deep Interviewer API",
-    version: "0.1.0",
-    endpoints: {
-      health: "GET /health",
-      interviews: {
-        list: "GET /api/interviews",
-        create: "POST /api/interviews",
-        get: "GET /api/interviews/:id",
-        chat: "POST /api/interviews/:id/chat",
-        results: "GET /api/interviews/:id/results",
+// API info (development only - in production, static files are served at /)
+if (process.env.NODE_ENV !== "production") {
+  app.get("/", (c) =>
+    c.json({
+      name: "Deep Interviewer API",
+      version: "0.1.0",
+      endpoints: {
+        health: "GET /health",
+        interviews: {
+          list: "GET /api/interviews",
+          create: "POST /api/interviews",
+          get: "GET /api/interviews/:id",
+          chat: "POST /api/interviews/:id/chat",
+          results: "GET /api/interviews/:id/results",
+        },
       },
-    },
-  })
-);
+    })
+  );
+}
 
 // Interview routes
 app.route("/api/interviews", interviewRoutes);
