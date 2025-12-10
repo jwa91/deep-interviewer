@@ -4,7 +4,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { HeeyooLogo } from "@/components/ui/heeyoo-logo";
 import { SpotlightPicture } from "@/components/ui/spotlight-picture";
 import { WORKSHOP_SLIDES_URL } from "@/shared/constants";
-import { ExternalLink, Github, X } from "lucide-react";
+import { ExternalLink, Github, Linkedin, X } from "lucide-react";
 
 interface CompletionModalProps {
   readonly isOpen: boolean;
@@ -73,6 +73,30 @@ export function CompletionModal({ isOpen, onClose }: CompletionModalProps) {
                     <p className="mt-1 text-xs italic opacity-70">
                       (Note: Repo might be private currently)
                     </p>
+                  </div>
+
+                  <div className="flex items-center gap-4 border-border/50 border-t pt-4">
+                    <span className="font-bold text-foreground">Jan Willem</span>
+                    <div className="flex items-center gap-2">
+                      <a
+                        href="https://github.com/jwa91/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-muted-foreground transition-colors hover:text-foreground"
+                        aria-label="GitHub"
+                      >
+                        <Github className="h-5 w-5" />
+                      </a>
+                      <a
+                        href="https://www.linkedin.com/in/janwillemaltink/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-muted-foreground transition-colors hover:text-foreground"
+                        aria-label="LinkedIn"
+                      >
+                        <Linkedin className="h-5 w-5" />
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -4,6 +4,7 @@ import { HeeyooLogo } from "@/components/ui/heeyoo-logo";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { SpotlightPicture } from "@/components/ui/spotlight-picture";
+import { Github, Linkedin } from "lucide-react";
 import type { FormEvent } from "react";
 import { useState } from "react";
 
@@ -74,7 +75,29 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
                   berichtje of email in dat geval.
                 </p>
 
-                <p className="pt-2 font-bold text-foreground">Groeten, Jan Willem</p>
+                <div className="flex items-center gap-4 pt-2">
+                  <p className="font-bold text-foreground">Groeten, Jan Willem</p>
+                  <div className="flex items-center gap-2">
+                    <a
+                      href="https://github.com/jwa91/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground transition-colors hover:text-foreground"
+                      aria-label="GitHub"
+                    >
+                      <Github className="h-5 w-5" />
+                    </a>
+                    <a
+                      href="https://www.linkedin.com/in/janwillemaltink/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground transition-colors hover:text-foreground"
+                      aria-label="LinkedIn"
+                    >
+                      <Linkedin className="h-5 w-5" />
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
 
