@@ -104,14 +104,14 @@ describe("FieldRenderer", () => {
     });
 
     it("applies correct styling for true value", () => {
-      const { container } = render(<FieldRenderer label="Test" value={true} />);
+      render(<FieldRenderer label="Test" value={true} />);
 
       const jaElement = screen.getByText("Ja");
       expect(jaElement.className).toContain("text-primary");
     });
 
     it("applies correct styling for false value", () => {
-      const { container } = render(<FieldRenderer label="Test" value={false} />);
+      render(<FieldRenderer label="Test" value={false} />);
 
       const neeElement = screen.getByText("Nee");
       expect(neeElement.className).toContain("text-muted-foreground");
@@ -233,10 +233,10 @@ describe("FieldRenderer", () => {
         "balanceOpinion",
       ];
 
-      expectedKeys.forEach((key) => {
+      for (const key of expectedKeys) {
         expect(FIELD_LABELS).toHaveProperty(key);
         expect(typeof FIELD_LABELS[key as keyof typeof FIELD_LABELS]).toBe("string");
-      });
+      }
     });
   });
 });

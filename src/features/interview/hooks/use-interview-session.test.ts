@@ -361,7 +361,7 @@ describe("useInterviewSession", () => {
     });
 
     // Set some state first
-    await act(async () => {
+    act(() => {
       result.current.updateProgress({
         questionsCompleted: {
           ai_background: true,
@@ -380,7 +380,7 @@ describe("useInterviewSession", () => {
       });
     });
 
-    await act(async () => {
+    act(() => {
       result.current.clearSession();
     });
 
@@ -422,7 +422,9 @@ describe("useInterviewSession", () => {
       search: "",
       searchParams: {
         has: () => false,
-        set: () => {},
+        set: () => {
+          // No-op for test mock
+        },
       },
     };
 
@@ -477,7 +479,9 @@ describe("useInterviewSession", () => {
       removeItem: () => {
         throw new Error("Storage error");
       },
-      clear: () => {},
+      clear: () => {
+        // No-op for test mock
+      },
     };
 
     Object.defineProperty(window, "sessionStorage", {

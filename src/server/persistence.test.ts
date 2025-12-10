@@ -253,7 +253,7 @@ describe("persistence", () => {
     });
 
     afterEach(() => {
-      delete process.env.DATA_DIR;
+      process.env.DATA_DIR = undefined;
     });
 
     it("creates checkpointer on first call", async () => {
@@ -282,7 +282,7 @@ describe("persistence", () => {
 
     it("defaults to ./data when DATA_DIR is not set", async () => {
       const { mkdir: mkdirMock } = await import("node:fs/promises");
-      delete process.env.DATA_DIR;
+      process.env.DATA_DIR = undefined;
       _resetForTesting();
 
       await getCheckpointer();

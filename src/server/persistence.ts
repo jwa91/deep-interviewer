@@ -196,6 +196,7 @@ export const listSessions = () => getDefaultStore().listSessions();
 export const deleteSession = (id: string) => getDefaultStore().deleteSession(id);
 
 // For testing - resets the default store and checkpointer
+// biome-ignore lint/style/useNamingConvention: underscore prefix indicates test-only function
 export function _resetForTesting(): void {
   defaultStore = null;
   checkpointer = null;

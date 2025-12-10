@@ -1,6 +1,23 @@
 import { WELCOME_MESSAGE } from "@/shared/constants";
 import { MOCK_RESPONSES } from "@/shared/mocks";
-import type { ProgressState } from "@/shared/schema";
+import type { ProgressState, QuestionId } from "@/shared/schema";
+
+// Types for the mock interview service
+interface MockMessage {
+  role: "user" | "assistant";
+  content: string;
+  toolCalls?: Array<{
+    name: string;
+    args: Record<string, unknown>;
+  }>;
+}
+
+interface MockResponse {
+  topic: string;
+  data: Record<string, unknown>;
+  timestamp: string;
+  source: "agent";
+}
 
 interface ScriptStep {
   id: string;
@@ -128,8 +145,8 @@ const SCRIPT: ScriptStep[] = [
 
 interface MockState {
   currentStep: number;
-  messages: any[]; // Using any to match the format expected by the route
-  responses: Record<string, any>;
+  messages: MockMessage[];
+  responses: Record<string, MockResponse>;
   progress: ProgressState;
   createdAt: string;
   isComplete: boolean;
@@ -221,7 +238,7 @@ class MockInterviewService {
             timestamp: new Date().toISOString(),
             source: "agent",
           };
-          (this.state.progress.questionsCompleted as any)[topic] = true;
+          this.state.progress.questionsCompleted[topic as QuestionId] = true;
           this.state.progress.completedCount++;
         }
 
@@ -294,7 +311,7 @@ class MockInterviewService {
           timestamp: new Date().toISOString(),
           source: "agent",
         };
-        (this.state.progress.questionsCompleted as any)[topic] = true;
+        this.state.progress.questionsCompleted[topic as QuestionId] = true;
         this.state.progress.completedCount++;
       }
     }

@@ -107,9 +107,9 @@ describe("SpotlightPicture", () => {
     const { container } = render(<SpotlightPicture imageSrc="/test.jpg" />);
 
     const svgs = container.querySelectorAll("svg");
-    svgs.forEach((svg) => {
+    for (const svg of svgs) {
       expect(svg.getAttribute("viewBox")).toBeDefined();
-    });
+    }
   });
 
   it("renders both background SVG and clipped image SVG", () => {

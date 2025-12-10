@@ -310,7 +310,9 @@ describe("POST /api/interviews - Session Creation", () => {
 
     vi.mocked(getInvite).mockReturnValue(mockInvite);
     vi.mocked(createSession).mockReturnValue(mockNewSession);
-    vi.mocked(linkSessionToInvite).mockImplementation(() => {});
+    vi.mocked(linkSessionToInvite).mockImplementation(() => {
+      // No-op mock
+    });
 
     const { interviewRoutes } = await import("./interview");
     const app = new Hono().route("/api/interviews", interviewRoutes);
@@ -393,7 +395,9 @@ describe("POST /api/interviews - Session Creation", () => {
     vi.mocked(getInvite).mockReturnValue(mockInvite);
     vi.mocked(getSession).mockReturnValue(undefined); // Session was deleted
     vi.mocked(createSession).mockReturnValue(mockNewSession);
-    vi.mocked(linkSessionToInvite).mockImplementation(() => {});
+    vi.mocked(linkSessionToInvite).mockImplementation(() => {
+      // No-op mock
+    });
 
     const { interviewRoutes } = await import("./interview");
     const app = new Hono().route("/api/interviews", interviewRoutes);
@@ -412,7 +416,9 @@ describe("POST /api/interviews - Session Creation", () => {
   });
 
   it("handles DEBUG_MODE code", async () => {
-    vi.mocked(mockInterviewService.reset).mockImplementation(() => {});
+    vi.mocked(mockInterviewService.reset).mockImplementation(() => {
+      // No-op mock
+    });
 
     const { interviewRoutes } = await import("./interview");
     const app = new Hono().route("/api/interviews", interviewRoutes);
@@ -436,7 +442,9 @@ describe("POST /api/interviews - Session Creation", () => {
 
     vi.mocked(getInvite).mockReturnValue(mockInvite);
     vi.mocked(createSession).mockReturnValue(mockNewSession);
-    vi.mocked(linkSessionToInvite).mockImplementation(() => {});
+    vi.mocked(linkSessionToInvite).mockImplementation(() => {
+      // No-op mock
+    });
 
     const { interviewRoutes } = await import("./interview");
     const app = new Hono().route("/api/interviews", interviewRoutes);
@@ -462,11 +470,13 @@ describe("GET /api/interviews/:id - Get Session State", () => {
   const mockStateWithMessages = agentStateFactory.withMessages(
     [
       {
+        // biome-ignore lint/style/useNamingConvention: matches LangChain message API
         _getType: () => "human",
         content: "Hello",
         tool_calls: undefined,
       },
       {
+        // biome-ignore lint/style/useNamingConvention: matches LangChain message API
         _getType: () => "ai",
         content: "Hi there!",
         tool_calls: undefined,
@@ -664,7 +674,9 @@ describe("POST /api/interviews/:id/chat - Chat Streaming", () => {
     if (reader) {
       while (true) {
         const { done, value } = await reader.read();
-        if (done) break;
+        if (done) {
+          break;
+        }
         buffer += decoder.decode(value, { stream: true });
         const lines = buffer.split("\n");
         buffer = lines.pop() || "";
@@ -682,7 +694,7 @@ describe("POST /api/interviews/:id/chat - Chat Streaming", () => {
   });
 
   it("streams real agent response with proper SSE format", async () => {
-    async function* mockStream() {
+    function* mockStream() {
       yield {
         event: "on_chat_model_stream",
         data: { chunk: { content: "Hello" } },
@@ -694,14 +706,12 @@ describe("POST /api/interviews/:id/chat - Chat Streaming", () => {
     }
 
     const mockStreamAgent = {
-      getState: vi
-        .fn()
-        .mockResolvedValue(
-          agentStateFactory.build({
-            messages: [],
-            questionsCompleted: questionsCompletedFactory.build(),
-          })
-        ),
+      getState: vi.fn().mockResolvedValue(
+        agentStateFactory.build({
+          messages: [],
+          questionsCompleted: questionsCompletedFactory.build(),
+        })
+      ),
       streamEvents: vi.fn().mockReturnValue(mockStream()),
     };
 

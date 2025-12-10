@@ -143,6 +143,7 @@ export const linkSessionToInvite = (code: string, sessionId: string) =>
 export const listInvites = () => getDefaultStore().listInvites();
 
 // For testing - resets the default store
+// biome-ignore lint/style/useNamingConvention: underscore prefix indicates test-only function
 export function _resetForTesting(): void {
   defaultStore = null;
 }

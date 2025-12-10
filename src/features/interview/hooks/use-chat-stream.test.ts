@@ -639,7 +639,7 @@ describe("useChatStream", () => {
       })
     );
 
-    const sseData = `event: token\ndata: {invalid json}\n\n`;
+    const sseData = "event: token\ndata: {invalid json}\n\n";
     const mockReader = {
       read: vi
         .fn()
