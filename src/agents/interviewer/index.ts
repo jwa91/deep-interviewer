@@ -3,7 +3,7 @@ export {
   createInterviewAgent,
   createInterviewInput,
   type InterviewAgentConfig,
-} from "./agent";
+} from "./agent.js";
 
 // State
 export {
@@ -13,7 +13,7 @@ export {
   getCompletedCount,
   shouldMarkComplete,
   getRemainingQuestionIds,
-} from "./state";
+} from "./state.js";
 
 // Model configuration
 export {
@@ -22,7 +22,7 @@ export {
   getModelConfigFromEnv,
   type ModelConfig,
   type ModelProvider,
-} from "./config";
+} from "./config.js";
 
 // Tools
 export {
@@ -31,7 +31,7 @@ export {
   toolNameToQuestionId,
   questionIdToToolName,
   type QuestionToolName,
-} from "./tools";
+} from "./tools.js";
 
 // Tool factory
 export {
@@ -39,11 +39,11 @@ export {
   TOOL_DESCRIPTIONS,
   type QuestionToolConfig,
   type ToolCallback,
-} from "./tool-factory";
+} from "./tool-factory.js";
 
 // Prompts
 export {
   INTERVIEWER_SYSTEM_PROMPT,
   getSystemPrompt,
   generateProgressReminder,
-} from "./prompts";
+} from "./prompts.js";

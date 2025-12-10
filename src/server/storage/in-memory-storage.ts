@@ -5,7 +5,7 @@
  * No mocking of node:fs required when using this implementation.
  */
 
-import type { KeyValueStorage } from "./types";
+import type { KeyValueStorage } from "./types.js";
 
 /**
  * In-memory storage implementation for testing.

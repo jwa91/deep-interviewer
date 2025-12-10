@@ -1,19 +1,19 @@
-import { WELCOME_MESSAGE } from "@/shared/constants";
-import type { CollectedResponses, QuestionId } from "@/shared/schema";
 import { AIMessage, HumanMessage, SystemMessage, isAIMessage } from "@langchain/core/messages";
 import type { RunnableConfig } from "@langchain/core/runnables";
 import { END, START, StateGraph } from "@langchain/langgraph";
 import type { BaseCheckpointSaver } from "@langchain/langgraph-checkpoint";
-import { type ModelConfig, createModel } from "./config";
-import { getSystemPrompt } from "./prompts";
+import { WELCOME_MESSAGE } from "../../shared/constants.js";
+import type { CollectedResponses, QuestionId } from "../../shared/schema/index.js";
+import { type ModelConfig, createModel } from "./config.js";
+import { getSystemPrompt } from "./prompts.js";
 import {
   type InterviewState,
   InterviewStateSchema,
   createInitialState,
   getRemainingQuestionIds,
   shouldMarkComplete,
-} from "./state";
-import { createQuestionTools } from "./tools";
+} from "./state.js";
+import { createQuestionTools } from "./tools.js";
 
 // ═══════════════════════════════════════════════════════════════
 // AGENT CONFIGURATION

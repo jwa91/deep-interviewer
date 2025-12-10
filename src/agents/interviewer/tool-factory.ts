@@ -1,6 +1,6 @@
-import type { QuestionId } from "@/shared/schema";
 import { tool } from "@langchain/core/tools";
 import type { z } from "zod";
+import type { QuestionId } from "../../shared/schema/index.js";
 
 // ═══════════════════════════════════════════════════════════════
 // TOOL FACTORY TYPES

@@ -7,7 +7,7 @@ import {
   SentimentSchema,
   UseCaseSubjectSchema,
   UserTypeSchema,
-} from "./base";
+} from "./base.js";
 
 // ═══════════════════════════════════════════════════════════════
 // QUESTION 1: AI Achtergrond

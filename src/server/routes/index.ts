@@ -1,1 +1,1 @@
-export { interviewRoutes } from "./interview";
+export { interviewRoutes } from "./interview.js";

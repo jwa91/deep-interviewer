@@ -5,8 +5,8 @@
  * Uses dependency injection for storage to enable easy testing.
  */
 
-import type { KeyValueStorage } from "./storage";
-import { createNodeFileStorage } from "./storage";
+import type { KeyValueStorage } from "./storage/index.js";
+import { createNodeFileStorage } from "./storage/index.js";
 
 // ═══════════════════════════════════════════════════════════════
 // TYPES

@@ -11,7 +11,7 @@ import {
   type RecordPerceivedContent,
   type RecordPresentation,
   type RecordSuggestions,
-} from "./questions";
+} from "./questions.js";
 
 // ═══════════════════════════════════════════════════════════════
 // QUESTION COMPLETION STATUS

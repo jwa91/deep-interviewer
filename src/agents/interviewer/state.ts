@@ -1,8 +1,8 @@
-import { CollectedResponsesSchema, QuestionCompletionSchema } from "@/shared/schema";
 import type { BaseMessage } from "@langchain/core/messages";
 import { MessagesZodMeta } from "@langchain/langgraph";
 import { registry } from "@langchain/langgraph/zod";
 import { z } from "zod";
+import { CollectedResponsesSchema, QuestionCompletionSchema } from "../../shared/schema/index.js";
 
 // ═══════════════════════════════════════════════════════════════
 // INTERVIEW AGENT STATE

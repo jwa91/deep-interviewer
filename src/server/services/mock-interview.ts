@@ -1,6 +1,6 @@
-import { WELCOME_MESSAGE } from "@/shared/constants";
-import { MOCK_RESPONSES } from "@/shared/mocks";
-import type { ProgressState, QuestionId } from "@/shared/schema";
+import { WELCOME_MESSAGE } from "../../shared/constants.js";
+import { MOCK_RESPONSES } from "../../shared/mocks/index.js";
+import type { ProgressState, QuestionId } from "../../shared/schema/index.js";
 
 // Types for the mock interview service
 interface MockMessage {

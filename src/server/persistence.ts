@@ -7,8 +7,8 @@
 
 import { SqliteSaver } from "@langchain/langgraph-checkpoint-sqlite";
 import { v4 as uuidv4 } from "uuid";
-import type { KeyValueStorage } from "./storage";
-import { createNodeFileStorage } from "./storage";
+import type { KeyValueStorage } from "./storage/index.js";
+import { createNodeFileStorage } from "./storage/index.js";
 
 // ═══════════════════════════════════════════════════════════════
 // TYPES

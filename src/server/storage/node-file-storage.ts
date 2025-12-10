@@ -7,7 +7,7 @@
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import type { KeyValueStorage, StorageConfig } from "./types";
+import type { KeyValueStorage, StorageConfig } from "./types.js";
 
 /**
  * File-based storage implementation using Node.js fs module.

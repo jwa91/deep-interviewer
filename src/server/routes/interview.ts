@@ -1,15 +1,15 @@
-import { createInterviewAgent, createInterviewInput } from "@/agents/interviewer";
 import { HumanMessage } from "@langchain/core/messages";
 import { Hono } from "hono";
 import { streamSSE } from "hono/streaming";
-import { getInvite, linkSessionToInvite } from "../invites";
+import { createInterviewAgent, createInterviewInput } from "../../agents/interviewer/index.js";
+import { getInvite, linkSessionToInvite } from "../invites.js";
 import {
   createSession,
   getCheckpointer,
   getSession,
   listSessions,
   updateSession,
-} from "../persistence";
+} from "../persistence.js";
 
 // ═══════════════════════════════════════════════════════════════
 // INTERVIEW ROUTES
@@ -93,7 +93,7 @@ interviewRoutes.get("/", (c) => {
   const sessions = listSessions();
   return c.json({ sessions });
 });
-import { mockInterviewService } from "../services/mock-interview";
+import { mockInterviewService } from "../services/mock-interview.js";
 
 // ═══════════════════════════════════════════════════════════════
 // DEBUG ROUTES (Must come before generic /:id routes)

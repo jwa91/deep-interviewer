@@ -1,3 +1,5 @@
+import { type StructuredToolInterface, tool } from "@langchain/core/tools";
+import { z } from "zod";
 import {
   type QuestionId,
   RecordAiBackgroundSchema,
@@ -9,10 +11,8 @@ import {
   RecordPerceivedContentSchema,
   RecordPresentationSchema,
   RecordSuggestionsSchema,
-} from "@/shared/schema";
-import { type StructuredToolInterface, tool } from "@langchain/core/tools";
-import { z } from "zod";
-import { TOOL_DESCRIPTIONS, type ToolCallback, createQuestionTool } from "./tool-factory";
+} from "../../shared/schema/index.js";
+import { TOOL_DESCRIPTIONS, type ToolCallback, createQuestionTool } from "./tool-factory.js";
 
 // ═══════════════════════════════════════════════════════════════
 // QUESTION TOOLS

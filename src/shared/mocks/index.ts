@@ -1,1 +1,1 @@
-export { MOCK_RESPONSES } from "./interview-data";
+export { MOCK_RESPONSES } from "./interview-data.js";

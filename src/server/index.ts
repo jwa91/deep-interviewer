@@ -5,7 +5,7 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import { interviewRoutes } from "./routes";
+import { interviewRoutes } from "./routes/index.js";
 
 // ═══════════════════════════════════════════════════════════════
 // SERVER SETUP

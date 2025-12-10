@@ -14,7 +14,7 @@ export {
   type DifficultyLevel,
   CoursePartPreferenceSchema,
   type CoursePartPreference,
-} from "./base";
+} from "./base.js";
 
 // Question schemas
 export {
@@ -39,7 +39,7 @@ export {
   QuestionId,
   QUESTION_IDS,
   TOTAL_QUESTIONS,
-} from "./questions";
+} from "./questions.js";
 
 // Progress tracking
 export {
@@ -65,4 +65,4 @@ export {
   type InterviewResponsesDTO,
   // Tool helpers
   toolNameToQuestionId,
-} from "./progress";
+} from "./progress.js";

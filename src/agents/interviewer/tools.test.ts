@@ -7,10 +7,10 @@ import {
 } from "./tools";
 
 describe("createQuestionTools", () => {
-  it("creates 9 tools", () => {
+  it("creates 10 tools (9 question tools + 1 utility tool)", () => {
     const callback = vi.fn();
     const tools = createQuestionTools(callback);
-    expect(tools).toHaveLength(9);
+    expect(tools).toHaveLength(10);
   });
 
   it("creates tools with correct names", () => {
@@ -18,6 +18,7 @@ describe("createQuestionTools", () => {
     const tools = createQuestionTools(callback);
     const names = tools.map((t) => t.name);
 
+    // 9 question tools
     expect(names).toContain("record_ai_background");
     expect(names).toContain("record_overall_impression");
     expect(names).toContain("record_perceived_content");
@@ -27,6 +28,8 @@ describe("createQuestionTools", () => {
     expect(names).toContain("record_clarity");
     expect(names).toContain("record_suggestions");
     expect(names).toContain("record_course_parts");
+    // 1 utility tool
+    expect(names).toContain("provide_workshop_slides");
   });
 
   it("all tools have descriptions", () => {
