@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { HeeyooLogo } from "@/components/ui/heeyoo-logo";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { SpotlightPicture } from "@/components/ui/spotlight-picture";
-import { HeeyooLogo } from "@/components/ui/heeyoo-logo";
 import type { FormEvent } from "react";
 import { useState } from "react";
 

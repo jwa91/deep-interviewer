@@ -605,22 +605,10 @@ interviewRoutes.get("/:id/responses/:topic", async (c) => {
     }
 
     return c.json({
-      topic,
-      data: data.data, // The stored response object has { topic, data, ... } structure, or is it direct?
-      // Check MockInterviewService structure:
-      // this.state.responses[topic] = { topic, data: args, timestamp, source }
-      // So we return the whole object or just parts?
-      // The real endpoint returns { topic, data, timestamp, source }.
-      // Our mock state stores exactly that.
-      // So 'data' here is the full response object.
-      // Wait, let's verify mockInterviewService storage.
-      // responses[topic] = { topic, data: step.toolCall.args, timestamp, source }
-      // So `data` IS the full DTO.
-      // So we should return `data.data` as `data`, `data.timestamp` as `timestamp`...
-      // Or just return `data` spread?
-      // Real endpoint: returns { topic, data, timestamp, source }.
-      // Our `data` variable holds exactly that object.
       ...data,
+      topic,
+      // biome-ignore lint/suspicious/noExplicitAny: Mock data structure has nested data field
+      data: (data as any).data,
     });
   }
 

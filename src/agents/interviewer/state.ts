@@ -16,7 +16,8 @@ import { z } from "zod";
  */
 export const InterviewStateSchema = z.object({
   // Core LangGraph message history with proper reducer
-  messages: z.array(z.custom<BaseMessage>()).register(registry, MessagesZodMeta),
+  // biome-ignore lint/suspicious/noExplicitAny: LangGraph MessagesZodMeta type mismatch with Zod v4
+  messages: z.array(z.custom<BaseMessage>()).register(registry, MessagesZodMeta as any),
 
   // Interview session ID (thread_id equivalent)
   sessionId: z.string().uuid(),

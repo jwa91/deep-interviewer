@@ -26,7 +26,7 @@ export function SlideLinkCard({ url }: SlideLinkCardProps) {
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md border-2 border-primary bg-primary px-4 py-2 font-bold text-primary-foreground text-sm transition-transform hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-0 active:shadow-none"
+              className="hover:-translate-y-0.5 inline-flex items-center gap-2 rounded-md border-2 border-primary bg-primary px-4 py-2 font-bold text-primary-foreground text-sm transition-transform hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-y-0 active:shadow-none"
             >
               <span>Open Slides</span>
               <ExternalLink className="h-4 w-4" />

@@ -9,7 +9,9 @@ interface MockMessage {
   toolCalls?: Array<{
     name: string;
     args: Record<string, unknown>;
+    id?: string;
   }>;
+  timestamp?: Date | string;
 }
 
 interface MockResponse {
@@ -27,6 +29,11 @@ interface ScriptStep {
     args: Record<string, unknown>;
     output: string; // The "result" of the tool
   };
+  toolCalls?: {
+    name: string;
+    args: Record<string, unknown>;
+    output: string;
+  }[];
   suggestedUserReply?: string;
   progressUpdate?: Partial<ProgressState>;
 }
@@ -156,6 +163,29 @@ class MockInterviewService {
   private state: MockState;
 
   constructor() {
+    this.state = {
+      currentStep: 0,
+      messages: [],
+      responses: {},
+      progress: {
+        questionsCompleted: {
+          ai_background: false,
+          overall_impression: false,
+          perceived_content: false,
+          difficulty: false,
+          content_quality: false,
+          presentation: false,
+          clarity: false,
+          suggestions: false,
+          course_parts: false,
+        },
+        completedCount: 0,
+        totalQuestions: 9,
+        isComplete: false,
+      },
+      createdAt: new Date().toISOString(),
+      isComplete: false,
+    };
     this.reset();
   }
 
@@ -165,7 +195,17 @@ class MockInterviewService {
       messages: [],
       responses: {},
       progress: {
-        questionsCompleted: {},
+        questionsCompleted: {
+          ai_background: false,
+          overall_impression: false,
+          perceived_content: false,
+          difficulty: false,
+          content_quality: false,
+          presentation: false,
+          clarity: false,
+          suggestions: false,
+          course_parts: false,
+        },
         completedCount: 0,
         totalQuestions: 9,
         isComplete: false,
@@ -190,7 +230,10 @@ class MockInterviewService {
     // So the script starts at step_0.
   }
 
-  private addAssistantMessage(content: string) {
+  private addAssistantMessage(content: string | undefined) {
+    if (!content) {
+      return;
+    }
     this.state.messages.push({
       role: "assistant",
       content,
@@ -222,7 +265,7 @@ class MockInterviewService {
       // Add assistant message if it exists (for step 0, it's the welcome message)
       // For step 0, we DO add it to history if we are jumping, because "restoring" a session means fetching history.
       if (step.assistantMessage) {
-        this.addAssistantMessage(step.assistantMessage);
+        this.addAssistantMessage(step.assistantMessage || "");
       }
 
       // Execute this step's assistant logic (tool calls)
@@ -393,7 +436,7 @@ class MockInterviewService {
     // That should fix the "empty card" issue.
 
     if (nextStep.assistantMessage) {
-      this.addAssistantMessage(nextStep.assistantMessage);
+      this.addAssistantMessage(nextStep.assistantMessage || "");
 
       // Attach tool calls to the message we just added
       if (toolCalls.length > 0) {

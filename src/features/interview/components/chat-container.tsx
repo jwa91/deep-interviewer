@@ -59,7 +59,7 @@ export function ChatContainer({
                   variant="default"
                   size="sm"
                   onClick={onShowCompletion}
-                  className="hidden xs:inline-flex"
+                  className="xs:inline-flex hidden"
                 >
                   Bekijk afronding
                 </Button>

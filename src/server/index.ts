@@ -1,7 +1,7 @@
 import "dotenv/config";
+import { readFile } from "node:fs/promises";
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
-import { readFile } from "node:fs/promises";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
@@ -69,7 +69,7 @@ if (process.env.NODE_ENV === "production") {
     try {
       const indexHtml = await readFile("./client/index.html", "utf-8");
       return c.html(indexHtml);
-    } catch (e) {
+    } catch (_e) {
       return c.text("Not found", 404);
     }
   });

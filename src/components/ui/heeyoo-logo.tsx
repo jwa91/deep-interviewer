@@ -6,11 +6,7 @@ interface HeeyooLogoProps {
   height?: number | string;
 }
 
-export function HeeyooLogo({
-  className,
-  width = 190,
-  height = 50,
-}: HeeyooLogoProps) {
+export function HeeyooLogo({ className, width = 190, height = 50 }: HeeyooLogoProps) {
   return (
     <a
       href="https://heeyoo.nl"
@@ -78,4 +74,3 @@ export function HeeyooLogo({
     </a>
   );
 }
-

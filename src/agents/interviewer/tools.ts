@@ -10,7 +10,7 @@ import {
   RecordPresentationSchema,
   RecordSuggestionsSchema,
 } from "@/shared/schema";
-import { tool, type StructuredToolInterface } from "@langchain/core/tools";
+import { type StructuredToolInterface, tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { TOOL_DESCRIPTIONS, type ToolCallback, createQuestionTool } from "./tool-factory";
 
@@ -126,13 +126,15 @@ export function createQuestionTools(onRecord: ToolCallback<unknown>): Structured
 
     // Workshop Slides Tool
     tool(
-      async () => {
+      () => {
         return "Slides link provided to user. You can now continue with the interview.";
       },
       {
         name: "provide_workshop_slides",
         description: "Provide the link to the workshop slides when the user asks for them.",
-        schema: z.object({ confirm: z.boolean().describe("Confirm that you want to provide the slides") }),
+        schema: z.object({
+          confirm: z.boolean().describe("Confirm that you want to provide the slides"),
+        }),
       }
     ),
   ];

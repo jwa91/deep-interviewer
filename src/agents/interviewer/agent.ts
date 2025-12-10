@@ -52,7 +52,8 @@ export function createInterviewAgent(config: InterviewAgentConfig = {}) {
   });
 
   // Bind tools to model
-  const modelWithTools = model.bindTools(tools);
+  // biome-ignore lint/suspicious/noExplicitAny: LangChain model type doesn't expose bindTools in type definition
+  const modelWithTools = (model as any).bindTools(tools);
 
   // ═══════════════════════════════════════════════════════════
   // NODE: Model Call
@@ -186,9 +187,12 @@ export function createInterviewAgent(config: InterviewAgentConfig = {}) {
   graph.addNode("model", callModel);
   graph.addNode("tools", executeTools);
 
-  graph.addEdge(START, "model");
-  graph.addConditionalEdges("model", shouldContinue, ["tools", END]);
-  graph.addEdge("tools", "model");
+  // biome-ignore lint/suspicious/noExplicitAny: LangGraph StateGraph requires string literal casts for node names
+  graph.addEdge(START, "model" as any);
+  // biome-ignore lint/suspicious/noExplicitAny: LangGraph StateGraph requires string literal casts for node names
+  graph.addConditionalEdges("model" as any, shouldContinue, ["tools" as any, END]);
+  // biome-ignore lint/suspicious/noExplicitAny: LangGraph StateGraph requires string literal casts for node names
+  graph.addEdge("tools" as any, "model" as any);
 
   // Compile with optional checkpointer
   return graph.compile({
