@@ -39,7 +39,7 @@ describe("useInterviewSession", () => {
     vi.mocked(global.fetch).mockResolvedValue({
       ok: false,
       status: 404,
-    } as Response);
+    } as unknown as Response);
 
     const { result } = renderHook(() => useInterviewSession());
 
@@ -91,7 +91,7 @@ describe("useInterviewSession", () => {
         progress: mockProgress,
       }),
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     const { result } = renderHook(() => useInterviewSession());
 
@@ -117,7 +117,7 @@ describe("useInterviewSession", () => {
       ok: false,
       status: 404,
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     const { result } = renderHook(() => useInterviewSession());
 
@@ -156,7 +156,7 @@ describe("useInterviewSession", () => {
         createdAt: "2024-01-15T10:00:00.000Z",
       }),
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockCreateResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockCreateResponse as unknown as Response);
 
     const { result } = renderHook(() => useInterviewSession());
 
@@ -186,7 +186,7 @@ describe("useInterviewSession", () => {
       ok: false,
       status: 403,
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     const { result } = renderHook(() => useInterviewSession());
 
@@ -210,7 +210,7 @@ describe("useInterviewSession", () => {
       ok: false,
       status: 500,
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     const { result } = renderHook(() => useInterviewSession());
 
@@ -283,8 +283,8 @@ describe("useInterviewSession", () => {
     };
 
     vi.mocked(global.fetch)
-      .mockResolvedValueOnce(mockCreateResponse as Response)
-      .mockResolvedValueOnce(mockGetResponse as Response);
+      .mockResolvedValueOnce(mockCreateResponse as unknown as Response)
+      .mockResolvedValueOnce(mockGetResponse as unknown as Response);
 
     const { result } = renderHook(() => useInterviewSession());
 
@@ -307,7 +307,7 @@ describe("useInterviewSession", () => {
     vi.mocked(global.fetch).mockResolvedValue({
       ok: false,
       status: 404,
-    } as Response);
+    } as unknown as Response);
 
     const { result } = renderHook(() => useInterviewSession());
 
@@ -351,7 +351,7 @@ describe("useInterviewSession", () => {
     vi.mocked(global.fetch).mockResolvedValue({
       ok: false,
       status: 404,
-    } as Response);
+    } as unknown as Response);
 
     const { result } = renderHook(() => useInterviewSession());
 
@@ -404,9 +404,9 @@ describe("useInterviewSession", () => {
     vi.mocked(global.fetch).mockResolvedValueOnce({
       ok: false,
       status: 404,
-    } as Response);
+    } as unknown as Response);
     // Mock create session fetch
-    vi.mocked(global.fetch).mockResolvedValueOnce(mockCreateResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValueOnce(mockCreateResponse as unknown as Response);
 
     // Mock window.location to prevent actual navigation
     const originalLocation = window.location;

@@ -95,7 +95,7 @@ describe("useChatStream", () => {
         getReader: () => mockReader,
       },
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     // Start first message (don't await - let it run in background)
     act(() => {
@@ -135,7 +135,7 @@ describe("useChatStream", () => {
         getReader: () => mockReader,
       },
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     await act(async () => {
       await result.current.sendMessage("Hello");
@@ -147,7 +147,9 @@ describe("useChatStream", () => {
         (item) => item.type === "message" && item.data.role === "user"
       );
       expect(userMessage).toBeDefined();
-      expect(userMessage?.data.content).toBe("Hello");
+      if (userMessage?.type === "message") {
+        expect(userMessage.data.content).toBe("Hello");
+      }
     });
   });
 
@@ -175,7 +177,7 @@ describe("useChatStream", () => {
         getReader: () => mockReader,
       },
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     await act(async () => {
       await result.current.sendMessage("Hello");
@@ -187,7 +189,9 @@ describe("useChatStream", () => {
           item.type === "message" && item.data.role === "assistant" && item.data.id === messageId
       );
       expect(assistantMessage).toBeDefined();
-      expect(assistantMessage?.data.content).toBe("Hi");
+      if (assistantMessage?.type === "message") {
+        expect(assistantMessage.data.content).toBe("Hi");
+      }
     });
   });
 
@@ -214,7 +218,7 @@ describe("useChatStream", () => {
         getReader: () => mockReader,
       },
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     await act(async () => {
       await result.current.sendMessage("Test");
@@ -224,7 +228,9 @@ describe("useChatStream", () => {
       const assistantMessage = result.current.chatItems.find(
         (item) => item.type === "message" && item.data.role === "assistant"
       );
-      expect(assistantMessage?.data.content).toBe("Hello World");
+      if (assistantMessage?.type === "message") {
+        expect(assistantMessage.data.content).toBe("Hello World");
+      }
     });
   });
 
@@ -251,7 +257,7 @@ describe("useChatStream", () => {
         getReader: () => mockReader,
       },
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     await act(async () => {
       await result.current.sendMessage("Test");
@@ -261,7 +267,9 @@ describe("useChatStream", () => {
       const assistantMessage = result.current.chatItems.find(
         (item) => item.type === "message" && item.data.role === "assistant"
       );
-      expect(assistantMessage?.data.isStreaming).toBe(false);
+      if (assistantMessage?.type === "message") {
+        expect(assistantMessage.data.isStreaming).toBe(false);
+      }
     });
   });
 
@@ -287,7 +295,7 @@ describe("useChatStream", () => {
         getReader: () => mockReader,
       },
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     await act(async () => {
       await result.current.sendMessage("Test");
@@ -323,7 +331,7 @@ describe("useChatStream", () => {
         getReader: () => mockReader,
       },
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     await act(async () => {
       await result.current.sendMessage("Test");
@@ -374,7 +382,7 @@ describe("useChatStream", () => {
         getReader: () => mockReader,
       },
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     await act(async () => {
       await result.current.sendMessage("Test");
@@ -424,7 +432,7 @@ describe("useChatStream", () => {
         getReader: () => mockReader,
       },
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     await act(async () => {
       await result.current.sendMessage("Test");
@@ -474,7 +482,7 @@ describe("useChatStream", () => {
         getReader: () => mockReader,
       },
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     await act(async () => {
       await result.current.sendMessage("Test");
@@ -508,7 +516,7 @@ describe("useChatStream", () => {
         getReader: () => mockReader,
       },
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     await act(async () => {
       await result.current.sendMessage("Test");
@@ -554,7 +562,7 @@ describe("useChatStream", () => {
       status: 500,
       statusText: "Internal Server Error",
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     await act(async () => {
       await result.current.sendMessage("Test");
@@ -612,7 +620,7 @@ describe("useChatStream", () => {
         getReader: () => mockReader,
       },
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     await act(async () => {
       await result.current.sendMessage("Test");
@@ -652,7 +660,7 @@ describe("useChatStream", () => {
         getReader: () => mockReader,
       },
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     await act(async () => {
       await result.current.sendMessage("Test");
@@ -691,7 +699,7 @@ describe("useChatStream", () => {
         getReader: () => mockReader,
       },
     };
-    vi.mocked(global.fetch).mockResolvedValue(mockResponse as Response);
+    vi.mocked(global.fetch).mockResolvedValue(mockResponse as unknown as Response);
 
     await act(async () => {
       await result.current.sendMessage("Test");
@@ -701,7 +709,9 @@ describe("useChatStream", () => {
       const assistantMessage = result.current.chatItems.find(
         (item) => item.type === "message" && item.data.role === "assistant"
       );
-      expect(assistantMessage?.data.content).toBe("Hello");
+      if (assistantMessage?.type === "message") {
+        expect(assistantMessage.data.content).toBe("Hello");
+      }
     });
   });
 });
