@@ -4,7 +4,8 @@ An AI-powered conversational interview agent that collects course feedback throu
 
 ## Overview
 
-Built with LangChain's LangGraph, this agent conducts interviews in Dutch, naturally weaving in 9 feedback questions while maintaining a friendly, conversational tone. Instead of rigid forms, participants chat with an AI that adapts to their responses and goes deeper when interesting insights emerge.
+Small LangGraph experiment. I needed to do a survey for a course i gave. This agent conducts interviews in Dutch, naturally weaving in 9 feedback questions. Instead of rigid forms, participants chat with an AI that adapts to their responses and goes deeper when interesting insights emerge.
+The agent can also share the slides with a slide share tool.
 
 ## Project Structure
 
