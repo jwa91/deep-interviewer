@@ -26,12 +26,9 @@ Laten we beginnen! Kun je me eerst vertellen: had je al ervaring met AI-tools zo
  */
 export const QUESTION_TITLES: Record<string, string> = {
 	ai_background: "AI Achtergrond",
-	overall_impression: "Algemene Indruk",
-	perceived_content: "Waarover ging de training?",
-	difficulty: "Moeilijkheidsgraad",
-	content_quality: "Inhoudelijke Kwaliteit",
-	presentation: "Presentatie",
-	clarity: "Duidelijkheid",
-	suggestions: "Suggesties",
-	course_parts: "Cursus Onderdelen",
+	overall_impression: "Algemene Waarde",
+	difficulty: "Tempo & Moeilijkheid",
+	content_quality: "Inhoud & Relevantie",
+	presentation: "Uitleg & Presentatie",
+	suggestions: "Verbeterpunten",
 };

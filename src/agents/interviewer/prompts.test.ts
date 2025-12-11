@@ -7,16 +7,13 @@ describe("INTERVIEWER_SYSTEM_PROMPT", () => {
     expect(INTERVIEWER_SYSTEM_PROMPT).toContain("deelnemer");
   });
 
-  it("mentions all 9 question tools", () => {
+  it("mentions all 6 question tools", () => {
     expect(INTERVIEWER_SYSTEM_PROMPT).toContain("record_ai_background");
     expect(INTERVIEWER_SYSTEM_PROMPT).toContain("record_overall_impression");
-    expect(INTERVIEWER_SYSTEM_PROMPT).toContain("record_perceived_content");
     expect(INTERVIEWER_SYSTEM_PROMPT).toContain("record_difficulty");
     expect(INTERVIEWER_SYSTEM_PROMPT).toContain("record_content_quality");
     expect(INTERVIEWER_SYSTEM_PROMPT).toContain("record_presentation");
-    expect(INTERVIEWER_SYSTEM_PROMPT).toContain("record_clarity");
     expect(INTERVIEWER_SYSTEM_PROMPT).toContain("record_suggestions");
-    expect(INTERVIEWER_SYSTEM_PROMPT).toContain("record_course_parts");
   });
 
   it("emphasizes natural conversation flow for tool calling", () => {

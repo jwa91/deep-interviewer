@@ -98,13 +98,10 @@ export const messageFactory = {
 const DEFAULT_QUESTIONS_COMPLETED: QuestionCompletion = {
   ai_background: false,
   overall_impression: false,
-  perceived_content: false,
   difficulty: false,
   content_quality: false,
   presentation: false,
-  clarity: false,
   suggestions: false,
-  course_parts: false,
 };
 
 export const questionsCompletedFactory = {
@@ -117,13 +114,10 @@ export const questionsCompletedFactory = {
   allCompleted: (): QuestionCompletion => ({
     ai_background: true,
     overall_impression: true,
-    perceived_content: true,
     difficulty: true,
     content_quality: true,
     presentation: true,
-    clarity: true,
     suggestions: true,
-    course_parts: true,
   }),
 
   /** Build with specific questions completed */
@@ -149,8 +143,8 @@ export const progressFactory = {
     return {
       questionsCompleted,
       completedCount,
-      totalQuestions: 9,
-      isComplete: completedCount >= 9,
+      totalQuestions: 6,
+      isComplete: completedCount >= 6,
       ...overrides,
     };
   },
@@ -167,7 +161,7 @@ export const progressFactory = {
   completed: (): ProgressState =>
     progressFactory.build({
       questionsCompleted: questionsCompletedFactory.allCompleted(),
-      completedCount: 9,
+      completedCount: 6,
       isComplete: true,
     }),
 
@@ -177,7 +171,7 @@ export const progressFactory = {
     return progressFactory.build({
       questionsCompleted,
       completedCount: questionIds.length,
-      isComplete: questionIds.length >= 9,
+      isComplete: questionIds.length >= 6,
     });
   },
 };

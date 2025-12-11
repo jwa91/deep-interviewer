@@ -1,6 +1,6 @@
 import { WELCOME_MESSAGE } from "../../shared/constants.js";
 import { MOCK_RESPONSES } from "../../shared/mocks/index.js";
-import type { ProgressState, QuestionId } from "../../shared/schema/index.js";
+import { QUESTION_IDS, type ProgressState, type QuestionId } from "../../shared/schema/index.js";
 
 // Types for the mock interview service
 interface MockMessage {
@@ -38,6 +38,10 @@ interface ScriptStep {
 	progressUpdate?: Partial<ProgressState>;
 }
 
+// ProgressStateSchema encodes totalQuestions as a literal (currently 6),
+// so we assert the derived length to keep TS happy while still deriving from QUESTION_IDS.
+const TOTAL_QUESTIONS = QUESTION_IDS.length as 6;
+
 // Define the linear script of the interview
 const SCRIPT: ScriptStep[] = [
 	{
@@ -54,14 +58,14 @@ const SCRIPT: ScriptStep[] = [
 			output: "AI Background recorded.",
 		},
 		assistantMessage:
-			"Helder. En waar gebruikte je ChatGPT dan voornamelijk voor? (Dit is een mock vraag)",
+			"Helder. En wat hoopte je vooral uit deze workshop te halen? (Dit is een mock vraag)",
 		suggestedUserReply:
-			"Vooral voor het brainstormen over nieuwe ideeën voor marketing teksten.",
+			"Vooral praktische handvatten en voorbeelden die ik direct kan gebruiken.",
 	},
 	{
 		id: "step_2",
 		assistantMessage:
-			"Duidelijk! Wat was je algemene indruk van de training vandaag?",
+			"Duidelijk! Als je één stap terug doet: hoe waardevol was dit voor je, en waarom?",
 		toolCalls: [
 			// Just demonstrating we can do multiple if needed, but script usually has one per step
 		],
@@ -75,81 +79,51 @@ const SCRIPT: ScriptStep[] = [
 			output: "Overall impression recorded.",
 		},
 		assistantMessage:
-			"Fijn om te horen. Wat vond je van de inhoud? Kwam het overeen met wat je verwachtte?",
+			"Fijn om te horen. Hoe zat het met tempo en moeilijkheid—waar ging het te snel/te traag of te makkelijk/te moeilijk?",
 		suggestedUserReply:
-			"Ja, de inhoud was goed. Vooral het stuk over prompting.",
+			"Het niveau was prima, maar soms ging het tempo wel snel door de slides.",
 	},
 	{
 		id: "step_4",
-		toolCall: {
-			name: "record_perceived_content",
-			args: MOCK_RESPONSES.perceived_content.data as Record<string, unknown>,
-			output: "Perceived content recorded.",
-		},
-		assistantMessage: "Hoe vond je de moeilijkheidsgraad van de training?",
-		suggestedUserReply: "Het was goed te volgen, soms ging het wel wat snel.",
-	},
-	{
-		id: "step_5",
 		toolCall: {
 			name: "record_difficulty",
 			args: MOCK_RESPONSES.difficulty.data as Record<string, unknown>,
 			output: "Difficulty recorded.",
 		},
-		assistantMessage: "En wat vond je van de kwaliteit van het materiaal?",
+		assistantMessage:
+			"Welke onderdelen waren voor jou het meest relevant in je werk, en wat voelde minder raak?",
 		suggestedUserReply:
 			"Het zag er verzorgd uit, maar ik miste wat diepgang bij de technische uitleg.",
 	},
 	{
-		id: "step_6",
+		id: "step_5",
 		toolCall: {
 			name: "record_content_quality",
 			args: MOCK_RESPONSES.content_quality.data as Record<string, unknown>,
 			output: "Content quality recorded.",
 		},
-		assistantMessage: "Hoe heb je de presentatie zelf ervaren?",
+		assistantMessage:
+			"Hoe vond je de uitleg en presentatie—wat maakte het helder of juist onduidelijk?",
 		suggestedUserReply:
-			"De spreker was erg enthousiast en hield de aandacht goed vast.",
+			"Enthousiast gebracht en meestal helder, maar het stuk over RAG bleef wat vaag.",
 	},
 	{
-		id: "step_7",
+		id: "step_6",
 		toolCall: {
 			name: "record_presentation",
 			args: MOCK_RESPONSES.presentation.data as Record<string, unknown>,
 			output: "Presentation recorded.",
 		},
 		assistantMessage:
-			"Was alles duidelijk, of waren er onderwerpen die je nog niet helemaal snapt?",
-		suggestedUserReply: "Het stuk over RAG vond ik nog wel lastig.",
-	},
-	{
-		id: "step_8",
-		toolCall: {
-			name: "record_clarity",
-			args: MOCK_RESPONSES.clarity.data as Record<string, unknown>,
-			output: "Clarity recorded.",
-		},
-		assistantMessage: "Heb je nog suggesties voor verbetering?",
+			"Als je één of twee dingen mocht aanpassen voor de volgende editie—wat zou de grootste winst zijn?",
 		suggestedUserReply: "Misschien wat meer oefentijd inruimen.",
 	},
 	{
-		id: "step_9",
+		id: "step_7",
 		toolCall: {
 			name: "record_suggestions",
 			args: MOCK_RESPONSES.suggestions.data as Record<string, unknown>,
 			output: "Suggestions recorded.",
-		},
-		assistantMessage:
-			"Tot slot, wat vond je van de balans tussen theorie en praktijk?",
-		suggestedUserReply:
-			"De praktijk vond ik het leukst, theorie was ook nodig.",
-	},
-	{
-		id: "step_10",
-		toolCall: {
-			name: "record_course_parts",
-			args: MOCK_RESPONSES.course_parts.data as Record<string, unknown>,
-			output: "Course parts recorded.",
 		},
 		assistantMessage: "Bedankt voor al je feedback! We zijn klaar.",
 		suggestedUserReply: "/complete",
@@ -177,16 +151,13 @@ class MockInterviewService {
 				questionsCompleted: {
 					ai_background: false,
 					overall_impression: false,
-					perceived_content: false,
 					difficulty: false,
 					content_quality: false,
 					presentation: false,
-					clarity: false,
 					suggestions: false,
-					course_parts: false,
 				},
 				completedCount: 0,
-				totalQuestions: 9,
+				totalQuestions: TOTAL_QUESTIONS,
 				isComplete: false,
 			},
 			createdAt: new Date().toISOString(),
@@ -204,16 +175,13 @@ class MockInterviewService {
 				questionsCompleted: {
 					ai_background: false,
 					overall_impression: false,
-					perceived_content: false,
 					difficulty: false,
 					content_quality: false,
 					presentation: false,
-					clarity: false,
 					suggestions: false,
-					course_parts: false,
 				},
 				completedCount: 0,
-				totalQuestions: 9,
+				totalQuestions: TOTAL_QUESTIONS,
 				isComplete: false,
 			},
 			createdAt: new Date().toISOString(),
@@ -364,6 +332,12 @@ class MockInterviewService {
 			}
 		}
 
+		// Mark complete when all topics are completed
+		if (this.state.progress.completedCount >= TOTAL_QUESTIONS) {
+			this.state.isComplete = true;
+			this.state.progress.isComplete = true;
+		}
+
 		// Add assistant message if it exists (but after tool execution logic)
 		// The "standard" flow is: User Reply -> Agent: "Okay, noted" + Tool Call -> Agent: "Next Question"
 		// Our simplified script structure combines "Okay, noted + Tool Call" and "Next Question" into one step mostly.
@@ -452,11 +426,6 @@ class MockInterviewService {
 					id: `call_${Date.now()}_${idx}`,
 				}));
 			}
-		}
-
-		if (nextStep.id === "step_10") {
-			this.state.isComplete = true;
-			this.state.progress.isComplete = true;
 		}
 
 		return {

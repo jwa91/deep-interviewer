@@ -18,13 +18,10 @@ describe("QuestionCompletionSchema", () => {
     const completion = QuestionCompletionSchema.parse({});
     expect(completion.ai_background).toBe(false);
     expect(completion.overall_impression).toBe(false);
-    expect(completion.perceived_content).toBe(false);
     expect(completion.difficulty).toBe(false);
     expect(completion.content_quality).toBe(false);
     expect(completion.presentation).toBe(false);
-    expect(completion.clarity).toBe(false);
     expect(completion.suggestions).toBe(false);
-    expect(completion.course_parts).toBe(false);
   });
 
   it("accepts partial completion", () => {
@@ -92,7 +89,7 @@ describe("countCompletedQuestions", () => {
     const completion = QuestionCompletionSchema.parse({
       ai_background: true,
       difficulty: true,
-      clarity: true,
+      presentation: true,
     });
     expect(countCompletedQuestions(completion)).toBe(3);
   });
@@ -101,13 +98,10 @@ describe("countCompletedQuestions", () => {
     const completion = QuestionCompletionSchema.parse({
       ai_background: true,
       overall_impression: true,
-      perceived_content: true,
       difficulty: true,
       content_quality: true,
       presentation: true,
-      clarity: true,
       suggestions: true,
-      course_parts: true,
     });
     expect(countCompletedQuestions(completion)).toBe(TOTAL_QUESTIONS);
   });
@@ -125,13 +119,10 @@ describe("isInterviewComplete", () => {
     const completion = QuestionCompletionSchema.parse({
       ai_background: true,
       overall_impression: true,
-      perceived_content: true,
       difficulty: true,
       content_quality: true,
       presentation: true,
-      clarity: true,
       suggestions: true,
-      course_parts: true,
     });
     expect(isInterviewComplete(completion)).toBe(true);
   });
@@ -214,13 +205,10 @@ describe("TopicResponseSchema", () => {
     const validTopics = [
       "ai_background",
       "overall_impression",
-      "perceived_content",
       "difficulty",
       "content_quality",
       "presentation",
-      "clarity",
       "suggestions",
-      "course_parts",
     ];
 
     for (const topic of validTopics) {
@@ -269,10 +257,10 @@ describe("InterviewResponsesDTOSchema", () => {
         },
       },
       completedTopics: ["ai_background"],
-      totalTopics: 9,
+      totalTopics: 6,
     });
     expect(dto.sessionId).toBe("550e8400-e29b-41d4-a716-446655440000");
-    expect(dto.totalTopics).toBe(9);
+    expect(dto.totalTopics).toBe(6);
   });
 
   it("accepts empty responses", () => {
@@ -280,7 +268,7 @@ describe("InterviewResponsesDTOSchema", () => {
       sessionId: "550e8400-e29b-41d4-a716-446655440000",
       responses: {},
       completedTopics: [],
-      totalTopics: 9,
+      totalTopics: 6,
     });
     expect(Object.keys(dto.responses)).toHaveLength(0);
     expect(dto.completedTopics).toHaveLength(0);
@@ -304,13 +292,13 @@ describe("InterviewResponsesDTOSchema", () => {
         },
       },
       completedTopics: ["ai_background", "difficulty"],
-      totalTopics: 9,
+      totalTopics: 6,
     });
     expect(Object.keys(dto.responses)).toHaveLength(2);
     expect(dto.completedTopics).toHaveLength(2);
   });
 
-  it("requires totalTopics to be exactly 9", () => {
+  it("requires totalTopics to be exactly 6", () => {
     expect(() =>
       InterviewResponsesDTOSchema.parse({
         sessionId: "550e8400-e29b-41d4-a716-446655440000",
@@ -327,7 +315,7 @@ describe("InterviewResponsesDTOSchema", () => {
         sessionId: "550e8400-e29b-41d4-a716-446655440000",
         responses: {},
         completedTopics: ["invalid_topic"],
-        totalTopics: 9,
+        totalTopics: 6,
       })
     ).toThrow();
   });

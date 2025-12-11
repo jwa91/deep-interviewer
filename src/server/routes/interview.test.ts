@@ -106,7 +106,7 @@ describe("Response API Endpoints", () => {
 
 			const json = await res.json();
 			expect(json.sessionId).toBe("test-session-123");
-			expect(json.totalTopics).toBe(9);
+			expect(json.totalTopics).toBe(6);
 			expect(json.completedTopics).toContain("ai_background");
 			expect(json.completedTopics).toContain("difficulty");
 			expect(json.completedTopics).toHaveLength(2);
@@ -163,7 +163,7 @@ describe("Response API Endpoints", () => {
 			const app = new Hono().route("/api/interviews", interviewRoutes);
 
 			const res = await app.request(
-				"/api/interviews/test-session-123/responses/clarity",
+				"/api/interviews/test-session-123/responses/presentation",
 			);
 			expect(res.status).toBe(404);
 			const json = await res.json();
@@ -189,13 +189,10 @@ describe("Response API Endpoints", () => {
 			const validTopics = [
 				"ai_background",
 				"overall_impression",
-				"perceived_content",
 				"difficulty",
 				"content_quality",
 				"presentation",
-				"clarity",
 				"suggestions",
-				"course_parts",
 			];
 
 			const { interviewRoutes } = await import("./interview");
@@ -288,19 +285,22 @@ describe("Response API Endpoints", () => {
 			const { interviewRoutes } = await import("./interview");
 			const app = new Hono().route("/api/interviews", interviewRoutes);
 
-			await app.request("/api/interviews/test-session-123/responses/clarity", {
+			await app.request("/api/interviews/test-session-123/responses/suggestions", {
 				method: "PUT",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					clarityRating: 4,
-					summary: "Clear explanation",
+					topSuggestion: "Meer oefentijd",
+					suggestions: ["Meer oefentijd", "Meer voorbeelden"],
+					improvementPriority: 5,
+					formatPreference: "more_practice",
+					summary: "Meer hands-on oefeningen zou de grootste winst zijn.",
 				}),
 			});
 
 			expect(mockAgent.updateState).toHaveBeenCalled();
 			const updateCall = mockAgent.updateState.mock.calls[0];
-			expect(updateCall[1].questionsCompleted.clarity).toBe(true);
-			expect(updateCall[1].responses.clarity.source).toBe("user_edit");
+			expect(updateCall[1].questionsCompleted.suggestions).toBe(true);
+			expect(updateCall[1].responses.suggestions.source).toBe("user_edit");
 		});
 
 		it("marks question as completed after update", async () => {
@@ -562,7 +562,7 @@ describe("GET /api/interviews/:id - Get Session State", () => {
 		expect(json.messages[1].role).toBe("assistant");
 		expect(json.messages[1].content).toBe("Hi there!");
 		expect(json.progress.completedCount).toBe(1);
-		expect(json.progress.totalQuestions).toBe(9);
+		expect(json.progress.totalQuestions).toBe(6);
 	});
 
 	it("returns 404 when session not found", async () => {

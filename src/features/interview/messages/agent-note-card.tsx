@@ -21,14 +21,11 @@ interface AgentNoteCardProps {
 
 const QUESTION_LABELS: Record<QuestionId, string> = {
 	ai_background: "AI Ervaring",
-	overall_impression: "Algemene Indruk",
-	perceived_content: "Inhoudservaring",
-	difficulty: "Moeilijkheidsgraad",
-	content_quality: "Inhoudskwaliteit",
-	presentation: "Presentatie",
-	clarity: "Duidelijkheid",
-	suggestions: "Suggesties",
-	course_parts: "Cursusonderdelen",
+	overall_impression: "Algemene Waarde",
+	difficulty: "Tempo & Moeilijkheid",
+	content_quality: "Inhoud & Relevantie",
+	presentation: "Uitleg & Presentatie",
+	suggestions: "Verbeterpunten",
 };
 
 function getQuestionLabel(questionId: QuestionId): string {

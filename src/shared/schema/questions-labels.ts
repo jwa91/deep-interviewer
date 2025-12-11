@@ -9,62 +9,54 @@ export const FIELD_LABELS: Record<string, string> = {
 	// ───────────────────────────────────────────────────────────────
 	userType: "Gebruikerstype",
 	experienceLevel: "Ervaringsniveau",
+	goalClarity: "Doel Duidelijkheid",
 	toolsUsed: "Gebruikte Tools",
 	useCaseSubjects: "Gebruiksdoelen",
+	expectations: "Verwachtingen",
 
 	// ───────────────────────────────────────────────────────────────
-	// QUESTION 2: Algemene Indruk
+	// QUESTION 2: Algemene Waarde
 	// ───────────────────────────────────────────────────────────────
 	overallRating: "Algemene Beoordeling",
+	wouldRecommend: "Zou Aanraden",
+	confidenceLift: "Zelfvertrouwen Toename",
 	sentiment: "Sentiment",
+	whyValue: "Waarom (uitleg)",
+	bestPart: "Beste Onderdeel",
 
 	// ───────────────────────────────────────────────────────────────
-	// QUESTION 3: Waarover ging de training?
-	// ───────────────────────────────────────────────────────────────
-	mainTopicsIdentified: "Identificeerde Onderwerpen",
-	alignsWithIntent: "Komt overeen met doel",
-
-	// ───────────────────────────────────────────────────────────────
-	// QUESTION 4: Moeilijkheidsgraad
+	// QUESTION 3: Tempo & Moeilijkheid
 	// ───────────────────────────────────────────────────────────────
 	difficultyRating: "Moeilijkheidsgraad",
 	difficultyLevel: "Niveau",
 	paceRating: "Tempo",
+	cognitiveLoad: "Cognitieve Belasting",
+	tooFastMoments: "Te Snel Momenten",
 
 	// ───────────────────────────────────────────────────────────────
-	// QUESTION 5: Inhoudelijke Kwaliteit
+	// QUESTION 4: Inhoud & Relevantie
 	// ───────────────────────────────────────────────────────────────
 	qualityRating: "Kwaliteit",
 	relevanceRating: "Relevantie",
 	depthRating: "Diepgang",
+	mostUsefulTopics: "Meest Bruikbare Onderwerpen",
+	missingTopics: "Gemiste Onderwerpen",
 
 	// ───────────────────────────────────────────────────────────────
-	// QUESTION 6: Presentatie
+	// QUESTION 5: Uitleg & Presentatie
 	// ───────────────────────────────────────────────────────────────
 	presentationRating: "Presentatie",
 	engagementRating: "Betrokkenheid",
 	structureRating: "Structuur",
-
-	// ───────────────────────────────────────────────────────────────
-	// QUESTION 7: Duidelijkheid
-	// ───────────────────────────────────────────────────────────────
 	clarityRating: "Duidelijkheid",
 	unclearTopics: "Onduidelijke Onderwerpen",
-	needsExplanation: "Uitleg Nodig",
-	explanationTopic: "Te Verklaren Onderwerp",
+	whatHelpedClarity: "Wat Hielp Met Duidelijkheid",
 
 	// ───────────────────────────────────────────────────────────────
-	// QUESTION 8: Suggesties
+	// QUESTION 6: Verbeterpunten
 	// ───────────────────────────────────────────────────────────────
 	suggestions: "Suggesties",
 	topSuggestion: "Top Suggestie",
-	wouldRecommend: "Zou Aanraden",
-
-	// ───────────────────────────────────────────────────────────────
-	// QUESTION 9: Twee Onderdelen Vergelijking
-	// ───────────────────────────────────────────────────────────────
-	preferredPart: "Voorkeur Onderdeel",
-	theoryPartRating: "Theorie Score",
-	practicalPartRating: "Praktijk Score",
-	balanceOpinion: "Balans Mening",
+	improvementPriority: "Prioriteit (verbeterpunt)",
+	formatPreference: "Voorkeur Type Verbetering",
 };

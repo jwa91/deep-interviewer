@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
-  CoursePartPreferenceSchema,
   DifficultyLevelSchema,
+  FormatPreferenceSchema,
   QualitativeCaptureSchema,
   RatingSchema,
   SentimentSchema,
@@ -103,11 +103,18 @@ describe("DifficultyLevelSchema", () => {
   });
 });
 
-describe("CoursePartPreferenceSchema", () => {
+describe("FormatPreferenceSchema", () => {
   it("accepts all valid preferences", () => {
-    const prefs = ["theory", "practical", "both_equal"];
+    const prefs = [
+      "more_practice",
+      "more_theory",
+      "better_examples",
+      "slower_pace",
+      "more_time_for_questions",
+      "other",
+    ];
     for (const pref of prefs) {
-      expect(CoursePartPreferenceSchema.parse(pref)).toBe(pref);
+      expect(FormatPreferenceSchema.parse(pref)).toBe(pref);
     }
   });
 });

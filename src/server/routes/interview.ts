@@ -20,6 +20,7 @@ import {
 // ═══════════════════════════════════════════════════════════════
 
 export const interviewRoutes = new Hono();
+const TOTAL_TOPICS = QUESTION_IDS.length;
 
 // Cached agent instance
 let agentInstance: Awaited<ReturnType<typeof createInterviewAgent>> | null =
@@ -197,7 +198,7 @@ interviewRoutes.get("/:id", async (c) => {
 			progress: {
 				questionsCompleted,
 				completedCount,
-				totalQuestions: 9,
+				totalQuestions: TOTAL_TOPICS,
 				isComplete: state.values?.isComplete ?? false,
 			},
 		});
@@ -210,7 +211,7 @@ interviewRoutes.get("/:id", async (c) => {
 			progress: {
 				questionsCompleted: {},
 				completedCount: 0,
-				totalQuestions: 9,
+				totalQuestions: TOTAL_TOPICS,
 				isComplete: false,
 			},
 		});
@@ -433,7 +434,7 @@ interviewRoutes.post("/:id/chat", async (c) => {
 				completedCount: Object.values(
 					finalState.values?.questionsCompleted ?? {},
 				).filter(Boolean).length,
-				totalQuestions: 9,
+				totalQuestions: TOTAL_TOPICS,
 			};
 
 			// Update session if complete
@@ -494,7 +495,7 @@ interviewRoutes.get("/:id/results", async (c) => {
 						completedCount: Object.values(
 							state.values?.questionsCompleted ?? {},
 						).filter(Boolean).length,
-						totalQuestions: 9,
+						totalQuestions: TOTAL_TOPICS,
 					},
 				},
 				400,
@@ -525,7 +526,7 @@ interviewRoutes.get("/:id/responses", async (c) => {
 			sessionId: "debug-session",
 			responses: responses,
 			completedTopics: Object.keys(responses),
-			totalTopics: 9,
+			totalTopics: TOTAL_TOPICS,
 		});
 	}
 
@@ -580,7 +581,7 @@ interviewRoutes.get("/:id/responses", async (c) => {
 			sessionId: id,
 			responses: responsesWithMetadata,
 			completedTopics,
-			totalTopics: 9,
+			totalTopics: TOTAL_TOPICS,
 		});
 	} catch {
 		// No state yet (interview not started)
@@ -588,7 +589,7 @@ interviewRoutes.get("/:id/responses", async (c) => {
 			sessionId: id,
 			responses: {},
 			completedTopics: [],
-			totalTopics: 9,
+			totalTopics: TOTAL_TOPICS,
 		});
 	}
 });
