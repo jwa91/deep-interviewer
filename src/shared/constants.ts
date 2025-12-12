@@ -17,7 +17,7 @@ Twee dingen vooraf:
 
 Laten we direct beginnen: allereerst ben ik wel benieuwd hoe ervaren je al was met AI voor je deze training in ging.
 
-Kun je me daar iets over vertellen? Bepaalde tools die je al gebruikte? En zo ja, was dat dan vooral voor werk of prive?`;
+Kun je me daar iets over vertellen?`;
 
 /**
  * Display titles for each question/topic.
