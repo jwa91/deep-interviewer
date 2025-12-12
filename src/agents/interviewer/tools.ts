@@ -29,7 +29,7 @@ export function createQuestionTools(onRecord: ToolCallback<unknown>): Structured
       {
         questionId: "ai_background",
         name: "record_ai_background",
-        description: `Leg AI-achtergrond + verwachting vast. Roep aan zodra je weet waarvoor ze AI gebruiken en waarom ze kwamen. Je mag infereren uit context (bv. "programmer" → coding, power_user).`,
+        description: `Leg AI-achtergrond + verwachting vast. Ervaring/tools mag je infereren (bv. "programmer" → professional). Maar vraag WEL naar verwachtingen/doel als dat niet gezegd is.`,
         schema: RecordAiBackgroundSchema,
       },
       onRecord
