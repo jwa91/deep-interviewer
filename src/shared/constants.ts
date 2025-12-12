@@ -9,26 +9,24 @@
  */
 export const WELCOME_MESSAGE = `Hoi! 👋 Leuk dat je meedoet!
 
-Ik ben de AI-assistent van JW en ik help hem feedback te verzamelen over de AI-training die je hebt gevolgd.
+Ik ben de AI-assistent van JW en verzamel feedback over de AI-training. We hebben een kort gesprek van ~5 minuten over je ervaringen.
 
-**Hoe werkt dit interview?**
-- We hebben een informeel gesprek over je ervaringen
-- Ik stel vragen over verschillende onderdelen van de training
-- Voordat ik iets vastleg, check ik even of ik het goed begrepen heb
-- Je kunt op elk moment pauzeren en later verder gaan
+Twee dingen vooraf:
+- Voel je vrij om mij feedback te geven. Zit je op hete kolen en moet ik meer vaart maken? Vertel het me! Trek ik juist te snel conclusies, laat dat ook weten.
+- Als ik iets noteer dat niet klopt, corrigeer me gerust - dan pas ik het direct aan.
 
-Het gesprek duurt ongeveer 10-15 minuten, afhankelijk van hoeveel je wilt delen.
+Laten we direct beginnen: allereerst ben ik wel benieuwd hoe ervaren je al was met AI voor je deze training in ging.
 
-Laten we beginnen! Kun je me eerst vertellen: had je al ervaring met AI-tools zoals ChatGPT vóórdat je deze training volgde?`;
+Kun je me daar iets over vertellen? Bepaalde tools die je al gebruikte? En zo ja, was dat dan vooral voor werk of prive?`;
 
 /**
  * Display titles for each question/topic.
  */
 export const QUESTION_TITLES: Record<string, string> = {
-	ai_background: "AI Achtergrond",
-	overall_impression: "Algemene Waarde",
-	difficulty: "Tempo & Moeilijkheid",
-	content_quality: "Inhoud & Relevantie",
-	presentation: "Uitleg & Presentatie",
-	suggestions: "Verbeterpunten",
+  ai_background: "AI Achtergrond",
+  overall_impression: "Algemene Waarde",
+  difficulty: "Tempo & Moeilijkheid",
+  content_quality: "Inhoud & Relevantie",
+  presentation: "Uitleg & Presentatie",
+  suggestions: "Verbeterpunten",
 };
