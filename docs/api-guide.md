@@ -66,7 +66,7 @@ Returns an SSE stream with the following event types:
 1. **Track `message_start`/`message_end`** to handle message boundaries (tool calls split messages)
 2. **Accumulate `token` events** per `messageId` to build the agent's response in real-time
 3. **Show `tool_start`/`tool_end`** as UI feedback (e.g., "Recording your feedback...")
-4. **Use `progress`** to show completion (e.g., "2/9 questions answered")
+4. **Use `progress`** to show completion (e.g., "2/6 questions answered")
 5. **Use `done`** to finalize and get the complete response
 
 ### Progress Object
@@ -81,7 +81,7 @@ Returns an SSE stream with the following event types:
   },
   "isComplete": false,
   "completedCount": 2,
-  "totalQuestions": 9
+  "totalQuestions": 6
 }
 ```
 
@@ -120,7 +120,7 @@ Returns all recorded responses with metadata:
     }
   },
   "completedTopics": ["ai_background", "difficulty"],
-  "totalTopics": 9
+  "totalTopics": 6
 }
 ```
 
@@ -130,7 +130,7 @@ Returns all recorded responses with metadata:
 GET /api/interviews/:id/responses/:topic
 ```
 
-Valid topics: `ai_background`, `overall_impression`, `perceived_content`, `difficulty`, `content_quality`, `presentation`, `clarity`, `suggestions`, `course_parts`
+Valid topics: `ai_background`, `overall_impression`, `difficulty`, `content_quality`, `presentation`, `suggestions`
 
 ### Update Response
 
@@ -192,6 +192,6 @@ Updates a response and marks `source: "user_edit"` to track corrections.
 ## Notes
 
 - The agent speaks Dutch
-- The agent will naturally guide the conversation through 9 feedback topics
+- The agent will naturally guide the conversation through 6 feedback topics
 - Tool calls happen mid-stream (agent writes while talking)
 - Session state persists - users can close and resume later

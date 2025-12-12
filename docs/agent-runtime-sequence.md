@@ -6,7 +6,7 @@ sequenceDiagram
     participant FE as Frontend
     participant API as Hono Server
     participant Agent as LangGraph Agent
-    participant LLM as Claude Haiku 4.5
+    participant LLM as Claude Sonnet 4.5
     participant Tool as Question Tool
     participant CP as Checkpointer
 
