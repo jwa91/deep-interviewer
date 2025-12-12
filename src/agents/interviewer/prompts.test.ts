@@ -17,10 +17,11 @@ describe("INTERVIEWER_SYSTEM_PROMPT", () => {
   });
 
   it("emphasizes natural conversation flow for tool calling", () => {
-    expect(INTERVIEWER_SYSTEM_PROMPT).toContain("Onthoud alles");
-    expect(INTERVIEWER_SYSTEM_PROMPT).toContain("Laat het gesprek natuurlijk verlopen");
-    // "Volg de flow" was removed in favor of being more directive/efficient
-    expect(INTERVIEWER_SYSTEM_PROMPT).toContain("Snelheid in het begin");
+    expect(INTERVIEWER_SYSTEM_PROMPT).toContain("Laat het gesprek natuurlijk stromen");
+    expect(INTERVIEWER_SYSTEM_PROMPT).toContain(
+      "Wanneer je een tool aanroept, stel dan geen nieuwe vraag in diezelfde beurt"
+    );
+    expect(INTERVIEWER_SYSTEM_PROMPT).toContain("FLOW REGEL");
   });
 
   it("mentions JW as the instructor", () => {

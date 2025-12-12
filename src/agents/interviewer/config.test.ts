@@ -20,8 +20,8 @@ describe("getModelConfigFromEnv", () => {
 
     const config = getModelConfigFromEnv();
     expect(config.provider).toBe("anthropic");
-    expect(config.modelName).toBe("claude-haiku-4-5");
-    expect(config.temperature).toBe(0.3);
+    expect(config.modelName).toBe("claude-sonnet-4-5");
+    expect(config.temperature).toBe(0.4);
   });
 
   it("uses env vars when set", () => {
