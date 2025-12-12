@@ -66,28 +66,25 @@ describe("shouldMarkComplete", () => {
     expect(shouldMarkComplete(state)).toBe(false);
   });
 
-  it("returns true when all 9 questions completed", () => {
+  it("returns true when all 6 questions completed", () => {
     const state = createInitialState("550e8400-e29b-41d4-a716-446655440000");
     state.questionsCompleted = {
       ai_background: true,
       overall_impression: true,
-      perceived_content: true,
       difficulty: true,
       content_quality: true,
       presentation: true,
-      clarity: true,
       suggestions: true,
-      course_parts: true,
     };
     expect(shouldMarkComplete(state)).toBe(true);
   });
 });
 
 describe("getRemainingQuestionIds", () => {
-  it("returns all 9 question IDs for new state", () => {
+  it("returns all 6 question IDs for new state", () => {
     const state = createInitialState("550e8400-e29b-41d4-a716-446655440000");
     const remaining = getRemainingQuestionIds(state);
-    expect(remaining).toHaveLength(9);
+    expect(remaining).toHaveLength(6);
   });
 
   it("excludes completed questions", () => {
@@ -96,7 +93,7 @@ describe("getRemainingQuestionIds", () => {
     state.questionsCompleted.difficulty = true;
 
     const remaining = getRemainingQuestionIds(state);
-    expect(remaining).toHaveLength(7);
+    expect(remaining).toHaveLength(4);
     expect(remaining).not.toContain("ai_background");
     expect(remaining).not.toContain("difficulty");
     expect(remaining).toContain("overall_impression");
@@ -107,13 +104,10 @@ describe("getRemainingQuestionIds", () => {
     state.questionsCompleted = {
       ai_background: true,
       overall_impression: true,
-      perceived_content: true,
       difficulty: true,
       content_quality: true,
       presentation: true,
-      clarity: true,
       suggestions: true,
-      course_parts: true,
     };
     expect(getRemainingQuestionIds(state)).toHaveLength(0);
   });

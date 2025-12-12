@@ -45,7 +45,7 @@ describe("useInterviewSession", () => {
 
     expect(result.current.session).toBeNull();
     expect(result.current.progress.completedCount).toBe(0);
-    expect(result.current.progress.totalQuestions).toBe(9);
+    expect(result.current.progress.totalQuestions).toBe(6);
     expect(result.current.progress.isComplete).toBe(false);
     expect(result.current.error).toBeNull();
     expect(result.current.existingMessages).toEqual([]);
@@ -66,16 +66,13 @@ describe("useInterviewSession", () => {
       questionsCompleted: {
         ai_background: true,
         overall_impression: false,
-        perceived_content: false,
         difficulty: false,
         content_quality: false,
         presentation: false,
-        clarity: false,
         suggestions: false,
-        course_parts: false,
       },
       completedCount: 1,
-      totalQuestions: 9,
+      totalQuestions: 6,
       isComplete: false,
     };
 
@@ -267,16 +264,13 @@ describe("useInterviewSession", () => {
           questionsCompleted: {
             ai_background: true,
             overall_impression: false,
-            perceived_content: false,
             difficulty: false,
             content_quality: false,
             presentation: false,
-            clarity: false,
             suggestions: false,
-            course_parts: false,
           },
           completedCount: 1,
-          totalQuestions: 9,
+          totalQuestions: 6,
           isComplete: false,
         },
       }),
@@ -319,16 +313,13 @@ describe("useInterviewSession", () => {
       questionsCompleted: {
         ai_background: true,
         overall_impression: true,
-        perceived_content: false,
         difficulty: false,
         content_quality: false,
         presentation: false,
-        clarity: false,
         suggestions: false,
-        course_parts: false,
       },
       completedCount: 2,
-      totalQuestions: 9,
+      totalQuestions: 6,
       isComplete: false,
     };
 
@@ -366,16 +357,13 @@ describe("useInterviewSession", () => {
         questionsCompleted: {
           ai_background: true,
           overall_impression: false,
-          perceived_content: false,
           difficulty: false,
           content_quality: false,
           presentation: false,
-          clarity: false,
           suggestions: false,
-          course_parts: false,
         },
         completedCount: 1,
-        totalQuestions: 9,
+        totalQuestions: 6,
         isComplete: false,
       });
     });

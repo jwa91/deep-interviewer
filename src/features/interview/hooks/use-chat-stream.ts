@@ -34,16 +34,13 @@ function createDefaultProgress(): ProgressState {
 		questionsCompleted: {
 			ai_background: false,
 			overall_impression: false,
-			perceived_content: false,
 			difficulty: false,
 			content_quality: false,
 			presentation: false,
-			clarity: false,
 			suggestions: false,
-			course_parts: false,
 		},
 		completedCount: 0,
-		totalQuestions: 9,
+		totalQuestions: 6,
 		isComplete: false,
 	};
 }

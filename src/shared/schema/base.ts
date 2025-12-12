@@ -66,12 +66,15 @@ export const DifficultyLevelSchema = z.enum([
 export type DifficultyLevel = z.infer<typeof DifficultyLevelSchema>;
 
 // ═══════════════════════════════════════════════════════════════
-// COURSE PART PREFERENCE - Which part of course was preferred
+// FORMAT PREFERENCE - What kind of improvement the participant prefers
 // ═══════════════════════════════════════════════════════════════
 
-export const CoursePartPreferenceSchema = z.enum([
-  "theory", // Hoe LLMs werken
-  "practical", // Gebruik van LLMs
-  "both_equal", // Geen voorkeur
+export const FormatPreferenceSchema = z.enum([
+  "more_practice",
+  "more_theory",
+  "better_examples",
+  "slower_pace",
+  "more_time_for_questions",
+  "other",
 ]);
-export type CoursePartPreference = z.infer<typeof CoursePartPreferenceSchema>;
+export type FormatPreference = z.infer<typeof FormatPreferenceSchema>;

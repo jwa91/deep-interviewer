@@ -71,7 +71,7 @@ export interface SSEToolEndEvent {
 export interface SSEProgressEvent {
 	questionsCompleted: QuestionCompletion;
 	completedCount: number;
-	totalQuestions: 9;
+	totalQuestions: 6;
 	isComplete: boolean;
 }
 
@@ -148,7 +148,7 @@ export interface GetAllResponsesResponse {
 	sessionId: string;
 	responses: Record<string, TopicResponseDTO>;
 	completedTopics: QuestionId[];
-	totalTopics: 9;
+	totalTopics: 6;
 }
 
 export interface GetTopicResponseResponse extends TopicResponseDTO {}

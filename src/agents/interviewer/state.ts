@@ -2,7 +2,11 @@ import type { BaseMessage } from "@langchain/core/messages";
 import { MessagesZodMeta } from "@langchain/langgraph";
 import { registry } from "@langchain/langgraph/zod";
 import { z } from "zod";
-import { CollectedResponsesSchema, QuestionCompletionSchema } from "../../shared/schema/index.js";
+import {
+	CollectedResponsesSchema,
+	QuestionCompletionSchema,
+	QUESTION_IDS,
+} from "../../shared/schema/index.js";
 
 // ═══════════════════════════════════════════════════════════════
 // INTERVIEW AGENT STATE
@@ -50,17 +54,9 @@ export function createInitialState(sessionId: string): InterviewState {
     messages: [],
     sessionId,
     startedAt: new Date().toISOString(),
-    questionsCompleted: {
-      ai_background: false,
-      overall_impression: false,
-      perceived_content: false,
-      difficulty: false,
-      content_quality: false,
-      presentation: false,
-      clarity: false,
-      suggestions: false,
-      course_parts: false,
-    },
+    questionsCompleted: Object.fromEntries(
+      QUESTION_IDS.map((id) => [id, false]),
+    ) as InterviewState["questionsCompleted"],
     responses: {},
     isComplete: false,
   };
@@ -82,7 +78,7 @@ export function getCompletedCount(state: InterviewState): number {
  */
 export function shouldMarkComplete(state: InterviewState): boolean {
   const completedCount = getCompletedCount(state);
-  return completedCount === 9;
+  return completedCount === QUESTION_IDS.length;
 }
 
 /**

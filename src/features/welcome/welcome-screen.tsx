@@ -60,8 +60,8 @@ export function WelcomeScreen({
 									gebruik van LLM's. Ik ben erg benieuwd hoe je de training hebt
 									ervaren. Om de enquete daarover een beetje in een leuke vorm
 									te gieten, heb ik een AI agent gemaakt die je zal interviewen
-									over de training. De interviewer heeft in totaal 9 vragen voor
-									je, en ik denk dat het invullen ervan ongeveer 10 minuten tijd
+									over de training. De interviewer heeft in totaal 6 vragen voor
+									je, en ik denk dat het invullen ervan ongeveer 6-8 minuten tijd
 									kost. Alle feedback wordt gewaardeerd!
 								</p>
 

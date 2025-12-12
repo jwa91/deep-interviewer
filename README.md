@@ -4,7 +4,7 @@ An AI-powered conversational interview agent that collects course feedback throu
 
 ## Overview
 
-Small LangGraph experiment. I needed to do a survey for a course i gave. This agent conducts interviews in Dutch, naturally weaving in 9 feedback questions. Instead of rigid forms, participants chat with an AI that adapts to their responses and goes deeper when interesting insights emerge.
+Small LangGraph experiment. I needed to do a survey for a course i gave. This agent conducts interviews in Dutch, naturally weaving in 6 feedback questions. Instead of rigid forms, participants chat with an AI that adapts to their responses and goes deeper when interesting insights emerge.
 The agent can also share the slides with a slide share tool.
 
 ## Project Structure
@@ -55,16 +55,13 @@ pnpm install
 pnpm dev:server
 ```
 
-## The 9 Interview Questions
+## The 6 Interview Questions
 
-1. AI background (experience before training)
-2. Overall impression
-3. Perceived content (what they think it was about)
-4. Difficulty & pace
-5. Content quality & relevance
-6. Presentation quality
-7. Clarity of explanations
-8. Suggestions & recommendations
-9. Course parts comparison (theory vs practical)
+1. AI background (experience before training + expectations)
+2. Overall impression (value, recommendation, confidence lift)
+3. Difficulty & pace (tempo, cognitive load)
+4. Content quality & relevance (depth, usefulness)
+5. Presentation (delivery, clarity, engagement)
+6. Suggestions & recommendations (improvements)
 
 Each question captures both quantitative ratings (for comparison) and qualitative insights (summaries + quotes).

@@ -4,12 +4,9 @@ import {
 	QuestionId,
 	type QuestionId as QuestionIdType,
 	type RecordAiBackground,
-	type RecordClarity,
 	type RecordContentQuality,
-	type RecordCourseParts,
 	type RecordDifficulty,
 	type RecordOverallImpression,
-	type RecordPerceivedContent,
 	type RecordPresentation,
 	type RecordSuggestions,
 } from "./questions.js";
@@ -21,13 +18,10 @@ import {
 export const QuestionCompletionSchema = z.object({
 	ai_background: z.boolean().default(false),
 	overall_impression: z.boolean().default(false),
-	perceived_content: z.boolean().default(false),
 	difficulty: z.boolean().default(false),
 	content_quality: z.boolean().default(false),
 	presentation: z.boolean().default(false),
-	clarity: z.boolean().default(false),
 	suggestions: z.boolean().default(false),
-	course_parts: z.boolean().default(false),
 });
 
 export type QuestionCompletion = z.infer<typeof QuestionCompletionSchema>;
@@ -38,8 +32,8 @@ export type QuestionCompletion = z.infer<typeof QuestionCompletionSchema>;
 
 export const ProgressStateSchema = z.object({
 	questionsCompleted: QuestionCompletionSchema,
-	completedCount: z.number().int().min(0).max(9),
-	totalQuestions: z.literal(9),
+	completedCount: z.number().int().min(0).max(6),
+	totalQuestions: z.literal(6),
 	isComplete: z.boolean(),
 });
 
@@ -52,13 +46,10 @@ export type ProgressState = z.infer<typeof ProgressStateSchema>;
 export const CollectedResponsesSchema = z.object({
 	ai_background: z.custom<RecordAiBackground>().optional(),
 	overall_impression: z.custom<RecordOverallImpression>().optional(),
-	perceived_content: z.custom<RecordPerceivedContent>().optional(),
 	difficulty: z.custom<RecordDifficulty>().optional(),
 	content_quality: z.custom<RecordContentQuality>().optional(),
 	presentation: z.custom<RecordPresentation>().optional(),
-	clarity: z.custom<RecordClarity>().optional(),
 	suggestions: z.custom<RecordSuggestions>().optional(),
-	course_parts: z.custom<RecordCourseParts>().optional(),
 });
 
 export type CollectedResponses = z.infer<typeof CollectedResponsesSchema>;
@@ -103,7 +94,7 @@ export const InterviewResponsesDTOSchema = z.object({
 	sessionId: z.string().uuid(),
 	responses: z.record(z.string(), TopicResponseSchema),
 	completedTopics: z.array(QuestionId),
-	totalTopics: z.literal(9),
+	totalTopics: z.literal(6),
 });
 
 export type InterviewResponsesDTO = z.infer<typeof InterviewResponsesDTOSchema>;
