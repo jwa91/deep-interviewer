@@ -28,7 +28,9 @@ adminRoutes.get("/export", async (c) => {
     // Filter by date
     if (fromDateObj) {
       const inviteDate = new Date(invite.createdAt);
-      if (inviteDate < fromDateObj) return false;
+      if (inviteDate < fromDateObj) {
+        return false;
+      }
     }
 
     // Filter by type
@@ -61,7 +63,7 @@ adminRoutes.get("/export", async (c) => {
           completedAt: state.values?.completedAt,
           startedAt: state.values?.startedAt,
         };
-      } catch (e) {
+      } catch {
         // Ignore errors reading state
       }
     }
