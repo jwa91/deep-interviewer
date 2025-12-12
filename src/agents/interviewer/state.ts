@@ -3,9 +3,9 @@ import { MessagesZodMeta } from "@langchain/langgraph";
 import { registry } from "@langchain/langgraph/zod";
 import { z } from "zod";
 import {
-	CollectedResponsesSchema,
-	QuestionCompletionSchema,
-	QUESTION_IDS,
+  CollectedResponsesSchema,
+  QUESTION_IDS,
+  QuestionCompletionSchema,
 } from "../../shared/schema/index.js";
 
 // ═══════════════════════════════════════════════════════════════
@@ -55,7 +55,7 @@ export function createInitialState(sessionId: string): InterviewState {
     sessionId,
     startedAt: new Date().toISOString(),
     questionsCompleted: Object.fromEntries(
-      QUESTION_IDS.map((id) => [id, false]),
+      QUESTION_IDS.map((id) => [id, false])
     ) as InterviewState["questionsCompleted"],
     responses: {},
     isComplete: false,

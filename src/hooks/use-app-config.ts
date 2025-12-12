@@ -9,11 +9,11 @@ import { useEffect, useState } from "react";
 // ═══════════════════════════════════════════════════════════════
 
 export interface AppConfig {
-	workshopSlidesUrl: string | null;
+  workshopSlidesUrl: string | null;
 }
 
 const DEFAULT_CONFIG: AppConfig = {
-	workshopSlidesUrl: null,
+  workshopSlidesUrl: null,
 };
 
 // Cache the config to avoid refetching
@@ -21,17 +21,17 @@ let cachedConfig: AppConfig | null = null;
 let fetchPromise: Promise<AppConfig> | null = null;
 
 async function fetchConfig(): Promise<AppConfig> {
-	try {
-		const response = await fetch("/api/config");
-		if (!response.ok) {
-			console.error("Failed to fetch config:", response.statusText);
-			return DEFAULT_CONFIG;
-		}
-		return await response.json();
-	} catch (error) {
-		console.error("Failed to fetch config:", error);
-		return DEFAULT_CONFIG;
-	}
+  try {
+    const response = await fetch("/api/config");
+    if (!response.ok) {
+      console.error("Failed to fetch config:", response.statusText);
+      return DEFAULT_CONFIG;
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Failed to fetch config:", error);
+    return DEFAULT_CONFIG;
+  }
 }
 
 /**
@@ -39,31 +39,29 @@ async function fetchConfig(): Promise<AppConfig> {
  * Fetches from server on first use, then caches the result.
  */
 export function useAppConfig(): { config: AppConfig; isLoading: boolean } {
-	const [config, setConfig] = useState<AppConfig>(
-		cachedConfig ?? DEFAULT_CONFIG,
-	);
-	const [isLoading, setIsLoading] = useState(!cachedConfig);
+  const [config, setConfig] = useState<AppConfig>(cachedConfig ?? DEFAULT_CONFIG);
+  const [isLoading, setIsLoading] = useState(!cachedConfig);
 
-	useEffect(() => {
-		if (cachedConfig) {
-			setConfig(cachedConfig);
-			setIsLoading(false);
-			return;
-		}
+  useEffect(() => {
+    if (cachedConfig) {
+      setConfig(cachedConfig);
+      setIsLoading(false);
+      return;
+    }
 
-		// Use shared promise to avoid duplicate fetches
-		if (!fetchPromise) {
-			fetchPromise = fetchConfig();
-		}
+    // Use shared promise to avoid duplicate fetches
+    if (!fetchPromise) {
+      fetchPromise = fetchConfig();
+    }
 
-		fetchPromise.then((fetchedConfig) => {
-			cachedConfig = fetchedConfig;
-			setConfig(fetchedConfig);
-			setIsLoading(false);
-		});
-	}, []);
+    fetchPromise.then((fetchedConfig) => {
+      cachedConfig = fetchedConfig;
+      setConfig(fetchedConfig);
+      setIsLoading(false);
+    });
+  }, []);
 
-	return { config, isLoading };
+  return { config, isLoading };
 }
 
 /**
@@ -71,5 +69,5 @@ export function useAppConfig(): { config: AppConfig; isLoading: boolean } {
  * Returns null if config hasn't been fetched yet.
  */
 export function getCachedConfig(): AppConfig | null {
-	return cachedConfig;
+  return cachedConfig;
 }

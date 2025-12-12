@@ -44,3 +44,39 @@ code,
 pre {
   font-family: monospace;
 }
+
+/* Markdown prose styles for chat messages */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  font-weight: var(--font-weight-bold);
+  margin-top: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.prose ul,
+.prose ol {
+  padding-left: var(--space-4);
+  margin-bottom: var(--space-2);
+}
+
+.prose li {
+  margin-bottom: var(--space-1);
+}
+
+.prose a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.prose p {
+  margin-bottom: var(--space-2);
+}
+
+.prose p:last-child {
+  margin-bottom: 0;
+}

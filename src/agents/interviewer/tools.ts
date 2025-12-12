@@ -97,7 +97,8 @@ export function createQuestionTools(onRecord: ToolCallback<unknown>): Structured
       },
       {
         name: "provide_workshop_slides",
-        description: "Provide the link to the workshop slides when the user asks for them.",
+        description:
+          "VERPLICHT: Gebruik deze tool als de deelnemer vraagt naar de slides. De UI toont automatisch de juiste link. Geef NOOIT zelf een URL in je tekstantwoord.",
         schema: z.object({
           confirm: z.boolean().describe("Confirm that you want to provide the slides"),
         }),

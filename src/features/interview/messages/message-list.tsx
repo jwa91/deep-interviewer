@@ -6,49 +6,49 @@ import { MessageBubble } from "./message-bubble";
 import { SlideLinkCard } from "./slide-link-card";
 
 interface MessageListProps {
-	readonly chatItems: ChatItem[];
-	readonly sessionId: string;
+  readonly chatItems: ChatItem[];
+  readonly sessionId: string;
 }
 
 export function MessageList({ chatItems, sessionId }: MessageListProps) {
-	const viewportRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
 
-	// Auto-scroll to bottom when items change
-	// biome-ignore lint/correctness/useExhaustiveDependencies: intentionally trigger on items changes
-	useEffect(() => {
-		if (viewportRef.current) {
-			viewportRef.current.scrollTop = viewportRef.current.scrollHeight;
-		}
-	}, [chatItems.length, chatItems[chatItems.length - 1]]);
+  // Auto-scroll to bottom when items change
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally trigger on items changes
+  useEffect(() => {
+    if (viewportRef.current) {
+      viewportRef.current.scrollTop = viewportRef.current.scrollHeight;
+    }
+  }, [chatItems.length, chatItems[chatItems.length - 1]]);
 
-	return (
-		<div className="min-h-0 flex-1">
-			<ScrollArea ref={viewportRef} className="h-full">
-				<div className="space-y-4 px-4 py-4">
-					{chatItems.map((item) => {
-						if (item.type === "message") {
-							return <MessageBubble key={item.id} message={item.data} />;
-						}
+  return (
+    <div className="min-h-0 flex-1">
+      <ScrollArea ref={viewportRef} className="h-full">
+        <div className="space-y-4 px-4 py-4">
+          {chatItems.map((item) => {
+            if (item.type === "message") {
+              return <MessageBubble key={item.id} message={item.data} />;
+            }
 
-						if (item.type === "tool_card") {
-							return (
-								<AgentNoteCard
-									key={item.id}
-									questionId={item.data.questionId}
-									state={item.data.state}
-									sessionId={sessionId}
-								/>
-							);
-						}
+            if (item.type === "tool_card") {
+              return (
+                <AgentNoteCard
+                  key={item.id}
+                  questionId={item.data.questionId}
+                  state={item.data.state}
+                  sessionId={sessionId}
+                />
+              );
+            }
 
-						if (item.type === "slide_link") {
-							return <SlideLinkCard key={item.id} url={item.data.url} />;
-						}
+            if (item.type === "slide_link") {
+              return <SlideLinkCard key={item.id} url={item.data.url} />;
+            }
 
-						return null;
-					})}
-				</div>
-			</ScrollArea>
-		</div>
-	);
+            return null;
+          })}
+        </div>
+      </ScrollArea>
+    </div>
+  );
 }

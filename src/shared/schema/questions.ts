@@ -26,9 +26,7 @@ export const RecordAiBackgroundSchema = QualitativeCaptureSchema.extend({
   useCaseSubjects: z
     .array(UseCaseSubjectSchema)
     .describe("Voor welke doeleinden gebruikte deelnemer AI?"),
-  expectations: z
-    .string()
-    .describe("Wat hoopte de deelnemer uit de workshop te halen?"),
+  expectations: z.string().describe("Wat hoopte de deelnemer uit de workshop te halen?"),
 });
 
 export type RecordAiBackground = z.infer<typeof RecordAiBackgroundSchema>;
@@ -83,10 +81,7 @@ export const RecordContentQualitySchema = QualitativeCaptureSchema.extend({
   mostUsefulTopics: z
     .array(z.string())
     .describe("Welke onderwerpen/onderdelen waren het meest bruikbaar?"),
-  missingTopics: z
-    .array(z.string())
-    .optional()
-    .describe("Welke onderwerpen miste de deelnemer?"),
+  missingTopics: z.array(z.string()).optional().describe("Welke onderwerpen miste de deelnemer?"),
 });
 
 export type RecordContentQuality = z.infer<typeof RecordContentQualitySchema>;
@@ -122,9 +117,7 @@ export const RecordSuggestionsSchema = QualitativeCaptureSchema.extend({
   improvementPriority: RatingSchema.describe(
     "1=kleine nice-to-have, 5=heel belangrijk / grootste winst"
   ),
-  formatPreference: FormatPreferenceSchema.describe(
-    "Welke soort verbetering heeft de voorkeur?"
-  ),
+  formatPreference: FormatPreferenceSchema.describe("Welke soort verbetering heeft de voorkeur?"),
 });
 
 export type RecordSuggestions = z.infer<typeof RecordSuggestionsSchema>;
