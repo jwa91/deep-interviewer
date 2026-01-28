@@ -9,6 +9,7 @@
 
 services:
   app:
+    container_name: deep-interviewer
     build:
       context: .
       dockerfile: Dockerfile
