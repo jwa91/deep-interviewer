@@ -28,3 +28,7 @@ dist-ssr
 .env
 # Data files
 data/
+
+# Deploy metrics via pushgateway
+
+# Deploy metrics via pushgateway
