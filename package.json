@@ -68,5 +68,12 @@
     "typescript": "~5.9.3",
     "vite": "^7.3.1",
     "vitest": "^4.0.18"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@biomejs/biome",
+      "better-sqlite3",
+      "esbuild"
+    ]
   }
 }

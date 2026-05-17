@@ -6,12 +6,12 @@
 FROM node:22-alpine AS build
 
 # Install pnpm
-RUN npm install -g pnpm
+RUN npm install -g pnpm@10.4.0
 
 WORKDIR /app
 
 # Copy package files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies (including devDependencies for build)
 RUN pnpm install --frozen-lockfile
@@ -27,7 +27,7 @@ RUN pnpm build:server
 FROM node:22-alpine AS production
 
 # Install pnpm for running
-RUN npm install -g pnpm
+RUN npm install -g pnpm@10.4.0
 
 # Install build dependencies for better-sqlite3
 RUN apk add --no-cache python3 make g++
@@ -35,7 +35,7 @@ RUN apk add --no-cache python3 make g++
 WORKDIR /app
 
 # Copy package files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml ./
 
 # Install production dependencies only
 RUN pnpm install --frozen-lockfile --prod
