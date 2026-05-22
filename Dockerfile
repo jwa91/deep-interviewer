@@ -3,15 +3,15 @@
 # ═══════════════════════════════════════════════════════════════
 
 # ---- Build Stage ----
-FROM node:22-alpine AS build
+FROM node:24-alpine AS build
 
 # Install pnpm
-RUN npm install -g pnpm@10.4.0
+RUN corepack enable && corepack prepare pnpm@11.2.2 --activate
 
 WORKDIR /app
 
 # Copy package files
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Install dependencies (including devDependencies for build)
 RUN pnpm install --frozen-lockfile
@@ -24,24 +24,18 @@ RUN pnpm build
 RUN pnpm build:server
 
 # ---- Production Stage ----
-FROM node:22-alpine AS production
+FROM node:24-alpine AS production
 
 # Install pnpm for running
-RUN npm install -g pnpm@10.4.0
-
-# Install build dependencies for better-sqlite3
-RUN apk add --no-cache python3 make g++
+RUN corepack enable && corepack prepare pnpm@11.2.2 --activate
 
 WORKDIR /app
 
 # Copy package files
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# Install production dependencies only
+# Install production dependencies only (better-sqlite3 uses prebuilt binaries via prebuild-install)
 RUN pnpm install --frozen-lockfile --prod
-
-# Rebuild native modules (better-sqlite3)
-RUN pnpm rebuild better-sqlite3
 
 # Copy built server code
 COPY --from=build /app/dist-server ./dist-server
