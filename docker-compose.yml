@@ -34,8 +34,8 @@ services:
       # Content configuration
       - WORKSHOP_SLIDES_URL=${WORKSHOP_SLIDES_URL}
     volumes:
-      # Bind mount local data directory for persistence and sync
-      - ./data:/app/data
+      # SQLite data persisted under /var/volumes/<service> (matches n8n/ntfy/postgres convention)
+      - /var/volumes/deep-interviewer:/app/data
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/health"]
       interval: 30s
